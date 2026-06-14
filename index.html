@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoGallery</title>
+  <style>
+    :root {
+      --bg: #0c0c10;
+      --surface: #16161e;
+      --card: #1d1d27;
+      --card-hover: #23232f;
+      --border: #2a2a38;
+      --border-light: #333344;
+      --gold: #c9a435;
+      --gold-dim: #8b6e1f;
+      --text: #e6e6f0;
+      --sub: #9090a8;
+      --green: #4caf84;
+      --red: #e05555;
+      --r: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      color: var(--gold);
+    }
+    .logo span { color: var(--text); font-weight: 400; }
+
+    .header-right { display: flex; gap: 8px; align-items: center; }
+
+    .btn-icon {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--sub);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: color .15s, background .15s;
+    }
+    .btn-icon:hover { color: var(--text); background: var(--border); }
+
+    .btn-add {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 0 16px;
+      height: 36px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: opacity .15s;
+      letter-spacing: .2px;
+    }
+    .btn-add:hover { opacity: .85; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 0;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 14px 0;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.2;
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-lbl {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--sub);
+      margin-top: 3px;
+    }
+
+    /* ── Controls ── */
+    .controls {
+      padding: 14px 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap {
+      flex: 1;
+      min-width: 180px;
+      position: relative;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--sub);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px 9px 34px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    .search-input:focus { border-color: var(--gold-dim); }
+    .search-input::placeholder { color: var(--sub); }
+
+    .sort-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+    .sort-select:focus { border-color: var(--gold-dim); }
+
+    /* ── Gallery grid ── */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 5), 1fr);
+      gap: 16px;
+      padding: 0 24px 32px;
+    }
+
+    .cols-select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+    .cols-select:focus { border-color: var(--gold-dim); }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+    }
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      border-color: var(--border-light);
+    }
+
+    .card-img-wrap {
+      width: 100%;
+      aspect-ratio: 5/4;
+      overflow: hidden;
+      background: var(--surface);
+      position: relative;
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .3s;
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.03); }
+
+    .card-no-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--sub);
+    }
+    .card-no-img svg { opacity: .4; }
+
+    .card-body { padding: 14px; }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+    .card-character {
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+
+    .roi-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .roi-pos { background: rgba(76,175,132,.15); color: var(--green); }
+    .roi-neg { background: rgba(224,85,85,.15); color: var(--red); }
+
+    .roi-overlay {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      background: rgba(0,0,0,.55) !important;
+    }
+    .roi-overlay.roi-pos { color: var(--green); }
+    .roi-overlay.roi-neg { color: var(--red); }
+
+    .card-divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 5px;
+      gap: 8px;
+    }
+    .card-row:last-child { margin-bottom: 0; }
+    .card-row-lbl { color: var(--sub); flex-shrink: 0; }
+    .card-row-val { font-weight: 500; text-align: right; word-break: break-all; }
+    .text-green { color: var(--green); }
+    .text-red   { color: var(--red); }
+
+    a.card-link {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    a.card-link:hover { text-decoration: underline; }
+
+    /* ── Empty state ── */
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 24px;
+    }
+    .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: .5; }
+    .empty-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--sub); margin-bottom: 24px; }
+
+    /* ── Modals ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 92vh;
+      overflow-y: auto;
+      transform: translateY(8px) scale(.98);
+      transition: transform .2s;
+    }
+    .overlay.open .modal { transform: translateY(0) scale(1); }
+
+    .modal-head {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--card);
+      z-index: 1;
+      border-radius: 16px 16px 0 0;
+    }
+    .modal-title { font-size: 15px; font-weight: 700; }
+
+    .btn-x {
+      background: none;
+      border: none;
+      color: var(--sub);
+      font-size: 18px;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s, background .15s;
+      line-height: 1;
+    }
+    .btn-x:hover { color: var(--text); background: var(--border); }
+
+    .modal-body { padding: 20px; }
+
+    .modal-foot {
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* ── Form ── */
+    .fg { margin-bottom: 14px; }
+    .fg:last-child { margin-bottom: 0; }
+
+    .flabel {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--sub);
+      margin-bottom: 5px;
+    }
+
+    .finput, .fselect, .ftextarea {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 9px 11px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font);
+      transition: border-color .15s;
+    }
+    .finput:focus, .fselect:focus, .ftextarea:focus { border-color: var(--gold-dim); }
+    .finput::placeholder, .ftextarea::placeholder { color: var(--sub); }
+    .finput.err { border-color: var(--red); }
+
+    .ftextarea { resize: vertical; min-height: 72px; }
+
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* ── Image upload ── */
+    .img-drop {
+      border: 2px dashed var(--border-light);
+      border-radius: 10px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .15s;
+      min-height: 110px;
+    }
+    .img-drop:hover { border-color: var(--gold-dim); }
+    .img-drop input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .img-drop-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 6px;
+      color: var(--sub);
+      font-size: 13px;
+      text-align: center;
+    }
+    .img-drop-content svg { opacity: .5; }
+    .img-preview-wrap {
+      display: none;
+      position: relative;
+    }
+    .img-preview-wrap img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+    }
+    .img-clear {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0,0,0,.7);
+      border: none;
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      transition: background .15s;
+    }
+    .img-clear:hover { background: rgba(224,85,85,.8); }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      background: var(--gold);
+      color: #000;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .btn-primary:hover { opacity: .85; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-secondary:hover { background: var(--border); }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid transparent;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      margin-right: auto;
+      transition: background .15s, border-color .15s;
+    }
+    .btn-danger:hover { background: rgba(224,85,85,.1); border-color: var(--red); }
+
+    /* ── Detail modal ── */
+    .detail-img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      background: var(--surface);
+      border-radius: 10px;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .detail-name { font-size: 20px; font-weight: 800; margin-bottom: 3px; }
+    .detail-sub { font-size: 13px; color: var(--sub); margin-bottom: 12px; }
+
+    .detail-rows { margin-top: 14px; }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      gap: 12px;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row-lbl { color: var(--sub); flex-shrink: 0; }
+    .detail-row-val { font-weight: 500; text-align: right; }
+
+    .detail-notes {
+      margin-top: 14px;
+      padding: 12px;
+      background: var(--surface);
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--sub);
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .detail-date {
+      font-size: 11px;
+      color: var(--sub);
+      margin-top: 14px;
+      opacity: .6;
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      color: var(--text);
+      padding: 10px 18px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 999;
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Import/Export hidden input ── */
+    #importFile { display: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .stats-bar { flex-wrap: wrap; }
+      .stat { min-width: 50%; border-bottom: 1px solid var(--border); }
+      .stat:nth-child(even) { border-right: none; }
+      .stat:nth-last-child(-n+2) { border-bottom: none; }
+      .gallery { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; padding: 0 12px 24px; }
+      .controls { padding: 10px 12px; }
+      .cols-select { display: none; }
+      header { padding: 0 16px; }
+      .stats-bar { padding: 0 16px; }
+      .frow { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 360px) {
+      .gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Auto<span>Gallery</span></div>
+  <div class="header-right">
+    <button class="btn-icon" title="Export collection" onclick="exportData()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </button>
+    <button class="btn-icon" title="Import collection" onclick="document.getElementById('importFile').click()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 16 12 21 17 16"/><line x1="12" y1="21" x2="12" y2="9"/></svg>
+    </button>
+    <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+    <button class="btn-add" onclick="openAdd()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Item
+    </button>
+  </div>
+</header>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat">
+    <div class="stat-val" id="sCount">0</div>
+    <div class="stat-lbl">Items</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="sPaid">—</div>
+    <div class="stat-lbl">Total Paid</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="sValue">—</div>
+    <div class="stat-lbl">Est. Value</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val" id="sROI">—</div>
+    <div class="stat-lbl">Return</div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="searchInput" placeholder="Search name, character, film…" oninput="render()">
+  </div>
+  <select class="sort-select" id="sortSelect" onchange="render()">
+    <option value="date-desc">Newest first</option>
+    <option value="date-asc">Oldest first</option>
+    <option value="name-asc">Name A–Z</option>
+    <option value="value-desc">Value: High–Low</option>
+    <option value="paid-desc">Paid: High–Low</option>
+    <option value="roi-desc">Best ROI</option>
+  </select>
+  <select class="cols-select" id="colsSelect" onchange="setCols(this.value)" title="Items per row">
+    <option value="3">3 per row</option>
+    <option value="4">4 per row</option>
+    <option value="5" selected>5 per row</option>
+  </select>
+</div>
+
+<div class="gallery" id="gallery"></div>
+
+<!-- ── Add/Edit Modal ── -->
+<div class="overlay" id="formOverlay" onclick="overlayClick(event,'formOverlay')">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="formTitle">Add Item</span>
+      <button class="btn-x" onclick="closeForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId">
+
+      <div class="fg">
+        <label class="flabel">Photo</label>
+        <div class="img-drop" id="imgDrop">
+          <input type="file" accept="image/*" id="imgInput" onchange="handleImg(event)">
+          <div class="img-drop-content" id="imgPrompt">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Click to upload photo</span>
+            <span style="font-size:11px;opacity:.6">JPG, PNG, WEBP</span>
+          </div>
+          <div class="img-preview-wrap" id="imgPreviewWrap">
+            <img id="imgPreview" alt="Preview">
+            <button type="button" class="img-clear" onclick="clearImg(event)">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Person Name <span style="color:var(--red)">*</span></label>
+          <input class="finput" id="fName" placeholder="e.g. James Earl Jones">
+        </div>
+        <div class="fg">
+          <label class="flabel">Character</label>
+          <input class="finput" id="fCharacter" placeholder="e.g. Darth Vader">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">Film / Show</label>
+        <input class="finput" id="fFilm" placeholder="e.g. A New Hope">
+      </div>
+
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Cert Number</label>
+          <input class="finput" id="fCertNum" placeholder="e.g. BD13964">
+        </div>
+        <div class="fg">
+          <label class="flabel">Cert URL</label>
+          <input class="finput" id="fCertUrl" placeholder="https://…" type="url">
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Currency</label>
+          <input class="finput" id="fCurrency" placeholder="NT$" value="NT$">
+        </div>
+        <div class="fg">
+          <label class="flabel">Amount Paid</label>
+          <input class="finput" id="fPaid" type="number" min="0" placeholder="5025">
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Est. Value</label>
+          <input class="finput" id="fValue" type="number" min="0" placeholder="9204">
+        </div>
+        <div class="fg">
+          <label class="flabel">Value URL</label>
+          <input class="finput" id="fValueUrl" placeholder="https://…" type="url">
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">Notes</label>
+        <textarea class="ftextarea" id="fNotes" placeholder="Additional notes…"></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-secondary" onclick="closeForm()">Cancel</button>
+      <button class="btn-primary" onclick="saveItem()">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Detail Modal ── -->
+<div class="overlay" id="detailOverlay" onclick="overlayClick(event,'detailOverlay')">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <span class="modal-title" id="dTitle">—</span>
+      <button class="btn-x" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="dBody"></div>
+    <div class="modal-foot">
+      <button class="btn-danger" onclick="deleteItem()">Delete</button>
+      <button class="btn-secondary" onclick="editFromDetail()">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const KEY = 'autogallery_v2';
+  let items = [];
+  let pendingImg = null;   // base64 string or null
+  let activeDetailId = null;
+
+  /* ── Storage ── */
+  function load() {
+    try { items = JSON.parse(localStorage.getItem(KEY) || '[]'); }
+    catch { items = []; }
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(items));
+    } catch (e) {
+      toast('⚠️ Storage full — try removing some photos or exporting.');
+    }
+  }
+
+  function uid() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  }
+
+  /* ── Image compression ── */
+  function compressImage(dataUrl, callback) {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 900;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else        { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = dataUrl;
+  }
+
+  /* ── Formatting ── */
+  function fmt(currency, n) {
+    if (!n && n !== 0) return '—';
+    return (currency || '') + Number(n).toLocaleString();
+  }
+
+  function roi(paid, value) {
+    if (!paid || !value || Number(paid) === 0) return null;
+    return ((Number(value) - Number(paid)) / Number(paid) * 100);
+  }
+
+  function roiStr(r) {
+    if (r === null) return null;
+    return (r >= 0 ? '+' : '') + r.toFixed(1) + '%';
+  }
+
+  /* ── Stats ── */
+  function updateStats() {
+    const cur = items.length ? (items[0].currency || '') : '';
+    const totalPaid  = items.reduce((s, i) => s + (Number(i.paid)  || 0), 0);
+    const totalValue = items.reduce((s, i) => s + (Number(i.value) || 0), 0);
+    const r = totalPaid > 0 ? (totalValue - totalPaid) / totalPaid * 100 : null;
+
+    document.getElementById('sCount').textContent = items.length;
+    document.getElementById('sPaid').textContent  = items.length ? fmt(cur, totalPaid) : '—';
+    document.getElementById('sValue').textContent = items.length ? fmt(cur, totalValue) : '—';
+
+    const el = document.getElementById('sROI');
+    if (r !== null) {
+      el.textContent = roiStr(r);
+      el.style.color = r >= 0 ? 'var(--green)' : 'var(--red)';
+    } else {
+      el.textContent = '—';
+      el.style.color = 'var(--gold)';
+    }
+  }
+
+  /* ── Filter + sort ── */
+  function filtered() {
+    const q   = document.getElementById('searchInput').value.toLowerCase().trim();
+    const srt = document.getElementById('sortSelect').value;
+
+    let res = q
+      ? items.filter(i =>
+          (i.name      || '').toLowerCase().includes(q) ||
+          (i.character || '').toLowerCase().includes(q) ||
+          (i.film      || '').toLowerCase().includes(q) ||
+          (i.certNum   || '').toLowerCase().includes(q))
+      : [...items];
+
+    res.sort((a, b) => {
+      switch (srt) {
+        case 'date-asc':   return a.added.localeCompare(b.added);
+        case 'name-asc':   return (a.name || '').localeCompare(b.name || '');
+        case 'value-desc': return (Number(b.value) || 0) - (Number(a.value) || 0);
+        case 'paid-desc':  return (Number(b.paid)  || 0) - (Number(a.paid)  || 0);
+        case 'roi-desc': {
+          const ra = roi(a.paid, a.value) ?? -1e9;
+          const rb = roi(b.paid, b.value) ?? -1e9;
+          return rb - ra;
+        }
+        default: return b.added.localeCompare(a.added);
+      }
+    });
+
+    return res;
+  }
+
+  /* ── Render gallery ── */
+  function render() {
+    updateStats();
+    const g   = document.getElementById('gallery');
+    const res = filtered();
+
+    if (!res.length) {
+      g.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">✍️</div>
+          <div class="empty-title">${items.length ? 'No matches' : 'Your collection is empty'}</div>
+          <div class="empty-sub">${items.length ? 'Try a different search term' : 'Add your first autograph to get started'}</div>
+          ${!items.length ? '<button class="btn-add" onclick="openAdd()" style="margin:0 auto">+ Add Item</button>' : ''}
+        </div>`;
+      return;
+    }
+
+    g.innerHTML = res.map(item => {
+      const r    = roi(item.paid, item.value);
+      const rStr = roiStr(r);
+      const cur  = item.currency || '';
+
+      const roiBadge = rStr
+        ? `<span class="roi-pill ${r >= 0 ? 'roi-pos' : 'roi-neg'} roi-overlay">${rStr}</span>`
+        : '';
+
+      const imgHtml = item.img
+        ? `<div class="card-img-wrap"><img src="${item.img}" alt="${escHtml(item.name)}" loading="lazy">${roiBadge}</div>`
+        : `<div class="card-img-wrap"><div class="card-no-img">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span style="font-size:11px">No photo</span>
+           </div>${roiBadge}</div>`;
+
+      let rows = '';
+      if (item.certNum) {
+        const v = item.certUrl
+          ? `<a class="card-link" href="${escHtml(item.certUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.certNum)}</a>`
+          : escHtml(item.certNum);
+        rows += cardRow('Cert #', v);
+      }
+      if (item.paid) {
+        let paidStr = escHtml(fmt(cur, item.paid));
+        if (item.shipping) paidStr += ` <span style="font-size:11px;color:var(--sub)">(${escHtml(item.shipping)})</span>`;
+        rows += cardRow('Paid', paidStr);
+      }
+      if (item.value) {
+        const cls = r !== null ? (r >= 0 ? 'text-green' : 'text-red') : '';
+        let vStr = escHtml(fmt(cur, item.value));
+        if (item.valueUrl) vStr = `<a class="card-link ${cls}" href="${escHtml(item.valueUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">${vStr}</a>`;
+        rows += cardRow('Est. Value', `<span class="${cls}">${vStr}</span>`);
+      }
+
+      return `
+        <div class="card" onclick="openDetail('${item.id}')">
+          ${imgHtml}
+          <div class="card-body">
+            <div class="card-name">${escHtml(item.name)}</div>
+            ${item.character ? `<div class="card-character">${escHtml(item.character)}</div>` : ''}
+            ${item.film ? `<div class="card-character">${escHtml(item.film)}</div>` : ''}
+            ${rows ? `<hr class="card-divider">${rows}` : ''}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function cardRow(lbl, val) {
+    return `<div class="card-row"><span class="card-row-lbl">${lbl}</span><span class="card-row-val">${val}</span></div>`;
+  }
+
+  function escHtml(s) {
+    if (!s && s !== 0) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Form ── */
+  function openAdd() {
+    pendingImg = null;
+    resetForm();
+    document.getElementById('editId').value = '';
+    document.getElementById('formTitle').textContent = 'Add Item';
+    open('formOverlay');
+  }
+
+  function openEdit(id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    resetForm();
+    pendingImg = item.img || null;
+    document.getElementById('editId').value    = id;
+    document.getElementById('formTitle').textContent = 'Edit Item';
+    document.getElementById('fName').value      = item.name      || '';
+    document.getElementById('fCharacter').value = item.character || '';
+    document.getElementById('fFilm').value      = item.film      || '';
+    document.getElementById('fCertNum').value   = item.certNum   || '';
+    document.getElementById('fCertUrl').value   = item.certUrl   || '';
+    document.getElementById('fCurrency').value  = item.currency  || 'NT$';
+    document.getElementById('fPaid').value      = item.paid      || '';
+    document.getElementById('fValue').value     = item.value     || '';
+    document.getElementById('fValueUrl').value  = item.valueUrl  || '';
+    document.getElementById('fNotes').value     = item.notes     || '';
+    if (item.img) showPreview(item.img);
+    open('formOverlay');
+  }
+
+  function resetForm() {
+    ['fName','fCharacter','fFilm','fCertNum','fCertUrl','fCurrency','fPaid','fValue','fValueUrl','fNotes']
+      .forEach(id => { document.getElementById(id).value = id === 'fCurrency' ? 'NT$' : ''; });
+    document.getElementById('fName').classList.remove('err');
+    clearImg();
+  }
+
+  function closeForm() { close('formOverlay'); }
+
+  function saveItem() {
+    const nameEl = document.getElementById('fName');
+    const name   = nameEl.value.trim();
+    if (!name) { nameEl.classList.add('err'); nameEl.focus(); return; }
+    nameEl.classList.remove('err');
+
+    const id = document.getElementById('editId').value;
+    const data = {
+      name,
+      character : document.getElementById('fCharacter').value.trim(),
+      film      : document.getElementById('fFilm').value.trim(),
+      certNum   : document.getElementById('fCertNum').value.trim(),
+      certUrl   : document.getElementById('fCertUrl').value.trim(),
+      currency  : document.getElementById('fCurrency').value.trim() || 'NT$',
+      paid      : document.getElementById('fPaid').value || null,
+      value     : document.getElementById('fValue').value || null,
+      valueUrl  : document.getElementById('fValueUrl').value.trim(),
+      notes     : document.getElementById('fNotes').value.trim(),
+      img       : pendingImg,
+    };
+
+    if (id) {
+      const idx = items.findIndex(i => i.id === id);
+      if (idx !== -1) items[idx] = { ...items[idx], ...data };
+    } else {
+      items.unshift({ id: uid(), added: new Date().toISOString(), ...data });
+    }
+
+    persist();
+    closeForm();
+    render();
+    toast(id ? 'Item updated' : 'Item added');
+  }
+
+  /* ── Image handling ── */
+  function handleImg(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      compressImage(ev.target.result, compressed => {
+        pendingImg = compressed;
+        showPreview(compressed);
+      });
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  }
+
+  function showPreview(src) {
+    document.getElementById('imgPrompt').style.display   = 'none';
+    document.getElementById('imgPreviewWrap').style.display = 'block';
+    document.getElementById('imgPreview').src = src;
+  }
+
+  function clearImg(e) {
+    if (e) e.stopPropagation();
+    pendingImg = null;
+    document.getElementById('imgPrompt').style.display      = '';
+    document.getElementById('imgPreviewWrap').style.display = 'none';
+    document.getElementById('imgPreview').src = '';
+  }
+
+  /* ── Detail modal ── */
+  function openDetail(id) {
+    const item = items.find(i => i.id === id);
+    if (!item) return;
+    activeDetailId = id;
+
+    const cur  = item.currency || '';
+    const r    = roi(item.paid, item.value);
+    const rStr = roiStr(r);
+
+    document.getElementById('dTitle').textContent = item.name;
+
+    let html = '';
+    if (item.img) html += `<img class="detail-img" src="${item.img}" alt="${escHtml(item.name)}">`;
+    if (item.character) html += `<div class="detail-sub">${escHtml(item.character)}</div>`;
+    if (item.film) html += `<div class="detail-sub">${escHtml(item.film)}</div>`;
+    if (rStr) {
+      const cls = r >= 0 ? 'roi-pos' : 'roi-neg';
+      html += `<span class="roi-pill ${cls}" style="margin-bottom:4px;display:inline-flex">${rStr} ROI</span>`;
+    }
+
+    html += '<div class="detail-rows">';
+    if (item.certNum) {
+      const v = item.certUrl
+        ? `<a class="card-link" href="${escHtml(item.certUrl)}" target="_blank" rel="noopener">${escHtml(item.certNum)}</a>`
+        : escHtml(item.certNum);
+      html += detailRow('Certification #', v);
+    }
+    if (item.paid) {
+      let s = escHtml(fmt(cur, item.paid));
+      if (item.shipping) s += ` <span style="font-size:12px;color:var(--sub)">(${escHtml(item.shipping)})</span>`;
+      html += detailRow('Paid', s);
+    }
+    if (item.value) {
+      const cls = r !== null ? (r >= 0 ? 'text-green' : 'text-red') : '';
+      let v = `<span class="${cls}">${escHtml(fmt(cur, item.value))}</span>`;
+      if (item.valueUrl) v = `<a class="card-link ${cls}" href="${escHtml(item.valueUrl)}" target="_blank" rel="noopener" style="color:inherit">${escHtml(fmt(cur, item.value))}</a>`;
+      html += detailRow('Estimated Value', v);
+    }
+    html += '</div>';
+
+    if (item.notes) html += `<div class="detail-notes">${escHtml(item.notes)}</div>`;
+    html += `<div class="detail-date">Added ${new Date(item.added).toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'})}</div>`;
+
+    document.getElementById('dBody').innerHTML = html;
+    open('detailOverlay');
+  }
+
+  function detailRow(lbl, val) {
+    return `<div class="detail-row"><span class="detail-row-lbl">${lbl}</span><span class="detail-row-val">${val}</span></div>`;
+  }
+
+  function closeDetail() { close('detailOverlay'); }
+
+  function editFromDetail() {
+    const id = activeDetailId;
+    closeDetail();
+    openEdit(id);
+  }
+
+  function deleteItem() {
+    if (!confirm('Delete this item? This cannot be undone.')) return;
+    items = items.filter(i => i.id !== activeDetailId);
+    persist();
+    closeDetail();
+    render();
+    toast('Item deleted');
+  }
+
+  /* ── Modal helpers ── */
+  function open(id)  { document.getElementById(id).classList.add('open'); }
+  function close(id) { document.getElementById(id).classList.remove('open'); }
+
+  function overlayClick(e, id) {
+    if (e.target === e.currentTarget) close(id);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      close('formOverlay');
+      close('detailOverlay');
+    }
+  });
+
+  /* ── Toast ── */
+  let toastTimer;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  /* ── Export / Import ── */
+  function exportData() {
+    if (!items.length) { toast('Nothing to export'); return; }
+    const blob = new Blob([JSON.stringify(items, null, 2)], { type: 'application/json' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `autogallery-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('Collection exported');
+  }
+
+  function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!Array.isArray(data)) throw new Error();
+        if (!confirm(`Import ${data.length} items? This will replace your current collection.`)) return;
+        items = data;
+        persist();
+        render();
+        toast(`Imported ${data.length} items`);
+      } catch {
+        toast('⚠️ Invalid file format');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  }
+
+  /* ── Columns per row ── */
+  function setCols(n) {
+    document.documentElement.style.setProperty('--cols', n);
+    localStorage.setItem('ag_cols', n);
+    const sel = document.getElementById('colsSelect');
+    if (sel) sel.value = n;
+  }
+
+  /* ── Init ── */
+  load();
+  const savedCols = localStorage.getItem('ag_cols') || '5';
+  setCols(savedCols);
+  render();
+</script>
+</body>
+</html>
