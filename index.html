@@ -22,6 +22,21 @@
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
 
+    [data-theme="light"] {
+      --bg: #f0f0f5;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --card-hover: #f8f8fc;
+      --border: #dcdce8;
+      --border-light: #c8c8da;
+      --gold: #a07810;
+      --gold-dim: #c9a435;
+      --text: #18182a;
+      --sub: #70708a;
+      --green: #1e7a52;
+      --red: #c03030;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -189,6 +204,92 @@
     }
     .cols-select:focus { border-color: var(--gold-dim); }
 
+    /* ── View toggle ── */
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .view-btn {
+      background: var(--surface);
+      border: none;
+      color: var(--sub);
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s, background .15s;
+    }
+    .view-btn + .view-btn { border-left: 1px solid var(--border); }
+    .view-btn.active { background: var(--border); color: var(--text); }
+    .view-btn:hover:not(.active) { color: var(--text); }
+
+    /* ── Table view ── */
+    .table-wrap {
+      padding: 0 24px 32px;
+      overflow-x: auto;
+    }
+    .table-wrap.hidden { display: none; }
+    .gallery.hidden { display: none; }
+
+    .ag-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .ag-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--sub);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .ag-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .ag-table tbody tr {
+      cursor: pointer;
+      transition: background .12s;
+    }
+    .ag-table tbody tr:hover { background: var(--card); }
+    .ag-table tbody tr:last-child td { border-bottom: none; }
+
+    .tbl-thumb {
+      width: 52px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+      background: var(--surface);
+    }
+    .tbl-no-thumb {
+      width: 52px;
+      height: 40px;
+      border-radius: 6px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sub);
+    }
+    .tbl-name { font-weight: 600; }
+    .tbl-sub  { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
+    @media (max-width: 640px) {
+      .table-wrap { padding: 0 12px 24px; }
+      .ag-table th:nth-child(n+5),
+      .ag-table td:nth-child(n+5) { display: none; }
+    }
+
     /* ── Card ── */
     .card {
       background: var(--card);
@@ -259,7 +360,7 @@
     .roi-overlay {
       position: absolute;
       top: 8px;
-      right: 8px;
+      left: 8px;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       background: rgba(0,0,0,.55) !important;
@@ -586,8 +687,11 @@
       .stat:nth-child(even) { border-right: none; }
       .stat:nth-last-child(-n+2) { border-bottom: none; }
       .gallery { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; padding: 0 12px 24px; }
+      .gallery.hidden { display: grid !important; }
+      .table-wrap { display: none !important; }
       .controls { padding: 10px 12px; }
       .cols-select { display: none; }
+      .view-toggle { display: none; }
       header { padding: 0 16px; }
       .stats-bar { padding: 0 16px; }
       .frow { grid-template-columns: 1fr; }
@@ -608,6 +712,10 @@
     </button>
     <button class="btn-icon" title="Import collection" onclick="document.getElementById('importFile').click()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 16 12 21 17 16"/><line x1="12" y1="21" x2="12" y2="9"/></svg>
+    </button>
+    <button class="btn-icon" id="themeToggle" title="Toggle light/dark mode" onclick="toggleTheme()">
+      <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
     </button>
     <input type="file" id="importFile" accept=".json" onchange="importData(event)">
     <button class="btn-add" onclick="openAdd()">
@@ -645,7 +753,7 @@
     <option value="date-desc">Newest first</option>
     <option value="date-asc">Oldest first</option>
     <option value="name-asc">Name A–Z</option>
-    <option value="value-desc">Value: High–Low</option>
+    <option value="value-desc" selected>Value: High–Low</option>
     <option value="paid-desc">Paid: High–Low</option>
     <option value="roi-desc">Best ROI</option>
   </select>
@@ -653,10 +761,38 @@
     <option value="3">3 per row</option>
     <option value="4">4 per row</option>
     <option value="5" selected>5 per row</option>
+    <option value="6">6 per row</option>
+    <option value="7">7 per row</option>
+    <option value="8">8 per row</option>
   </select>
+  <div class="view-toggle">
+    <button class="view-btn active" id="btnGrid" onclick="setView('grid')" title="Grid view">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </button>
+    <button class="view-btn" id="btnTable" onclick="setView('table')" title="Table view">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
 </div>
 
 <div class="gallery" id="gallery"></div>
+<div class="table-wrap hidden" id="tableWrap">
+  <table class="ag-table" id="agTable">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Signer</th>
+        <th>Character</th>
+        <th>Film / Show</th>
+        <th>Cert #</th>
+        <th>Paid</th>
+        <th>Est. Value</th>
+        <th>ROI</th>
+      </tr>
+    </thead>
+    <tbody id="agTableBody"></tbody>
+  </table>
+</div>
 
 <!-- ── Add/Edit Modal ── -->
 <div class="overlay" id="formOverlay" onclick="overlayClick(event,'formOverlay')">
@@ -686,7 +822,7 @@
 
       <div class="frow">
         <div class="fg">
-          <label class="flabel">Person Name <span style="color:var(--red)">*</span></label>
+          <label class="flabel">Signer <span style="color:var(--red)">*</span></label>
           <input class="finput" id="fName" placeholder="e.g. James Earl Jones">
         </div>
         <div class="fg">
@@ -818,7 +954,7 @@
 
   function roiStr(r) {
     if (r === null) return null;
-    return (r >= 0 ? '+' : '') + r.toFixed(1) + '%';
+    return (r >= 0 ? '+' : '') + Math.round(r) + '%';
   }
 
   /* ── Stats ── */
@@ -876,8 +1012,10 @@
   /* ── Render gallery ── */
   function render() {
     updateStats();
-    const g   = document.getElementById('gallery');
     const res = filtered();
+    const isMobile = window.innerWidth <= 640;
+    if (currentView === 'table' && !isMobile) { renderTable(res); return; }
+    const g = document.getElementById('gallery');
 
     if (!res.length) {
       g.innerHTML = `
@@ -1184,10 +1322,78 @@
     if (sel) sel.value = n;
   }
 
+  /* ── View mode ── */
+  let currentView = 'grid';
+
+  function setView(mode) {
+    currentView = mode;
+    localStorage.setItem('ag_view', mode);
+    document.getElementById('gallery').classList.toggle('hidden', mode !== 'grid');
+    document.getElementById('tableWrap').classList.toggle('hidden', mode !== 'table');
+    document.getElementById('colsSelect').style.display = mode === 'grid' ? '' : 'none';
+    document.getElementById('btnGrid').classList.toggle('active', mode === 'grid');
+    document.getElementById('btnTable').classList.toggle('active', mode === 'table');
+    render();
+  }
+
+  function renderTable(res) {
+    const tbody = document.getElementById('agTableBody');
+    if (!res.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:60px;color:var(--sub)">${items.length ? 'No matches' : 'No items yet'}</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = res.map(item => {
+      const cur  = item.currency || '';
+      const r    = roi(item.paid, item.value);
+      const rStr = roiStr(r);
+      const thumb = item.img
+        ? `<img class="tbl-thumb" src="${item.img}" alt="">`
+        : `<div class="tbl-no-thumb"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+      const cls = r !== null ? (r >= 0 ? 'text-green' : 'text-red') : '';
+      const certCell = item.certNum
+        ? (item.certUrl ? `<a class="card-link" href="${escHtml(item.certUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.certNum)}</a>` : escHtml(item.certNum))
+        : '—';
+      const valueCell = item.value
+        ? (item.valueUrl
+            ? `<span class="${cls}"><a class="card-link" href="${escHtml(item.valueUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" style="color:inherit">${escHtml(fmt(cur, item.value))}</a></span>`
+            : `<span class="${cls}">${escHtml(fmt(cur, item.value))}</span>`)
+        : '—';
+      const roiCell = rStr
+        ? `<span class="roi-pill ${r >= 0 ? 'roi-pos' : 'roi-neg'}">${rStr}</span>`
+        : '—';
+      return `<tr onclick="openDetail('${item.id}')">
+        <td>${thumb}</td>
+        <td><div class="tbl-name">${escHtml(item.name)}</div></td>
+        <td>${escHtml(item.character) || '—'}</td>
+        <td>${escHtml(item.film) || '—'}</td>
+        <td>${certCell}</td>
+        <td>${item.paid ? escHtml(fmt(cur, item.paid)) : '—'}</td>
+        <td>${valueCell}</td>
+        <td>${roiCell}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ── Theme ── */
+  function toggleTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    applyTheme(isLight ? 'dark' : 'light');
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('ag_theme', theme);
+    document.getElementById('iconSun').style.display  = theme === 'light' ? 'block' : 'none';
+    document.getElementById('iconMoon').style.display = theme === 'light' ? 'none'  : 'block';
+  }
+
   /* ── Init ── */
   load();
   const savedCols = localStorage.getItem('ag_cols') || '5';
   setCols(savedCols);
+  const savedView = localStorage.getItem('ag_view') || 'grid';
+  setView(savedView);
+  applyTheme(localStorage.getItem('ag_theme') || 'light');
   render();
 </script>
 </body>
