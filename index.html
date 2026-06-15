@@ -1546,7 +1546,7 @@
         if (!confirm(`Import ${data.length} items? This will replace your current collection.`)) return;
         items = data;
         persist();
-        if (currency) setCurrency(currency);
+        if (currency) setLocalCurrency(currency);
         render();
         toast(`Imported ${data.length} items`);
       } catch {
