@@ -87,20 +87,40 @@
     }
     .btn-icon:hover { color: var(--text); background: var(--border); }
 
-    .currency-select {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0 10px;
-      height: 36px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-      transition: border-color .15s;
+    .setting-hint {
+      font-size: 11px;
+      color: var(--sub);
+      margin-bottom: 6px;
+      line-height: 1.4;
     }
-    .currency-select:focus { border-color: var(--gold-dim); }
+
+    .rate-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .rate-text { font-size: 13px; line-height: 1.5; }
+    .btn-refresh {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--sub);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-refresh:hover { color: var(--text); border-color: var(--border-light); }
+    .btn-refresh:disabled { opacity: .4; cursor: default; }
 
     .btn-add {
       background: var(--gold);
@@ -722,19 +742,9 @@
 <header>
   <div class="logo">Auto<span>Gallery</span></div>
   <div class="header-right">
-    <select class="currency-select" id="currencySelect" onchange="setCurrency(this.value)" title="Currency">
-      <option value="USD">USD $</option>
-      <option value="GBP">GBP £</option>
-      <option value="EUR">EUR €</option>
-      <option value="TWD" selected>TWD NT$</option>
-      <option value="JPY">JPY ¥</option>
-      <option value="CNY">CNY ¥</option>
-      <option value="AUD">AUD A$</option>
-      <option value="CAD">CAD CA$</option>
-      <option value="HKD">HKD HK$</option>
-      <option value="SGD">SGD S$</option>
-      <option value="KRW">KRW ₩</option>
-    </select>
+    <button class="btn-icon" id="settingsBtn" title="Settings" onclick="openSettings()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
     <button class="btn-icon" title="Export collection" onclick="exportData()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </button>
@@ -924,6 +934,63 @@
   </div>
 </div>
 
+<!-- ── Settings Modal ── -->
+<div class="overlay" id="settingsOverlay" onclick="overlayClick(event,'settingsOverlay')">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <span class="modal-title">Settings</span>
+      <button class="btn-x" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="fg">
+        <label class="flabel">Local Currency</label>
+        <div class="setting-hint">The currency your data is recorded in</div>
+        <select class="finput" id="settingsLocal" onchange="setLocalCurrency(this.value)">
+          <option value="USD">USD — $</option>
+          <option value="GBP">GBP — £</option>
+          <option value="EUR">EUR — €</option>
+          <option value="TWD">TWD — NT$</option>
+          <option value="JPY">JPY — ¥</option>
+          <option value="CNY">CNY — ¥</option>
+          <option value="AUD">AUD — A$</option>
+          <option value="CAD">CAD — CA$</option>
+          <option value="HKD">HKD — HK$</option>
+          <option value="SGD">SGD — S$</option>
+          <option value="KRW">KRW — ₩</option>
+        </select>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">Display Currency</label>
+        <div class="setting-hint">The currency prices are shown in (converted automatically)</div>
+        <select class="finput" id="settingsDisplay" onchange="setDisplayCurrency(this.value)">
+          <option value="USD">USD — $</option>
+          <option value="GBP">GBP — £</option>
+          <option value="EUR">EUR — €</option>
+          <option value="TWD">TWD — NT$</option>
+          <option value="JPY">JPY — ¥</option>
+          <option value="CNY">CNY — ¥</option>
+          <option value="AUD">AUD — A$</option>
+          <option value="CAD">CAD — CA$</option>
+          <option value="HKD">HKD — HK$</option>
+          <option value="SGD">SGD — S$</option>
+          <option value="KRW">KRW — ₩</option>
+        </select>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">Exchange Rate</label>
+        <div class="rate-box">
+          <div class="rate-text" id="rateInfo">—</div>
+          <button class="btn-refresh" id="rateRefreshBtn" onclick="refreshRate()">↻ Refresh</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <!-- ── Toast ── -->
 <div class="toast" id="toast"></div>
 
@@ -940,16 +1007,125 @@
     HKD: 'HK$', SGD: 'S$', KRW: '₩',
   };
 
-  function getCurrencySymbol() {
-    return CURRENCY_SYMBOLS[localStorage.getItem('ag_currency') || 'TWD'] || 'NT$';
+  let exchangeRate = 1;
+  let rateState = 'idle'; // 'idle' | 'loading' | 'ok' | 'error'
+
+  function getLocalCurrency()   { return localStorage.getItem('ag_currency') || 'TWD'; }
+  function getDisplayCurrency() { return localStorage.getItem('ag_display_currency') || getLocalCurrency(); }
+  function getCurrencySymbol()  { return CURRENCY_SYMBOLS[getDisplayCurrency()] || getDisplayCurrency(); }
+
+  function setLocalCurrency(code) {
+    localStorage.setItem('ag_currency', code);
+    localStorage.removeItem('ag_rate_cache'); // invalidate cache
+    const el = document.getElementById('settingsLocal');
+    if (el) el.value = code;
+    fetchExchangeRate();
   }
 
-  function setCurrency(code) {
-    localStorage.setItem('ag_currency', code);
-    const sel = document.getElementById('currencySelect');
-    if (sel) sel.value = code;
+  function setDisplayCurrency(code) {
+    localStorage.setItem('ag_display_currency', code);
+    localStorage.removeItem('ag_rate_cache');
+    const el = document.getElementById('settingsDisplay');
+    if (el) el.value = code;
+    fetchExchangeRate();
+  }
+
+  async function fetchExchangeRate(force = false) {
+    const local   = getLocalCurrency();
+    const display = getDisplayCurrency();
+
+    if (local === display) {
+      exchangeRate = 1;
+      rateState = 'ok';
+      updateRateDisplay();
+      render();
+      return;
+    }
+
+    // Use cache if fresh (< 1 hour) and not forced
+    if (!force) {
+      try {
+        const cached = JSON.parse(localStorage.getItem('ag_rate_cache') || 'null');
+        if (cached && cached.from === local && cached.to === display && Date.now() - cached.ts < 3_600_000) {
+          exchangeRate = cached.rate;
+          rateState = 'ok';
+          updateRateDisplay();
+          render();
+          return;
+        }
+      } catch {}
+    }
+
+    rateState = 'loading';
+    updateRateDisplay();
+
+    try {
+      const url  = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${local.toLowerCase()}.json`;
+      const res  = await fetch(url);
+      const data = await res.json();
+      const rate = data[local.toLowerCase()][display.toLowerCase()];
+      if (!rate) throw new Error('Rate not found');
+      exchangeRate = rate;
+      localStorage.setItem('ag_rate_cache', JSON.stringify({ from: local, to: display, rate, ts: Date.now() }));
+      rateState = 'ok';
+    } catch {
+      rateState = 'error';
+    }
+
+    updateRateDisplay();
     render();
   }
+
+  function refreshRate() { fetchExchangeRate(true); }
+
+  function updateRateDisplay() {
+    const el  = document.getElementById('rateInfo');
+    const btn = document.getElementById('rateRefreshBtn');
+    if (!el) return;
+
+    const local   = getLocalCurrency();
+    const display = getDisplayCurrency();
+
+    if (local === display) {
+      el.innerHTML = `<span style="color:var(--sub)">Same currency — no conversion needed</span>`;
+      if (btn) btn.style.display = 'none';
+      return;
+    }
+    if (btn) btn.style.display = '';
+
+    if (rateState === 'loading') {
+      el.innerHTML = `<span style="color:var(--sub)">Fetching rate…</span>`;
+      if (btn) btn.disabled = true;
+      return;
+    }
+    if (btn) btn.disabled = false;
+
+    if (rateState === 'error') {
+      el.innerHTML = `<span style="color:var(--red)">Could not fetch rate — check your connection</span>`;
+      return;
+    }
+
+    const sym = CURRENCY_SYMBOLS;
+    try {
+      const cached = JSON.parse(localStorage.getItem('ag_rate_cache') || 'null');
+      const agoMs  = cached ? Date.now() - cached.ts : null;
+      const agoStr = agoMs !== null
+        ? (agoMs < 60_000 ? 'just now' : `${Math.round(agoMs / 60_000)}m ago`)
+        : '';
+      el.innerHTML = `<span>1 ${sym[local]}${local} = ${exchangeRate.toFixed(4)} ${sym[display]}${display}</span>`
+        + (agoStr ? `<br><span style="color:var(--sub);font-size:11px">Updated ${agoStr}</span>` : '');
+    } catch {
+      el.innerHTML = `<span>1 ${sym[local]}${local} = ${exchangeRate.toFixed(4)} ${sym[display]}${display}</span>`;
+    }
+  }
+
+  function openSettings() {
+    document.getElementById('settingsLocal').value   = getLocalCurrency();
+    document.getElementById('settingsDisplay').value = getDisplayCurrency();
+    updateRateDisplay();
+    open('settingsOverlay');
+  }
+  function closeSettings() { close('settingsOverlay'); }
 
   /* ── Cert company URL map ── */
   const CERT_URLS = {
@@ -1003,7 +1179,8 @@
   /* ── Formatting ── */
   function fmt(n) {
     if (!n && n !== 0) return '—';
-    return getCurrencySymbol() + Number(n).toLocaleString();
+    const converted = Math.round(Number(n) * exchangeRate);
+    return getCurrencySymbol() + converted.toLocaleString();
   }
 
   function roi(paid, value) {
@@ -1325,6 +1502,7 @@
     if (e.key === 'Escape') {
       close('formOverlay');
       close('detailOverlay');
+      close('settingsOverlay');
     }
   });
 
@@ -1459,8 +1637,7 @@
   const savedView = localStorage.getItem('ag_view') || 'grid';
   setView(savedView);
   applyTheme(localStorage.getItem('ag_theme') || 'light');
-  setCurrency(localStorage.getItem('ag_currency') || 'TWD');
-  render();
+  fetchExchangeRate(); // renders after rate is ready (uses cache if fresh)
 </script>
 </body>
 </html>
