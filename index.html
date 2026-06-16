@@ -87,6 +87,61 @@
     }
     .btn-icon:hover { color: var(--text); background: var(--border); }
 
+    .share-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .share-loader.visible { opacity: 1; pointer-events: all; }
+    .share-loader-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin .75s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .share-loader-text {
+      font-size: 14px;
+      color: var(--sub);
+      font-weight: 500;
+    }
+
+    .view-banner {
+      background: var(--gold);
+      color: #000;
+      padding: 9px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .view-banner-btn {
+      background: rgba(0,0,0,.15);
+      border: none;
+      color: #000;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+    .view-banner-btn:hover { background: rgba(0,0,0,.25); }
+
     .settings-row-btn {
       width: 100%;
       background: var(--surface);
@@ -770,12 +825,22 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
     </button>
     <input type="file" id="importFile" accept=".json" onchange="importData(event)">
-    <button class="btn-add" onclick="openAdd()">
+    <button class="btn-add" id="btnAdd" onclick="openAdd()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Item
     </button>
   </div>
 </header>
+
+<div id="shareLoader" class="share-loader">
+  <div class="share-loader-spinner"></div>
+  <div class="share-loader-text">Loading shared collection…</div>
+</div>
+
+<div id="viewBanner" style="display:none" class="view-banner">
+  <span>👁 Viewing a shared collection — your own collection is untouched</span>
+  <button class="view-banner-btn" onclick="exitViewMode()">← Back to my collection</button>
+</div>
 
 <div class="stats-bar" id="statsBar">
   <div class="stat">
@@ -942,8 +1007,8 @@
     </div>
     <div class="modal-body" id="dBody"></div>
     <div class="modal-foot">
-      <button class="btn-danger" onclick="deleteItem()">Delete</button>
-      <button class="btn-secondary" onclick="editFromDetail()">Edit</button>
+      <button class="btn-danger" id="btnDetailDelete" onclick="deleteItem()">Delete</button>
+      <button class="btn-secondary" id="btnDetailEdit" onclick="editFromDetail()">Edit</button>
     </div>
   </div>
 </div>
@@ -968,7 +1033,7 @@
         </button>
       </div>
 
-      <div class="fg">
+      <div class="fg" id="settingsDataSection">
         <label class="flabel">Data</label>
         <button class="settings-row-btn" onclick="exportData()">
           <span class="settings-row-icon">
@@ -982,9 +1047,27 @@
           </span>
           Import Collection
         </button>
+        <button class="settings-row-btn" id="sharePhotosBtn" style="margin-top:6px" onclick="shareCollectionWithPhotos()">
+          <span class="settings-row-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </span>
+          Copy Share Link
+        </button>
+        <div class="setting-hint" style="margin-top:4px">Uploads your collection to dpaste.com and copies a short shareable URL. ⚠️ Your collection data will be publicly accessible to anyone with the link.</div>
       </div>
 
-      <div class="fg">
+      <div class="fg" id="settingsViewSection" style="display:none">
+        <label class="flabel">This Collection</label>
+        <button class="settings-row-btn" onclick="saveSharedAsOwn()">
+          <span class="settings-row-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          </span>
+          Save as My Collection
+        </button>
+        <div class="setting-hint" style="margin-top:4px">Overwrites your own collection with the one you are currently viewing.</div>
+      </div>
+
+      <div class="fg" id="settingsLocalSection">
         <label class="flabel">Local Currency</label>
         <div class="setting-hint">The currency your data is recorded in</div>
         <select class="finput" id="settingsLocal" onchange="setLocalCurrency(this.value)">
@@ -1038,6 +1121,8 @@
 <script>
   const KEY = 'autogallery_v2';
   let items = [];
+  let viewMode = false;
+  let viewLocalCurrency = null;
   let pendingImg = null;   // base64 string or null
   let activeDetailId = null;
 
@@ -1051,7 +1136,7 @@
   let exchangeRate = 1;
   let rateState = 'idle'; // 'idle' | 'loading' | 'ok' | 'error'
 
-  function getLocalCurrency()   { return localStorage.getItem('ag_currency') || 'TWD'; }
+  function getLocalCurrency()   { return (viewMode && viewLocalCurrency) ? viewLocalCurrency : (localStorage.getItem('ag_currency') || 'TWD'); }
   function getDisplayCurrency() { return localStorage.getItem('ag_display_currency') || getLocalCurrency(); }
   function getCurrencySymbol()  { return CURRENCY_SYMBOLS[getDisplayCurrency()] || getDisplayCurrency(); }
 
@@ -1160,9 +1245,49 @@
     }
   }
 
+  function enterViewMode(data, currency) {
+    viewMode = true;
+    viewLocalCurrency = currency || null;
+    items = data;
+    document.getElementById('viewBanner').style.display = '';
+    document.getElementById('btnAdd').style.display = 'none';
+    document.getElementById('btnDetailDelete').style.display = 'none';
+    document.getElementById('btnDetailEdit').style.display = 'none';
+    fetchExchangeRate();
+  }
+
+  function saveSharedAsOwn() {
+    const s = items.length === 1 ? '' : 's';
+    if (!confirm(`Replace your own collection with these ${items.length} item${s}? This cannot be undone.`)) return;
+    const sharedItems = items;
+    const currency = viewLocalCurrency;
+    exitViewMode();           // resets viewMode, reloads own items from localStorage
+    items = sharedItems;      // overwrite with the shared items
+    persist();                // write them to localStorage
+    if (currency) { localStorage.setItem('ag_currency', currency); }
+    fetchExchangeRate();
+    render();
+    closeSettings();
+    toast(`Saved ${sharedItems.length} item${s} as your collection`);
+  }
+
+  function exitViewMode() {
+    viewMode = false;
+    viewLocalCurrency = null;
+    load();
+    document.getElementById('viewBanner').style.display = 'none';
+    document.getElementById('btnAdd').style.display = '';
+    document.getElementById('btnDetailDelete').style.display = '';
+    document.getElementById('btnDetailEdit').style.display = '';
+    fetchExchangeRate();
+  }
+
   function openSettings() {
     document.getElementById('settingsLocal').value   = getLocalCurrency();
     document.getElementById('settingsDisplay').value = getDisplayCurrency();
+    document.getElementById('settingsDataSection').style.display  = viewMode ? 'none' : '';
+    document.getElementById('settingsLocalSection').style.display = viewMode ? 'none' : '';
+    document.getElementById('settingsViewSection').style.display  = viewMode ? '' : 'none';
     updateRateDisplay();
     open('settingsOverlay');
   }
@@ -1658,6 +1783,88 @@
     }).join('');
   }
 
+  /* ── Share via URL ── */
+  async function compressToURL(obj) {
+    const json = JSON.stringify(obj);
+    const stream = new CompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(new TextEncoder().encode(json));
+    writer.close();
+    const buf = await new Response(stream.readable).arrayBuffer();
+    return btoa(String.fromCharCode(...new Uint8Array(buf)))
+      .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+  }
+
+  async function decompressFromURL(b64) {
+    const std = b64.replace(/-/g, '+').replace(/_/g, '/');
+    const bytes = Uint8Array.from(atob(std), c => c.charCodeAt(0));
+    const stream = new DecompressionStream('deflate-raw');
+    const writer = stream.writable.getWriter();
+    writer.write(bytes);
+    writer.close();
+    return new Response(stream.readable).text();
+  }
+
+  async function shareCollectionWithPhotos() {
+    if (!items.length) { toast('Nothing to share'); return; }
+    const btn = document.getElementById('sharePhotosBtn');
+    const txtNode = [...btn.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    const originalText = txtNode.textContent;
+    btn.disabled = true;
+    txtNode.textContent = ' Uploading…';
+    const payload = { currency: getLocalCurrency(), items };
+    try {
+      const fd = new FormData();
+      fd.append('content', JSON.stringify(payload));
+      fd.append('syntax', 'text');
+      fd.append('expiry_days', '365');
+      const res = await fetch('https://dpaste.com/api/v2/', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error();
+      const id = (await res.text()).trim().split('/').pop();
+      const url = `${location.href.split('#')[0]}#blob=${id}`;
+      await navigator.clipboard.writeText(url);
+      toast('Share link (with photos) copied to clipboard');
+    } catch {
+      toast('⚠️ Upload failed — check your connection');
+    } finally {
+      btn.disabled = false;
+      txtNode.textContent = originalText;
+    }
+  }
+
+  async function checkShareURL() {
+    const hash = location.hash;
+    if (!hash.startsWith('#share=') && !hash.startsWith('#blob=')) return;
+    history.replaceState(null, '', location.pathname + location.search);
+
+    async function applyShared(parsed) {
+      const data = Array.isArray(parsed) ? parsed : parsed.items;
+      const currency = Array.isArray(parsed) ? null : parsed.currency;
+      if (!Array.isArray(data)) throw new Error('bad format');
+      const s = data.length === 1 ? '' : 's';
+      enterViewMode(data, currency);
+      toast(`Viewing shared collection — ${data.length} item${s}`);
+    }
+
+    const loader = document.getElementById('shareLoader');
+    loader.classList.add('visible');
+    try {
+      if (hash.startsWith('#share=')) {
+        const json = await decompressFromURL(hash.slice(7));
+        await applyShared(JSON.parse(json));
+      } else {
+        const id = hash.slice(6);
+        const res = await fetch(`https://dpaste.com/${id}.txt`);
+        if (!res.ok) throw new Error('fetch failed');
+        await applyShared(await res.json());
+      }
+    } catch {
+      toast('⚠️ Could not load shared collection — link may be invalid');
+    } finally {
+      loader.classList.remove('visible');
+    }
+  }
+
   /* ── Theme ── */
   function toggleTheme() {
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -1681,6 +1888,8 @@
   setView(savedView);
   applyTheme(localStorage.getItem('ag_theme') || 'light');
   fetchExchangeRate(); // renders after rate is ready (uses cache if fresh)
+  checkShareURL();
+  window.addEventListener('hashchange', checkShareURL);
 </script>
 </body>
 </html>

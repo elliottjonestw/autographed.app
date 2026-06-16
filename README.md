@@ -17,11 +17,13 @@ A single-file, no-backend browser app for managing an autograph and memorabilia 
 9. [Item Detail Modal](#item-detail-modal)
 10. [Settings Modal](#settings-modal)
 11. [Import & Export](#import--export)
-12. [Light & Dark Mode](#light--dark-mode)
-13. [Mobile Behavior](#mobile-behavior)
-14. [Data Storage](#data-storage)
-15. [Item Schema](#item-schema)
-16. [Technical Notes](#technical-notes)
+12. [Sharing a Collection](#sharing-a-collection)
+13. [View Mode](#view-mode)
+14. [Light & Dark Mode](#light--dark-mode)
+15. [Mobile Behavior](#mobile-behavior)
+16. [Data Storage](#data-storage)
+17. [Item Schema](#item-schema)
+18. [Technical Notes](#technical-notes)
 
 ---
 
@@ -257,7 +259,11 @@ Fields with no value are omitted (not shown as blank rows).
 
 ## Settings Modal
 
-Opened by clicking the **⚙️ gear icon** in the header. The modal is organized into three sections: Appearance, Data, and Currency.
+Opened by clicking the **⚙️ gear icon** in the header. The modal is organized into sections that vary depending on whether you are in normal mode or [View Mode](#view-mode).
+
+**Normal mode sections:** Appearance, Data, Local Currency, Display Currency, Exchange Rate
+
+**View mode sections:** Appearance, This Collection, Display Currency, Exchange Rate
 
 ### Appearance
 
@@ -265,10 +271,13 @@ A row button that toggles between light and dark mode. The label updates to refl
 
 ### Data
 
-Two row buttons for backup and restore:
+Three row buttons for backup, restore, and sharing:
 
 - **Export Collection** — downloads the full collection as a `.json` file. See [Import & Export](#import--export).
 - **Import Collection** — opens a file picker to load a previously exported `.json` file, replacing the current collection. See [Import & Export](#import--export).
+- **Copy Share Link** — uploads the collection to dpaste.com and copies a short shareable URL to the clipboard. See [Sharing a Collection](#sharing-a-collection).
+
+> ⚠️ The Data section is hidden entirely when viewing a shared collection in [View Mode](#view-mode). It is replaced by the **This Collection** section, which contains the **Save as My Collection** button.
 
 ### Currency
 
@@ -323,6 +332,128 @@ Changing either currency in the settings modal:
 2. Clears any cached exchange rate (to prevent stale rates when the currency pair changes)
 3. Triggers a fresh `fetchExchangeRate()` call
 4. Re-renders the gallery with the new rate once it arrives
+
+---
+
+## Sharing a Collection
+
+AutoGallery can generate a short URL that lets anyone view your collection in their own browser — no account, no app install required.
+
+### How to Share
+
+1. Open the **Settings Modal** (⚙️ in the header)
+2. Under **Data**, click **Copy Share Link**
+3. The button label changes to "Uploading…" while the collection is sent to dpaste.com
+4. Once uploaded, a short URL is copied to your clipboard automatically — e.g.:
+   ```
+   http://localhost:4200/index.html#blob=G9GW3KB53
+   ```
+5. Send that URL to anyone. When they open it, AutoGallery loads and immediately displays your collection in read-only [View Mode](#view-mode)
+
+### What Gets Uploaded
+
+The **entire collection** is included — all item fields and all photos. The JSON is uploaded as a single paste to [dpaste.com](https://dpaste.com), a free public paste service.
+
+> ⚠️ **Your collection data is publicly accessible.** Anyone who has or guesses the URL can read all item data including photos, values, cert numbers, and notes. Do not share if your collection data is sensitive.
+
+### How the URL Works
+
+The URL contains only a short blob ID in the hash fragment (`#blob=<id>`). The hash is never sent to the server hosting AutoGallery — it is processed entirely in the browser. When someone opens the URL:
+
+1. The app detects `#blob=<id>` in the URL hash on page load
+2. It immediately shows a full-page loading spinner ("Loading shared collection…")
+3. It fetches the paste from `https://dpaste.com/<id>.txt`
+4. The JSON is parsed and the collection is displayed in [View Mode](#view-mode)
+5. The hash is stripped from the URL (`history.replaceState`) so refreshing the page does not re-trigger the load
+
+### Loading in the Same Tab
+
+If AutoGallery is already open and you paste a share URL into the browser's address bar (changing only the hash), the app detects the `hashchange` event and loads the shared collection without a full page reload.
+
+### Paste Expiry
+
+dpaste.com pastes created by AutoGallery are set to expire after **365 days**. After that, the share URL will stop working. There is no way to renew a paste — generate a new share link if needed.
+
+### Error Handling
+
+- If the upload fails (e.g. no internet connection), a toast appears: "⚠️ Upload failed — check your connection". The button returns to its normal state and nothing is copied to the clipboard.
+- If a share URL is opened but the paste has expired or the ID is invalid, a toast appears: "⚠️ Could not load shared collection — link may be invalid".
+
+---
+
+## View Mode
+
+View mode is a read-only state that activates when opening a share link. It lets you browse someone else's collection without affecting your own data.
+
+### Entering View Mode
+
+View mode is entered automatically when a `#blob=<id>` URL hash is detected — either on page load or when the hash changes in the current tab. It is never entered manually.
+
+### Visual Indicator
+
+A gold banner appears directly below the header:
+
+> 👁 Viewing a shared collection — your own collection is untouched
+
+The banner contains a **← Back to my collection** button on the right side.
+
+### What Is Disabled in View Mode
+
+| Feature | Status |
+|---|---|
+| **+ Add Item** button | Hidden |
+| **Edit** button in detail modal | Hidden |
+| **Delete** button in detail modal | Hidden |
+| **Settings → Data** section (Export, Import, Share) | Hidden |
+| **Settings → Local Currency** | Hidden |
+| Saving to localStorage | Never happens |
+
+### What Remains Available
+
+| Feature | Status |
+|---|---|
+| Search and sort | ✅ Fully functional |
+| Grid / Table view toggle | ✅ Fully functional |
+| Columns per row selector | ✅ Fully functional |
+| Item detail modal (read-only) | ✅ Opens, no edit/delete |
+| **Settings → This Collection → Save as My Collection** | ✅ See below |
+| **Settings → Display Currency** | ✅ Change how values are shown |
+| **Settings → Appearance** (theme toggle) | ✅ Light/dark mode still works |
+| Exchange rate conversion | ✅ Works against the shared collection's local currency |
+
+### Saving a Shared Collection as Your Own
+
+While in view mode, the Settings modal shows a **This Collection** section with a **Save as My Collection** button. This lets you adopt the shared collection as your own, replacing whatever you currently have saved.
+
+**What happens when you click it:**
+
+1. A confirmation dialog appears: *"Replace your own collection with these N items? This cannot be undone."*
+2. If confirmed:
+   - The shared items (including all photos) are written to `localStorage`
+   - The sharer's local currency is set as your new local currency
+   - View mode exits and the full editing UI is restored (Add Item button, Edit/Delete in detail modal, all Settings sections)
+   - The exchange rate is re-fetched for your currency pair
+   - A toast confirms: *"Saved N items as your collection"*
+3. If cancelled, nothing changes.
+
+> ⚠️ This permanently overwrites your existing collection. There is no undo. Export your current collection first if you want to keep it.
+
+### Currency in View Mode
+
+The shared collection was recorded in the sharer's local currency (stored in the JSON payload). When viewing, that currency is used as the local currency for exchange-rate conversion — so if the sharer used TWD and you switch your display currency to USD, the values convert correctly. Your own local currency setting in localStorage is not changed.
+
+### Your Own Data is Untouched
+
+View mode never writes to `localStorage`. Your own collection remains exactly as it was. Switching back via **← Back to my collection** immediately reloads your own data from localStorage and restores the full editing UI.
+
+### Exiting View Mode
+
+Click **← Back to my collection** in the gold banner. This:
+1. Clears the view mode state
+2. Reloads your own items from `localStorage`
+3. Restores the Add Item button and all edit/delete controls
+4. Hides the banner
+5. Re-fetches the exchange rate for your own currency pair
 
 ---
 
@@ -518,3 +649,44 @@ Sort is applied after search filtering. Items without a value (`null`) are sorte
 ### Click Propagation
 
 Links inside cards and table rows (Est. Value link, Cert link) call `event.stopPropagation()` so that clicking them does not bubble up to the card/row click handler that would otherwise open the detail modal.
+
+### Share Link Upload (dpaste.com)
+
+Sharing uses the dpaste.com API:
+
+```
+POST https://dpaste.com/api/v2/
+Content-Type: multipart/form-data
+Body: content=<JSON>, syntax=text, expiry_days=365
+
+Response 201: https://dpaste.com/<id>\n  (plain text)
+```
+
+The ID is extracted from the response URL (`url.trim().split('/').pop()`). The share URL is then built as `<page-url>#blob=<id>`.
+
+When loading a share URL, the raw content is fetched via:
+
+```
+GET https://dpaste.com/<id>.txt
+```
+
+The `.txt` suffix returns raw plain text (the original JSON), bypassing dpaste's HTML wrapper page. dpaste.com sets `Access-Control-Allow-Origin: *` on both endpoints, making both POST and GET work from any browser origin without a CORS proxy.
+
+### View Mode State
+
+View mode is controlled by two module-level variables:
+
+```javascript
+let viewMode = false;          // true when viewing a shared collection
+let viewLocalCurrency = null;  // the sharer's local currency, used for conversion
+```
+
+`getLocalCurrency()` returns `viewLocalCurrency` when `viewMode` is true, transparently making the exchange rate system use the sharer's currency without touching `localStorage`. When `exitViewMode()` is called, both variables are reset and `load()` restores items from localStorage.
+
+### hashchange Listener
+
+```javascript
+window.addEventListener('hashchange', checkShareURL);
+```
+
+This single listener means share URLs work whether the page is freshly loaded or already open. When the user pastes a share URL into the address bar while AutoGallery is already running, the browser fires `hashchange` and `checkShareURL` handles it identically to the initial page load case. The hash is immediately cleared via `history.replaceState` so the loaded state is not tied to the URL.
