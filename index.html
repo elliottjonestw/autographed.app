@@ -1322,6 +1322,10 @@
     return CERT_URLS[item.certCompany] || null;
   }
 
+  function copyCert(el) {
+    navigator.clipboard.writeText(el.dataset.cert).then(() => toast(`Cert # ${el.dataset.cert} copied`)).catch(() => {});
+  }
+
   /* ── Storage ── */
   function load() {
     try { items = JSON.parse(localStorage.getItem(KEY) || '[]'); }
@@ -1464,7 +1468,7 @@
       if (item.certNum) {
         const cUrl = getCertUrl(item);
         const v = cUrl
-          ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.certNum)}</a>`
+          ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener" data-cert="${escHtml(item.certNum)}" onclick="copyCert(this); event.stopPropagation()">${escHtml(item.certNum)}</a>`
           : escHtml(item.certNum);
         rows += cardRow('Cert #', v);
       }
@@ -1669,7 +1673,7 @@
     if (item.certNum) {
       const cUrl = getCertUrl(item);
       const v = cUrl
-        ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener">${escHtml(item.certNum)}</a>`
+        ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener" data-cert="${escHtml(item.certNum)}" onclick="copyCert(this)">${escHtml(item.certNum)}</a>`
         : escHtml(item.certNum);
       const lbl = item.certCompany ? `${CERT_LABELS[item.certCompany]} Cert #` : 'Certification #';
       html += detailRow(lbl, v);
@@ -1819,7 +1823,7 @@
       const cls = r !== null ? (r >= 0 ? 'text-green' : 'text-red') : '';
       const cUrl = getCertUrl(item);
       const certCell = item.certNum
-        ? (cUrl ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.certNum)}</a>` : escHtml(item.certNum))
+        ? (cUrl ? `<a class="card-link" href="${escHtml(cUrl)}" target="_blank" rel="noopener" data-cert="${escHtml(item.certNum)}" onclick="copyCert(this); event.stopPropagation()">${escHtml(item.certNum)}</a>` : escHtml(item.certNum))
         : '—';
       const valueCell = item.value
         ? (item.valueUrl
