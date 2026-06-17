@@ -1008,6 +1008,21 @@
       backdrop-filter: blur(4px); pointer-events: none;
     }
 
+    /* ── Advanced fields expander ── */
+    .advanced-details { margin-top: 6px; }
+    .advanced-summary {
+      list-style: none; display: flex; align-items: center; gap: 6px;
+      cursor: pointer; color: var(--sub); font-size: 12px;
+      user-select: none; padding: 6px 0;
+    }
+    .advanced-summary::-webkit-details-marker { display: none; }
+    .advanced-summary::before {
+      content: '▶'; font-size: 9px; display: inline-block;
+      transition: transform .15s;
+    }
+    .advanced-details[open] .advanced-summary::before { transform: rotate(90deg); }
+    .advanced-fields { display: flex; flex-direction: column; gap: 14px; padding-top: 10px; }
+
     /* ── Buttons ── */
     .btn-primary {
       background: var(--gold);
@@ -1277,6 +1292,33 @@
         <input class="finput" id="fFilm" placeholder="e.g. A New Hope">
       </div>
 
+      <div class="fg">
+        <label class="flabel">Item Type</label>
+        <select class="finput" id="fItemType">
+          <option value="">— None —</option>
+          <option value="Photo">Photo</option>
+          <option value="Poster">Poster</option>
+          <option value="Helmet">Helmet</option>
+          <option value="Jersey">Jersey</option>
+          <option value="Baseball">Baseball</option>
+          <option value="Basketball">Basketball</option>
+          <option value="Football">Football</option>
+          <option value="Bat">Bat</option>
+          <option value="Trading Card">Trading Card</option>
+          <option value="Funko Pop">Funko Pop</option>
+          <option value="Book">Book</option>
+          <option value="Comic">Comic</option>
+          <option value="Magazine">Magazine</option>
+          <option value="Record / Album">Record / Album</option>
+          <option value="Canvas">Canvas</option>
+          <option value="Lithograph">Lithograph</option>
+          <option value="Glove">Glove</option>
+          <option value="Shoe">Shoe</option>
+          <option value="Program">Program</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
       <div class="frow">
         <div class="fg">
           <label class="flabel">Cert Number</label>
@@ -1321,6 +1363,53 @@
           <input type="text" id="tagTextInput" class="tag-text-input" placeholder="Type a tag and press Enter…" onkeydown="tagKeydown(event)">
         </div>
       </div>
+
+      <details class="advanced-details" id="advancedDetails">
+        <summary class="advanced-summary">Advanced Fields</summary>
+        <div class="advanced-fields">
+          <div class="fg">
+            <label class="flabel">Signing Event / Venue</label>
+            <input class="finput" id="fSigningEvent" placeholder="e.g. Star Wars Celebration 2023">
+          </div>
+          <div class="fg">
+            <label class="flabel">Signing Date</label>
+            <input class="finput" id="fSigningDate" type="date">
+          </div>
+          <div class="fg">
+            <label class="flabel">Acquisition Method</label>
+            <select class="finput" id="fAcquiredHow">
+              <option value="">— None —</option>
+              <option value="In-Person">In-Person</option>
+              <option value="Mail-In / TTM">Mail-In / TTM</option>
+              <option value="Convention">Convention</option>
+              <option value="Purchased Online">Purchased Online</option>
+              <option value="Purchased at Show">Purchased at Show</option>
+              <option value="Auction">Auction</option>
+              <option value="Gift">Gift</option>
+              <option value="Trade">Trade</option>
+              <option value="Gallery / Dealer">Gallery / Dealer</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="flabel">Condition</label>
+            <select class="finput" id="fCondition">
+              <option value="">— Select —</option>
+              <option value="Mint">Mint</option>
+              <option value="Near Mint">Near Mint</option>
+              <option value="Excellent">Excellent</option>
+              <option value="Very Good">Very Good</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+              <option value="Poor">Poor</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="flabel">Physical Location</label>
+            <input class="finput" id="fLocation" placeholder="e.g. Binder A, Frame #3">
+          </div>
+        </div>
+      </details>
     </div>
     <div class="modal-foot">
       <button class="btn-secondary" onclick="closeForm()">Cancel</button>
@@ -1936,7 +2025,7 @@
   }
 
   /* ── Filter modal ── */
-  let activeFilters = { tags: new Set(), certCompany: new Set(), film: new Set(), signer: new Set() };
+  let activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), film: new Set(), signer: new Set() };
 
   function openFilterModal() {
     buildFilterModal();
@@ -1945,19 +2034,32 @@
   function closeFilterModal() { close('filterOverlay'); }
 
   function buildFilterModal() {
-    const allTags = new Set(), allCerts = new Set(), allFilms = new Set(), allSigners = new Set();
+    const allTags = new Set(), allItemTypes = new Set(), allConditions = new Set(),
+          allCerts = new Set(), allAcquired = new Set(), allEvents = new Set(),
+          allLocations = new Set(), allFilms = new Set(), allSigners = new Set();
     items.forEach(i => {
       (i.tags || []).forEach(t => allTags.add(t));
-      if (i.certCompany) allCerts.add(i.certCompany);
-      if (i.film) allFilms.add(i.film);
+      if (i.itemType)     allItemTypes.add(i.itemType);
+      if (i.condition)    allConditions.add(i.condition);
+      if (i.certCompany)  allCerts.add(i.certCompany);
+      if (i.acquiredHow)  allAcquired.add(i.acquiredHow);
+      if (i.signingEvent) allEvents.add(i.signingEvent);
+      if (i.location)     allLocations.add(i.location);
+      if (i.film)         allFilms.add(i.film);
       (i.signers || [i.name]).filter(Boolean).forEach(s => allSigners.add(s));
     });
 
+    const CONDITION_ORDER = ['Mint','Near Mint','Excellent','Very Good','Good','Fair','Poor'];
     const sections = [];
-    if (allTags.size)    sections.push({ key: 'tags',        label: 'Tags',        values: [...allTags].sort() });
-    if (allCerts.size)   sections.push({ key: 'certCompany', label: 'Cert Company', values: [...allCerts].sort(), display: CERT_LABELS });
-    if (allFilms.size)   sections.push({ key: 'film',        label: 'Film / Show',  values: [...allFilms].sort() });
-    if (allSigners.size) sections.push({ key: 'signer',      label: 'Signer',       values: [...allSigners].sort() });
+    if (allTags.size)       sections.push({ key: 'tags',         label: 'Tags',               values: [...allTags].sort() });
+    if (allItemTypes.size)  sections.push({ key: 'itemType',     label: 'Item Type',           values: [...allItemTypes].sort() });
+    if (allConditions.size) sections.push({ key: 'condition',    label: 'Condition',           values: CONDITION_ORDER.filter(c => allConditions.has(c)) });
+    if (allCerts.size)      sections.push({ key: 'certCompany',  label: 'Cert Company',        values: [...allCerts].sort(), display: CERT_LABELS });
+    if (allAcquired.size)   sections.push({ key: 'acquiredHow',  label: 'Acquisition Method',  values: [...allAcquired].sort() });
+    if (allEvents.size)     sections.push({ key: 'signingEvent', label: 'Signing Event',       values: [...allEvents].sort() });
+    if (allLocations.size)  sections.push({ key: 'location',     label: 'Physical Location',   values: [...allLocations].sort() });
+    if (allFilms.size)      sections.push({ key: 'film',         label: 'Film / Show',         values: [...allFilms].sort() });
+    if (allSigners.size)    sections.push({ key: 'signer',       label: 'Signer',              values: [...allSigners].sort() });
 
     const body = document.getElementById('filterBody');
     if (!sections.length) {
@@ -1988,14 +2090,14 @@
   }
 
   function clearAllFilters() {
-    activeFilters = { tags: new Set(), certCompany: new Set(), film: new Set(), signer: new Set() };
+    activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), film: new Set(), signer: new Set() };
     updateFilterBtn();
     buildFilterModal();
     render();
   }
 
   function updateFilterBtn() {
-    const count = activeFilters.tags.size + activeFilters.certCompany.size + activeFilters.film.size + activeFilters.signer.size;
+    const count = Object.values(activeFilters).reduce((n, s) => n + s.size, 0);
     const badge = document.getElementById('filterBadge');
     badge.textContent = count;
     badge.style.display = count ? '' : 'none';
@@ -2010,19 +2112,29 @@
     let res = q
       ? items.filter(i =>
           (i.signers ? i.signers.join(' ') : (i.name || '')).toLowerCase().includes(q) ||
-          (i.character || '').toLowerCase().includes(q) ||
-          (i.film      || '').toLowerCase().includes(q) ||
-          (i.certNum   || '').toLowerCase().includes(q) ||
+          (i.character    || '').toLowerCase().includes(q) ||
+          (i.film         || '').toLowerCase().includes(q) ||
+          (i.certNum      || '').toLowerCase().includes(q) ||
+          (i.itemType     || '').toLowerCase().includes(q) ||
+          (i.signingEvent || '').toLowerCase().includes(q) ||
+          (i.acquiredHow  || '').toLowerCase().includes(q) ||
+          (i.condition    || '').toLowerCase().includes(q) ||
+          (i.location     || '').toLowerCase().includes(q) ||
           (i.tags || []).some(t => t.toLowerCase().includes(q)))
       : [...items];
 
     const af = activeFilters;
-    if (af.tags.size || af.certCompany.size || af.film.size || af.signer.size) {
+    if (Object.values(af).some(s => s.size)) {
       res = res.filter(i => {
-        if (af.tags.size        && !(i.tags || []).some(t => af.tags.has(t)))                         return false;
-        if (af.certCompany.size && !af.certCompany.has(i.certCompany || ''))                           return false;
-        if (af.film.size        && !af.film.has(i.film || ''))                                         return false;
-        if (af.signer.size      && !(i.signers || [i.name]).filter(Boolean).some(s => af.signer.has(s))) return false;
+        if (af.tags.size         && !(i.tags || []).some(t => af.tags.has(t)))                            return false;
+        if (af.itemType.size     && !af.itemType.has(i.itemType || ''))                                   return false;
+        if (af.condition.size    && !af.condition.has(i.condition || ''))                                  return false;
+        if (af.certCompany.size  && !af.certCompany.has(i.certCompany || ''))                             return false;
+        if (af.acquiredHow.size  && !af.acquiredHow.has(i.acquiredHow || ''))                             return false;
+        if (af.signingEvent.size && !af.signingEvent.has(i.signingEvent || ''))                           return false;
+        if (af.location.size     && !af.location.has(i.location || ''))                                   return false;
+        if (af.film.size         && !af.film.has(i.film || ''))                                           return false;
+        if (af.signer.size       && !(i.signers || [i.name]).filter(Boolean).some(s => af.signer.has(s))) return false;
         return true;
       });
     }
@@ -2159,21 +2271,31 @@
     document.getElementById('fPaid').value      = item.paid      || '';
     document.getElementById('fValue').value     = item.value     || '';
     document.getElementById('fValueUrl').value  = item.valueUrl  || '';
-    document.getElementById('fNotes').value     = item.notes     || '';
+    document.getElementById('fNotes').value        = item.notes        || '';
+    document.getElementById('fItemType').value     = item.itemType     || '';
+    document.getElementById('fSigningEvent').value = item.signingEvent || '';
+    document.getElementById('fSigningDate').value  = item.signingDate  || '';
+    document.getElementById('fAcquiredHow').value  = item.acquiredHow  || '';
+    document.getElementById('fCondition').value    = item.condition    || '';
+    document.getElementById('fLocation').value     = item.location     || '';
     formTags = (item.tags || []).slice();
     renderFormTags();
     renderImgThumbnails();
+    const hasAdvanced = item.signingEvent || item.signingDate || item.acquiredHow || item.condition || item.location;
+    document.getElementById('advancedDetails').open = !!hasAdvanced;
     open('formOverlay');
   }
 
   function resetForm() {
-    ['fCharacter','fFilm','fCertNum','fCertCompany','fPaid','fValue','fValueUrl','fNotes']
+    ['fCharacter','fFilm','fItemType','fCertNum','fCertCompany','fPaid','fValue','fValueUrl','fNotes',
+     'fSigningEvent','fSigningDate','fAcquiredHow','fCondition','fLocation']
       .forEach(id => { document.getElementById(id).value = ''; });
     renderSignersList(['']);
     pendingImgs = [];
     renderImgThumbnails();
     formTags = [];
     renderFormTags();
+    document.getElementById('advancedDetails').open = false;
   }
 
   function closeForm() { close('formOverlay'); }
@@ -2277,8 +2399,14 @@
       value     : document.getElementById('fValue').value || null,
       valueUrl  : document.getElementById('fValueUrl').value.trim(),
       notes     : document.getElementById('fNotes').value.trim(),
-      tags      : getFormTags(),
-      imgs      : pendingImgs.slice(),
+      tags        : getFormTags(),
+      imgs        : pendingImgs.slice(),
+      itemType    : document.getElementById('fItemType').value.trim(),
+      signingEvent: document.getElementById('fSigningEvent').value.trim(),
+      signingDate : document.getElementById('fSigningDate').value,
+      acquiredHow : document.getElementById('fAcquiredHow').value.trim(),
+      condition   : document.getElementById('fCondition').value,
+      location    : document.getElementById('fLocation').value.trim(),
     };
 
     if (id) {
@@ -2364,6 +2492,8 @@
     }
     if (item.character) html += detailRow('Character', escHtml(item.character));
     if (item.film)      html += detailRow('Film / Show', `<a class="card-link" href="${escHtml(filmUrl(item.film))}" target="_blank" rel="noopener">${escHtml(item.film)}</a>`);
+    if (item.itemType)     html += detailRow('Item Type',    escHtml(item.itemType));
+    if (item.condition)    html += detailRow('Condition',    escHtml(item.condition));
     if (item.certNum) {
       const cUrl = getCertUrl(item);
       const v = cUrl
@@ -2387,6 +2517,10 @@
       const cls = r >= 0 ? 'text-green' : 'text-red';
       html += detailRow('ROI', `<span class="${cls}">${rStr}</span>`);
     }
+    if (item.signingDate)  html += detailRow('Signing Date',  new Date(item.signingDate + 'T12:00:00').toLocaleDateString(undefined, {year:'numeric',month:'long',day:'numeric'}));
+    if (item.signingEvent) html += detailRow('Signing Event', escHtml(item.signingEvent));
+    if (item.acquiredHow)  html += detailRow('Acquired',      escHtml(item.acquiredHow));
+    if (item.location)     html += detailRow('Location',      escHtml(item.location));
     if (item.tags && item.tags.length) {
       const tagHtml = item.tags.map(t => `<span class="tag" onclick="filterByTag(event,'${escHtml(t)}');closeDetail()">${escHtml(t)}</span>`).join('');
       html += detailRow('Tags', `<span style="display:flex;flex-wrap:wrap;gap:4px">${tagHtml}</span>`);

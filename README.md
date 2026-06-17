@@ -117,12 +117,17 @@ A **Filter** button (funnel icon) opens the Filter modal for structured, multi-s
 
 #### Filter Modal
 
-The modal shows up to four sections, each populated from values that actually exist in the current collection (empty sections are hidden):
+The modal shows sections populated from values that actually exist in the current collection (empty sections are hidden):
 
 | Section | Description |
 |---|---|
 | **Tags** | All tags used across the collection |
+| **Item Type** | All item types in the collection |
+| **Condition** | Condition grades, sorted from best to worst (Mint → Near Mint → Excellent → Very Good → Good → Fair → Poor) |
 | **Cert Company** | Authentication companies used (Beckett, PSA, JSA, SWAU) |
+| **Acquisition Method** | All acquisition methods in the collection |
+| **Signing Event** | All signing events or venues in the collection |
+| **Location** | All physical storage locations in the collection |
 | **Film / Show** | All film and show titles in the collection |
 | **Signer** | All signer names in the collection |
 
@@ -237,6 +242,7 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 | **+ button** | Button | Adds a Signer 2 field. Each additional signer row has a − button to remove it. There is no upper limit on the number of signers. |
 | **Character** | Text input | Optional. Character name (e.g. "Darth Vader"). Applies to the item, not per signer. |
 | **Film / Show** | Text input | Optional. The title of the film or show. |
+| **Item Type** | Text input | Optional. The kind of memorabilia (e.g. "Photo", "Helmet", "Jersey", "Trading Card"). Filterable. |
 | **Cert #** | Text input | Optional. The authentication certificate number. |
 | **Cert Company** | Dropdown | Options: *(none)*, Beckett, PSA, JSA, SWAU. Controls the verification URL. |
 | **Paid** | Number input | Optional. What you paid, in your **local currency**. |
@@ -245,6 +251,20 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 | **Notes** | Textarea | Optional. Free-form notes. Resizable vertically. |
 | **Tags** | Tag input | Optional. Type a tag and press **Enter** or **,** to add it as a chip. Press **Backspace** on an empty input to remove the last tag. Click **×** on a chip to remove it. Multiple tags per item are supported. |
 | **Photo** | File upload / drag-and-drop | Optional. See below. |
+
+### Advanced Fields
+
+Below the Tags field is an **▶ Advanced Fields** expander (`<details>` element). Clicking it reveals five additional optional fields:
+
+| Field | Type | Notes |
+|---|---|---|
+| **Signing Event / Venue** | Text input | Optional. The event or venue where the item was signed (e.g. "Fan Expo 2024", "Private signing"). Filterable. |
+| **Signing Date** | Date picker | Optional. The date the item was signed. Shown in the detail modal as a formatted date (e.g. "June 15, 2024"). Not filterable. |
+| **Acquisition Method** | Text input | Optional. How you obtained the item (e.g. "In person", "Mail-in", "eBay"). Filterable. |
+| **Condition** | Dropdown | Optional. Grades: *(none)*, Mint, Near Mint, Excellent, Very Good, Good, Fair, Poor. Filterable; conditions are displayed in grade order (best to worst) in the filter modal. |
+| **Physical Location** | Text input | Optional. Where the item is physically stored (e.g. "Display case", "Storage box #3"). Filterable. |
+
+When any advanced field has a value and you open the **Edit** modal, the Advanced Fields section automatically expands to show those values. Otherwise it starts collapsed.
 
 All monetary inputs (**Paid**, **Est. Value**) are stored in the **local currency** (configured in Settings). They are converted to the display currency at render time using the live exchange rate.
 
@@ -300,10 +320,16 @@ Clicking any card (grid) or row (table) opens a read-only detail view for that i
   - **Signer** — clickable link (Wikipedia or IMDb). For multi-signer items, individual **Signer 1 / Signer 2 / …** rows, each a link.
   - Character — plain text
   - Film / Show — clickable link (Wikipedia or IMDb)
+  - Item Type — plain text (only shown if set)
+  - Condition — plain text (only shown if set)
   - Cert # — clickable link to the cert company's verification page. Clicking **also copies the cert number to the clipboard** and shows a toast confirmation.
   - Paid (in display currency)
   - Est. Value (in display currency, with link if URL is set)
   - ROI — percentage, colored green or red. Only shown when both Paid and Est. Value are set.
+  - Signing Date — formatted as "Month D, YYYY" (only shown if set)
+  - Signing Event / Venue — plain text (only shown if set)
+  - Acquisition Method — plain text (only shown if set)
+  - Physical Location — plain text (only shown if set)
   - Tags — clickable chips. Clicking a tag closes the modal and filters the gallery to items with that tag.
   - Notes
   - Date Added
@@ -677,12 +703,19 @@ Click **Export Collection** in the Settings Modal (⚙️ → Data). The browser
       "signers": ["Harrison Ford"],
       "character": "Han Solo",
       "film": "Star Wars",
+      "itemType": "Photo",
       "certNum": "A1234567",
       "certCompany": "beckett",
       "paid": 15000,
       "value": 22000,
       "valueUrl": "https://www.ebay.com/...",
       "notes": "Signed at Fan Expo 2023",
+      "tags": ["sci-fi"],
+      "signingEvent": "Fan Expo 2023",
+      "signingDate": "2023-08-26",
+      "acquiredHow": "In person",
+      "condition": "Near Mint",
+      "location": "Display case",
       "imgs": ["data:image/jpeg;base64,/9j/...", "data:image/jpeg;base64,/9j/..."]
     }
   ]
@@ -780,6 +813,12 @@ Each item is a JavaScript object with the following fields:
 | `valueUrl` | string | URL to a value source (optional, may be empty string) |
 | `notes` | string | Free-form notes (optional, may be empty string) |
 | `tags` | string[] | Array of tag strings (optional, defaults to `[]`) |
+| `itemType` | string | Type of memorabilia (e.g. `"Photo"`, `"Jersey"`). Optional, may be empty string. |
+| `signingEvent` | string | Event or venue where the item was signed. Optional, may be empty string. |
+| `signingDate` | string | Date the item was signed in `YYYY-MM-DD` format. Optional, may be empty string. |
+| `acquiredHow` | string | How the item was acquired (e.g. `"In person"`, `"Mail-in"`). Optional, may be empty string. |
+| `condition` | string | Grade: one of `"Mint"`, `"Near Mint"`, `"Excellent"`, `"Very Good"`, `"Good"`, `"Fair"`, `"Poor"`, or `""`. Optional. |
+| `location` | string | Physical storage location. Optional, may be empty string. |
 | `imgs` | string[] | Array of base64 JPEG data URLs. Empty array means no photos. First element is the cover image. |
 
 ---
