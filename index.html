@@ -201,6 +201,30 @@
       line-height: 1.4;
     }
 
+    .settings-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin: 0 -20px 20px;
+    }
+    .settings-tab {
+      flex: 1;
+      padding: 12px 6px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      color: var(--sub);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+    .settings-tab:hover { color: var(--text); }
+    .settings-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+    .settings-panel { display: none; }
+    .settings-panel.active { display: block; }
+
     .rate-box {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -1081,129 +1105,138 @@
       <span class="modal-title">Settings</span>
       <button class="btn-x" onclick="closeSettings()">✕</button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="padding-top:0">
 
-      <div class="fg">
-        <label class="flabel">Appearance</label>
-        <button class="settings-row-btn" id="themeToggle" onclick="toggleTheme()">
-          <span class="settings-row-icon">
-            <svg id="iconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            <svg id="iconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-          </span>
-          <span id="themeLabel">Switch to Dark Mode</span>
-        </button>
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="display" onclick="switchSettingsTab('display')">Display</button>
+        <button class="settings-tab" data-tab="data" onclick="switchSettingsTab('data')">Data</button>
+        <button class="settings-tab" data-tab="currency" onclick="switchSettingsTab('currency')">Currency</button>
       </div>
 
-      <div class="fg">
-        <label class="flabel">Photo Format</label>
-        <select class="finput" id="settingsPhotoFormat" onchange="setPhotoFormat(this.value)">
-          <option value="8x10L">8×10 Landscape</option>
-          <option value="8x10P">8×10 Portrait</option>
-          <option value="5x7L">5×7 Landscape</option>
-          <option value="5x7P">5×7 Portrait</option>
-          <option value="4x6L">4×6 Landscape</option>
-          <option value="4x6P">4×6 Portrait</option>
-          <option value="3x5">Index Card (3×5)</option>
-          <option value="trading">Trading Card (2.5×3.5)</option>
-          <option value="square">Square (1×1)</option>
-        </select>
-        <div class="setting-hint" style="margin-top:4px">Sets the image aspect ratio for grid cards and table thumbnails</div>
+      <!-- Display tab -->
+      <div class="settings-panel active" id="stab-display">
+        <div class="fg">
+          <label class="flabel">Appearance</label>
+          <button class="settings-row-btn" id="themeToggle" onclick="toggleTheme()">
+            <span class="settings-row-icon">
+              <svg id="iconSun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg id="iconMoon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            </span>
+            <span id="themeLabel">Switch to Dark Mode</span>
+          </button>
+        </div>
+        <div class="fg">
+          <label class="flabel">Photo Format</label>
+          <select class="finput" id="settingsPhotoFormat" onchange="setPhotoFormat(this.value)">
+            <option value="8x10L">8×10 Landscape</option>
+            <option value="8x10P">8×10 Portrait</option>
+            <option value="5x7L">5×7 Landscape</option>
+            <option value="5x7P">5×7 Portrait</option>
+            <option value="4x6L">4×6 Landscape</option>
+            <option value="4x6P">4×6 Portrait</option>
+            <option value="3x5">Index Card (3×5)</option>
+            <option value="trading">Trading Card (2.5×3.5)</option>
+            <option value="square">Square (1×1)</option>
+          </select>
+          <div class="setting-hint" style="margin-top:4px">Sets the image aspect ratio for grid cards and table thumbnails</div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Image Fit</label>
+          <select class="finput" id="settingsImgFit" onchange="setImgFit(this.value)">
+            <option value="cover">Crop to fill</option>
+            <option value="contain">Fit with black bars</option>
+            <option value="blurbg">Fit with blurred background</option>
+          </select>
+          <div class="setting-hint" style="margin-top:4px">How photos are shown when the image doesn't match the selected format</div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Info Links</label>
+          <select class="finput" id="settingsInfoLink" onchange="setInfoLink(this.value)">
+            <option value="wiki">Wikipedia</option>
+            <option value="imdb">IMDb</option>
+          </select>
+          <div class="setting-hint" style="margin-top:4px">Signer names and film/show titles link to this site</div>
+        </div>
       </div>
 
-      <div class="fg">
-        <label class="flabel">Image Fit</label>
-        <select class="finput" id="settingsImgFit" onchange="setImgFit(this.value)">
-          <option value="cover">Crop to fill</option>
-          <option value="contain">Fit with black bars</option>
-          <option value="blurbg">Fit with blurred background</option>
-        </select>
-        <div class="setting-hint" style="margin-top:4px">How photos are shown when the image doesn't match the selected format</div>
+      <!-- Data tab -->
+      <div class="settings-panel" id="stab-data">
+        <div class="fg" id="settingsDataSection">
+          <label class="flabel">Backup &amp; Share</label>
+          <button class="settings-row-btn" onclick="exportData()">
+            <span class="settings-row-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </span>
+            Export Collection
+          </button>
+          <button class="settings-row-btn" style="margin-top:6px" onclick="document.getElementById('importFile').click()">
+            <span class="settings-row-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 16 12 21 17 16"/><line x1="12" y1="21" x2="12" y2="9"/></svg>
+            </span>
+            Import Collection
+          </button>
+          <button class="settings-row-btn" id="sharePhotosBtn" style="margin-top:6px" onclick="shareCollectionWithPhotos()">
+            <span class="settings-row-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </span>
+            Copy Share Link
+          </button>
+          <div class="setting-hint" style="margin-top:4px">Uploads your collection to dpaste.com and copies a short shareable URL. ⚠️ Your collection data will be publicly accessible to anyone with the link.</div>
+        </div>
+        <div class="fg" id="settingsViewSection" style="display:none">
+          <label class="flabel">This Collection</label>
+          <button class="settings-row-btn" onclick="saveSharedAsOwn()">
+            <span class="settings-row-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </span>
+            Save as My Collection
+          </button>
+          <div class="setting-hint" style="margin-top:4px">Overwrites your own collection with the one you are currently viewing.</div>
+        </div>
       </div>
 
-      <div class="fg">
-        <label class="flabel">Info Links</label>
-        <select class="finput" id="settingsInfoLink" onchange="setInfoLink(this.value)">
-          <option value="wiki">Wikipedia</option>
-          <option value="imdb">IMDb</option>
-        </select>
-        <div class="setting-hint" style="margin-top:4px">Signer names and film/show titles link to this site</div>
-      </div>
-
-      <div class="fg" id="settingsDataSection">
-        <label class="flabel">Data</label>
-        <button class="settings-row-btn" onclick="exportData()">
-          <span class="settings-row-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </span>
-          Export Collection
-        </button>
-        <button class="settings-row-btn" style="margin-top:6px" onclick="document.getElementById('importFile').click()">
-          <span class="settings-row-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 16 12 21 17 16"/><line x1="12" y1="21" x2="12" y2="9"/></svg>
-          </span>
-          Import Collection
-        </button>
-        <button class="settings-row-btn" id="sharePhotosBtn" style="margin-top:6px" onclick="shareCollectionWithPhotos()">
-          <span class="settings-row-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-          </span>
-          Copy Share Link
-        </button>
-        <div class="setting-hint" style="margin-top:4px">Uploads your collection to dpaste.com and copies a short shareable URL. ⚠️ Your collection data will be publicly accessible to anyone with the link.</div>
-      </div>
-
-      <div class="fg" id="settingsViewSection" style="display:none">
-        <label class="flabel">This Collection</label>
-        <button class="settings-row-btn" onclick="saveSharedAsOwn()">
-          <span class="settings-row-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          </span>
-          Save as My Collection
-        </button>
-        <div class="setting-hint" style="margin-top:4px">Overwrites your own collection with the one you are currently viewing.</div>
-      </div>
-
-      <div class="fg" id="settingsLocalSection">
-        <label class="flabel">Local Currency</label>
-        <div class="setting-hint">The currency your data is recorded in</div>
-        <select class="finput" id="settingsLocal" onchange="setLocalCurrency(this.value)">
-          <option value="USD">USD — $</option>
-          <option value="GBP">GBP — £</option>
-          <option value="EUR">EUR — €</option>
-          <option value="TWD">TWD — NT$</option>
-          <option value="JPY">JPY — ¥</option>
-          <option value="CNY">CNY — ¥</option>
-          <option value="AUD">AUD — A$</option>
-          <option value="CAD">CAD — CA$</option>
-          <option value="HKD">HKD — HK$</option>
-          <option value="SGD">SGD — S$</option>
-          <option value="KRW">KRW — ₩</option>
-        </select>
-      </div>
-
-      <div class="fg">
-        <label class="flabel">Display Currency</label>
-        <div class="setting-hint">The currency prices are shown in (converted automatically)</div>
-        <select class="finput" id="settingsDisplay" onchange="setDisplayCurrency(this.value)">
-          <option value="USD">USD — $</option>
-          <option value="GBP">GBP — £</option>
-          <option value="EUR">EUR — €</option>
-          <option value="TWD">TWD — NT$</option>
-          <option value="JPY">JPY — ¥</option>
-          <option value="CNY">CNY — ¥</option>
-          <option value="AUD">AUD — A$</option>
-          <option value="CAD">CAD — CA$</option>
-          <option value="HKD">HKD — HK$</option>
-          <option value="SGD">SGD — S$</option>
-          <option value="KRW">KRW — ₩</option>
-        </select>
-      </div>
-
-      <div class="fg">
-        <label class="flabel">Exchange Rate</label>
-        <div class="rate-box">
-          <div class="rate-text" id="rateInfo">—</div>
-          <button class="btn-refresh" id="rateRefreshBtn" onclick="refreshRate()">↻ Refresh</button>
+      <!-- Currency tab -->
+      <div class="settings-panel" id="stab-currency">
+        <div class="fg" id="settingsLocalSection">
+          <label class="flabel">Local Currency</label>
+          <div class="setting-hint">The currency your data is recorded in</div>
+          <select class="finput" id="settingsLocal" onchange="setLocalCurrency(this.value)">
+            <option value="USD">USD — $</option>
+            <option value="GBP">GBP — £</option>
+            <option value="EUR">EUR — €</option>
+            <option value="TWD">TWD — NT$</option>
+            <option value="JPY">JPY — ¥</option>
+            <option value="CNY">CNY — ¥</option>
+            <option value="AUD">AUD — A$</option>
+            <option value="CAD">CAD — CA$</option>
+            <option value="HKD">HKD — HK$</option>
+            <option value="SGD">SGD — S$</option>
+            <option value="KRW">KRW — ₩</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Display Currency</label>
+          <div class="setting-hint">The currency prices are shown in (converted automatically)</div>
+          <select class="finput" id="settingsDisplay" onchange="setDisplayCurrency(this.value)">
+            <option value="USD">USD — $</option>
+            <option value="GBP">GBP — £</option>
+            <option value="EUR">EUR — €</option>
+            <option value="TWD">TWD — NT$</option>
+            <option value="JPY">JPY — ¥</option>
+            <option value="CNY">CNY — ¥</option>
+            <option value="AUD">AUD — A$</option>
+            <option value="CAD">CAD — CA$</option>
+            <option value="HKD">HKD — HK$</option>
+            <option value="SGD">SGD — S$</option>
+            <option value="KRW">KRW — ₩</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Exchange Rate</label>
+          <div class="rate-box">
+            <div class="rate-text" id="rateInfo">—</div>
+            <button class="btn-refresh" id="rateRefreshBtn" onclick="refreshRate()">↻ Refresh</button>
+          </div>
         </div>
       </div>
 
@@ -1384,15 +1417,25 @@
     fetchExchangeRate();
   }
 
+  function switchSettingsTab(name) {
+    document.querySelectorAll('.settings-tab').forEach(el =>
+      el.classList.toggle('active', el.dataset.tab === name)
+    );
+    document.querySelectorAll('.settings-panel').forEach(el =>
+      el.classList.toggle('active', el.id === 'stab-' + name)
+    );
+  }
+
   function openSettings() {
-    document.getElementById('settingsLocal').value     = getLocalCurrency();
-    document.getElementById('settingsDisplay').value   = getDisplayCurrency();
+    document.getElementById('settingsLocal').value       = getLocalCurrency();
+    document.getElementById('settingsDisplay').value     = getDisplayCurrency();
     document.getElementById('settingsPhotoFormat').value = getPhotoFormat();
     document.getElementById('settingsImgFit').value      = getImgFit();
     document.getElementById('settingsInfoLink').value    = getInfoLinkMode();
     document.getElementById('settingsDataSection').style.display  = viewMode ? 'none' : '';
     document.getElementById('settingsLocalSection').style.display = viewMode ? 'none' : '';
     document.getElementById('settingsViewSection').style.display  = viewMode ? '' : 'none';
+    switchSettingsTab('display');
     updateRateDisplay();
     open('settingsOverlay');
   }

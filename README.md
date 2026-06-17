@@ -275,17 +275,25 @@ Fields with no value are omitted (not shown as blank rows).
 
 ## Settings Modal
 
-Opened by clicking the **⚙️ gear icon** in the header. The modal is organized into sections that vary depending on whether you are in normal mode or [View Mode](#view-mode).
+Opened by clicking the **⚙️ gear icon** in the header. Settings are organized into three tabs:
 
-**Normal mode sections:** Appearance, Photo Format, Image Fit, Info Links, Data, Local Currency, Display Currency, Exchange Rate
+| Tab | Contents |
+|---|---|
+| **Display** | Appearance, Photo Format, Image Fit, Info Links |
+| **Data** | Backup & Share (normal mode) or Save as My Collection (view mode) |
+| **Currency** | Local Currency, Display Currency, Exchange Rate (Local Currency hidden in view mode) |
 
-**View mode sections:** Appearance, Photo Format, Image Fit, Info Links, This Collection, Display Currency, Exchange Rate
+The modal always opens on the **Display** tab.
 
-### Appearance
+---
+
+### Display Tab
+
+#### Appearance
 
 A row button that toggles between light and dark mode. The label updates to reflect the opposite of the current theme ("Switch to Dark Mode" / "Switch to Light Mode"), and the icon switches between a sun and moon accordingly. See [Light & Dark Mode](#light--dark-mode) for full details.
 
-### Photo Format
+#### Photo Format
 
 A dropdown that sets the image aspect ratio used for grid cards and table thumbnails. Choose the format that matches your memorabilia:
 
@@ -304,7 +312,7 @@ A dropdown that sets the image aspect ratio used for grid cards and table thumbn
 - Saved to `localStorage` (`ag_photo_format`). Takes effect instantly via a CSS custom property (`--card-img-ratio`) — no re-render needed.
 - Available in both normal mode and view mode.
 
-### Image Fit
+#### Image Fit
 
 A dropdown that controls how photos are displayed when the uploaded image doesn't match the selected Photo Format:
 
@@ -315,11 +323,10 @@ A dropdown that controls how photos are displayed when the uploaded image doesn'
 | **Fit with blurred background** | Full image always visible; gaps filled with a blurred, scaled-up copy of the same photo |
 
 - Saved to `localStorage` (`ag_img_fit`). Takes effect instantly — no re-render needed.
-- Available in both normal mode and view mode.
 - The blurred background option has no effect on cards without a photo.
 - Table thumbnails use `contain` (no blur) in the blurred background mode, since the thumbnail size is too small for the effect to be useful.
 
-### Info Links
+#### Info Links
 
 A dropdown to choose which site signer names and film/show titles link to in the table view and detail modal:
 
@@ -328,11 +335,12 @@ A dropdown to choose which site signer names and film/show titles link to in the
 | **Wikipedia** *(default)* | `en.wikipedia.org/wiki/[Name]` | `en.wikipedia.org/wiki/[Title]` |
 | **IMDb** | IMDb name search (`&s=nm`) | IMDb title search (`&s=tt`) |
 
-- The setting is saved to `localStorage` (`ag_info_link`) and takes effect immediately (gallery re-renders on change).
-- Available in both normal mode and view mode.
+- Saved to `localStorage` (`ag_info_link`). Takes effect immediately (gallery re-renders on change).
 - Links appear in **table view** (Signer column, Film / Show column) and **detail modal** (Signer row, Film / Show row). Grid card text is plain — no links.
 
-### Data
+---
+
+### Data Tab
 
 Three row buttons for backup, restore, and sharing:
 
@@ -340,9 +348,11 @@ Three row buttons for backup, restore, and sharing:
 - **Import Collection** — opens a file picker to load a previously exported `.json` file, replacing the current collection. See [Import & Export](#import--export).
 - **Copy Share Link** — uploads the collection to dpaste.com and copies a short shareable URL to the clipboard. See [Sharing a Collection](#sharing-a-collection).
 
-> ⚠️ The Data section is hidden entirely when viewing a shared collection in [View Mode](#view-mode). It is replaced by the **This Collection** section, which contains the **Save as My Collection** button.
+> ⚠️ In [View Mode](#view-mode) the Data tab shows **Save as My Collection** instead of the backup and share buttons.
 
-### Currency
+---
+
+### Currency Tab
 
 #### Two-Currency System
 
@@ -355,7 +365,7 @@ AutoGallery separates **where you record values** from **how you display them**:
 
 If local and display currencies differ, a live exchange rate is fetched from the internet and used to convert all displayed monetary values.
 
-### Currency Options
+#### Currency Options
 
 Both dropdowns offer the same list of currencies:
 
@@ -363,7 +373,7 @@ Both dropdowns offer the same list of currencies:
 
 Each is shown with its symbol in the UI: `$`, `£`, `€`, `NT$`, `¥`, `¥`, `A$`, `CA$`, `HK$`, `S$`, `₩`.
 
-### Exchange Rate
+#### Exchange Rate
 
 When local ≠ display currency, the app fetches a live exchange rate from:
 
