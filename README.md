@@ -277,13 +277,47 @@ Fields with no value are omitted (not shown as blank rows).
 
 Opened by clicking the **⚙️ gear icon** in the header. The modal is organized into sections that vary depending on whether you are in normal mode or [View Mode](#view-mode).
 
-**Normal mode sections:** Appearance, Info Links, Data, Local Currency, Display Currency, Exchange Rate
+**Normal mode sections:** Appearance, Photo Format, Image Fit, Info Links, Data, Local Currency, Display Currency, Exchange Rate
 
-**View mode sections:** Appearance, Info Links, This Collection, Display Currency, Exchange Rate
+**View mode sections:** Appearance, Photo Format, Image Fit, Info Links, This Collection, Display Currency, Exchange Rate
 
 ### Appearance
 
 A row button that toggles between light and dark mode. The label updates to reflect the opposite of the current theme ("Switch to Dark Mode" / "Switch to Light Mode"), and the icon switches between a sun and moon accordingly. See [Light & Dark Mode](#light--dark-mode) for full details.
+
+### Photo Format
+
+A dropdown that sets the image aspect ratio used for grid cards and table thumbnails. Choose the format that matches your memorabilia:
+
+| Option | Aspect Ratio | Typical use |
+|---|---|---|
+| **8×10 Landscape** *(default)* | 5:4 | Most sports & entertainment photos |
+| **8×10 Portrait** | 4:5 | Portrait-oriented photos |
+| **5×7 Landscape** | 7:5 | Smaller landscape photos |
+| **5×7 Portrait** | 5:7 | Smaller portrait photos |
+| **4×6 Landscape** | 3:2 | Standard print landscape |
+| **4×6 Portrait** | 2:3 | Standard print portrait |
+| **Index Card (3×5)** | 5:3 | Signed index cards |
+| **Trading Card (2.5×3.5)** | 5:7 | Sports/entertainment trading cards |
+| **Square (1×1)** | 1:1 | Square-format items |
+
+- Saved to `localStorage` (`ag_photo_format`). Takes effect instantly via a CSS custom property (`--card-img-ratio`) — no re-render needed.
+- Available in both normal mode and view mode.
+
+### Image Fit
+
+A dropdown that controls how photos are displayed when the uploaded image doesn't match the selected Photo Format:
+
+| Option | Behavior |
+|---|---|
+| **Crop to fill** *(default)* | Image is cropped to fill the frame (`object-fit: cover`) — no gaps, edges may be trimmed |
+| **Fit with black bars** | Full image always visible; gaps filled with a black background (`object-fit: contain`) |
+| **Fit with blurred background** | Full image always visible; gaps filled with a blurred, scaled-up copy of the same photo |
+
+- Saved to `localStorage` (`ag_img_fit`). Takes effect instantly — no re-render needed.
+- Available in both normal mode and view mode.
+- The blurred background option has no effect on cards without a photo.
+- Table thumbnails use `contain` (no blur) in the blurred background mode, since the thumbnail size is too small for the effect to be useful.
 
 ### Info Links
 
