@@ -1902,15 +1902,15 @@
     fetchExchangeRate();
   }
 
-  function saveSharedAsOwn() {
+  async function saveSharedAsOwn() {
     const s = items.length === 1 ? '' : 's';
     if (!confirm(`Replace your own collection with these ${items.length} item${s}? This cannot be undone.`)) return;
     const sharedItems = items;
     const currency = viewLocalCurrency;
     const settingsToApply = viewSettings;
-    exitViewMode();           // resets viewMode, reloads own items from localStorage
+    await exitViewMode();     // resets viewMode, reloads own items from storage
     items = sharedItems;      // overwrite with the shared items
-    persist();                // write them to localStorage
+    persist();                // write them to localStorage + IndexedDB
     if (currency) setLocalCurrency(currency);
     if (settingsToApply) applySettings(settingsToApply);
     fetchExchangeRate();
@@ -1919,12 +1919,12 @@
     toast(`Saved ${sharedItems.length} item${s} as your collection`);
   }
 
-  function exitViewMode() {
+  async function exitViewMode() {
     viewMode = false;
     viewLocalCurrency = null;
     viewSettings = null;
     if (savedSettings) { applySettings(savedSettings); savedSettings = null; }
-    load();
+    await load();
     document.getElementById('viewBanner').style.display = 'none';
     document.getElementById('btnAdd').style.display = '';
     document.getElementById('btnDetailDelete').style.display = '';
@@ -1989,6 +1989,70 @@
     navigator.clipboard.writeText(el.dataset.cert).then(() => toast(`Cert # ${el.dataset.cert} copied`)).catch(() => {});
   }
 
+  /* ── Image store (IndexedDB) ──
+     Item metadata stays in localStorage; the bulky base64 photo strings live
+     here, so a collection isn't capped by the ~5 MB localStorage limit. In
+     memory each item still carries its `imgs` array, so every rendering / export
+     / share path is unchanged — only load() and persist() cross this boundary. */
+  const IDB_NAME  = 'autogallery';
+  const IDB_STORE = 'images';
+  let _idbPromise = null;
+  let idbBroken   = false;   // set if IndexedDB is unavailable → fall back to inline localStorage
+
+  function idbOpen() {
+    if (_idbPromise) return _idbPromise;
+    _idbPromise = new Promise((resolve, reject) => {
+      if (!window.indexedDB) { reject(new Error('IndexedDB unavailable')); return; }
+      const req = indexedDB.open(IDB_NAME, 1);
+      req.onupgradeneeded = () => {
+        const db = req.result;
+        if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror   = () => reject(req.error);
+    });
+    return _idbPromise;
+  }
+
+  // Resolves to a plain object: { [itemId]: imgs[] }
+  function idbGetAllImages() {
+    return idbOpen().then(db => new Promise((resolve, reject) => {
+      const tx    = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const out   = {};
+      const req   = store.openCursor();
+      req.onsuccess = () => {
+        const cur = req.result;
+        if (cur) { out[cur.key] = cur.value; cur.continue(); }
+        else resolve(out);
+      };
+      req.onerror = () => reject(req.error);
+    }));
+  }
+
+  // Mirror the in-memory items' photos into IndexedDB: store each item's imgs
+  // under its id, and drop records for items that no longer exist.
+  function idbSyncImages(list) {
+    return idbOpen().then(db => new Promise((resolve, reject) => {
+      const tx    = db.transaction(IDB_STORE, 'readwrite');
+      const store = tx.objectStore(IDB_STORE);
+      const keep  = new Set(list.map(i => i.id));
+      const cur   = store.openCursor();
+      cur.onsuccess = () => {
+        const c = cur.result;
+        if (c) {
+          if (!keep.has(c.key)) c.delete();
+          c.continue();
+        } else {
+          list.forEach(it => store.put((it.imgs || []).slice(), it.id));
+        }
+      };
+      tx.oncomplete = () => resolve();
+      tx.onerror    = () => reject(tx.error);
+      tx.onabort    = () => reject(tx.error || new Error('IDB transaction aborted'));
+    }));
+  }
+
   /* ── Storage ── */
   function migrateItem(item) {
     if (!item.imgs) {
@@ -1998,19 +2062,61 @@
     return item;
   }
 
-  function load() {
-    try { items = JSON.parse(localStorage.getItem(KEY) || '[]').map(migrateItem); }
-    catch { items = []; }
+  async function load() {
+    let raw = [];
+    try { raw = JSON.parse(localStorage.getItem(KEY) || '[]').map(migrateItem); }
+    catch { raw = []; }
     try { customOrder = JSON.parse(localStorage.getItem('ag_custom_order') || '[]'); }
     catch { customOrder = []; }
+
+    let imgMap = {};
+    try {
+      imgMap = await idbGetAllImages();
+    } catch {
+      idbBroken = true;   // no IndexedDB → keep whatever images localStorage held
+    }
+
+    let needsMigration = false;
+    raw.forEach(it => {
+      if (Object.prototype.hasOwnProperty.call(imgMap, it.id)) {
+        it.imgs = imgMap[it.id] || [];
+      } else if (it.imgs && it.imgs.length) {
+        // Legacy data: photos are still inline in localStorage. Keep them in
+        // memory for now; the persist() below moves them into IndexedDB.
+        needsMigration = true;
+      } else {
+        it.imgs = it.imgs || [];
+      }
+    });
+
+    items = raw;
+
+    if (needsMigration && !idbBroken) persist();
   }
 
   function persist() {
+    // Fallback path: no IndexedDB → original behavior (photos inline).
+    if (idbBroken || !window.indexedDB) {
+      try { localStorage.setItem(KEY, JSON.stringify(items)); }
+      catch { toast('⚠️ Storage full — try removing some photos or exporting.'); }
+      return;
+    }
+
+    // Metadata only (no photos) → localStorage.
     try {
-      localStorage.setItem(KEY, JSON.stringify(items));
-    } catch (e) {
+      const meta = items.map(({ imgs, ...rest }) => rest);
+      localStorage.setItem(KEY, JSON.stringify(meta));
+    } catch {
       toast('⚠️ Storage full — try removing some photos or exporting.');
     }
+
+    // Photos → IndexedDB (async, non-blocking).
+    idbSyncImages(items).catch(() => {
+      idbBroken = true;
+      // Last resort: try to keep everything inline in localStorage.
+      try { localStorage.setItem(KEY, JSON.stringify(items)); } catch {}
+      toast('⚠️ Photo database unavailable — using basic storage.');
+    });
   }
 
   function uid() {
@@ -3056,20 +3162,25 @@
     render();
   }
 
-  load();
-  const savedCols = localStorage.getItem('ag_cols') || '5';
-  setCols(savedCols);
-  const savedSort = localStorage.getItem('ag_sort');
-  if (savedSort) { const el = document.getElementById('sortSelect'); if (el) el.value = savedSort; }
-  const savedView = localStorage.getItem('ag_view') || 'grid';
-  setView(savedView);
-  applyTheme(localStorage.getItem('ag_theme') || 'light');
-  applyPhotoFormat(getPhotoFormat());
-  applyImgFit(getImgFit());
-  applyPrivacyMode(getPrivacyMode());
+  (async () => {
+    // Visual prefs need no item data — apply them synchronously first so the
+    // page paints correctly before the (async) image load resolves.
+    applyTheme(localStorage.getItem('ag_theme') || 'light');
+    const savedCols = localStorage.getItem('ag_cols') || '5';
+    setCols(savedCols);
+    applyPhotoFormat(getPhotoFormat());
+    applyImgFit(getImgFit());
+    applyPrivacyMode(getPrivacyMode());
+    const savedSort = localStorage.getItem('ag_sort');
+    if (savedSort) { const el = document.getElementById('sortSelect'); if (el) el.value = savedSort; }
 
-  fetchExchangeRate(); // renders after rate is ready (uses cache if fresh)
-  checkShareURL();
+    await load();   // metadata from localStorage + photos from IndexedDB
+
+    const savedView = localStorage.getItem('ag_view') || 'grid';
+    setView(savedView);  // first render, now that items are ready
+    fetchExchangeRate(); // re-renders once the rate is ready (uses cache if fresh)
+    checkShareURL();
+  })();
   window.addEventListener('hashchange', checkShareURL);
 
   /* photo viewer interactions (attached once after DOM ready) */

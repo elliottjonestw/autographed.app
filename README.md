@@ -36,7 +36,7 @@ AutoGallery is a **single HTML file** (`index.html`). There is no server, no dat
 Key characteristics:
 
 - **Zero dependencies** — runs directly from the filesystem or any static file server (e.g. `python3 -m http.server 4200`).
-- **Persistent storage** — all collection data, preferences, and cached exchange rates are stored in the browser's `localStorage`.
+- **Persistent storage** — item metadata, preferences, and cached exchange rates are stored in the browser's `localStorage`; photos are stored in **IndexedDB** so large collections aren't capped by the small `localStorage` quota.
 - **No account required** — open the file, start adding items.
 - **Designed for 8×10 autographed photos and similar memorabilia**, but works for any signed collectible.
 
@@ -290,13 +290,13 @@ Items support **multiple photos**. The **Photos** section of the form shows a ro
 - **Click "Add photo"** to open the system file picker (accepts `image/*`; you can select multiple files at once)
 - Each selected file is compressed client-side and added to the thumbnail row
 
-Each thumbnail has an **✕** button to remove that individual photo. The first photo in the row is the **cover image** shown on the card and in the table view. There is no limit on the number of photos per item beyond localStorage capacity.
+Each thumbnail has an **✕** button to remove that individual photo. The first photo in the row is the **cover image** shown on the card and in the table view. There is no limit on the number of photos per item beyond IndexedDB capacity.
 
 **Compression per image:**
 
 - Maximum dimension: **900px** (width or height, whichever is larger)
 - Output format: **JPEG at 0.82 quality**
-- Stored as a **base64 data URL** in `localStorage` inside the `imgs` array
+- Stored as a **base64 data URL** in the item's `imgs` array, persisted to **IndexedDB** (see [Data Storage](#data-storage))
 
 ### Validation
 
@@ -305,7 +305,7 @@ Only **Signer 1** is required. If left blank, the field is highlighted in red an
 ### Buttons
 
 - **Cancel** — closes the modal without saving
-- **Save** (Add Item modal) or **Save Changes** (edit modal) — validates and writes to `localStorage`, then re-renders the gallery
+- **Save** (Add Item modal) or **Save Changes** (edit modal) — validates and persists the item (metadata to `localStorage`, photos to IndexedDB), then re-renders the gallery
 
 ---
 
@@ -341,7 +341,7 @@ Fields with no value are omitted (not shown as blank rows).
 ### Buttons
 
 - **Edit** — opens the Edit modal pre-populated with all current field values
-- **Delete** — shows a browser `confirm()` dialog. If confirmed, removes the item from `localStorage` and re-renders. If cancelled, nothing happens.
+- **Delete** — shows a browser `confirm()` dialog. If confirmed, removes the item from storage (metadata from `localStorage`, photos from IndexedDB) and re-renders. If cancelled, nothing happens.
 - **✕** (top-right) — closes the modal
 - Clicking the **backdrop** (outside the modal) also closes it
 
@@ -655,7 +655,7 @@ While in view mode, the Settings modal shows a **This Collection** section with 
 
 1. A confirmation dialog appears: *"Replace your own collection with these N items? This cannot be undone."*
 2. If confirmed:
-   - The shared items (including all photos) are written to `localStorage`
+   - The shared items are saved as your own (metadata to `localStorage`, photos to IndexedDB)
    - The sharer's local currency is set as your new local currency
    - All shared preferences (theme, sort, columns, photo format, etc.) are applied permanently
    - View mode exits and the full editing UI is restored (Add Item button, Edit/Delete in detail modal, all Settings sections)
@@ -671,13 +671,13 @@ The shared collection was recorded in the sharer's local currency (stored in the
 
 ### Your Own Data is Untouched
 
-Your own **collection** (items) is never touched in view mode — it remains in `localStorage` exactly as it was. The shared settings (theme, sort, columns, etc.) are applied temporarily to `localStorage` while viewing so you see the collection as the sharer had it configured. When you click **← Back to my collection**, your original preferences are restored from the snapshot taken at the moment you opened the share link, and your own items are reloaded.
+Your own **collection** (items) is never touched in view mode — it remains in storage exactly as it was. View mode never calls `persist()`, so neither your `localStorage` metadata nor your IndexedDB photos are modified while viewing. The shared settings (theme, sort, columns, etc.) are applied temporarily to `localStorage` while viewing so you see the collection as the sharer had it configured. When you click **← Back to my collection**, your original preferences are restored from the snapshot taken at the moment you opened the share link, and your own items are reloaded.
 
 ### Exiting View Mode
 
 Click **← Back to my collection** in the gold banner. This:
 1. Clears the view mode state
-2. Reloads your own items from `localStorage`
+2. Reloads your own items from storage (metadata from `localStorage`, photos from IndexedDB)
 3. Restores the Add Item button and all edit/delete controls
 4. Hides the banner
 5. Re-fetches the exchange rate for your own currency pair
@@ -771,7 +771,7 @@ Click **Import Collection** in the Settings Modal (⚙️ → Data). A file pick
 **Import behavior:**
 
 - The imported `currency` field is set as the new **local currency**.
-- All items are loaded into `localStorage`, **replacing** the current collection entirely.
+- All items are loaded and persisted (metadata to `localStorage`, photos to IndexedDB), **replacing** the current collection entirely.
 - All preferences in the `settings` field are applied immediately — theme, sort, columns, photo format, etc.
 - The gallery re-renders immediately with the imported data.
 - If the file is malformed or cannot be parsed, a toast error is shown.
@@ -809,11 +809,13 @@ The app is designed to work on small screens. On viewports **640px wide or narro
 
 ## Data Storage
 
-All data is stored in the browser's `localStorage`. The following keys are used:
+AutoGallery uses a **hybrid storage model**: lightweight item metadata and preferences live in `localStorage`, while the bulky photo data lives in **IndexedDB**. This keeps the collection from being capped by the small `localStorage` quota once you add lots of images.
+
+### localStorage (metadata & preferences)
 
 | Key | Type | Contents |
 |---|---|---|
-| `autogallery_v2` | JSON string | Array of all item objects |
+| `autogallery_v2` | JSON string | Array of all item objects, **without** the `imgs` photo data (photos are stored separately in IndexedDB) |
 | `ag_currency` | String | Local currency code (e.g. `"TWD"`) |
 | `ag_display_currency` | String | Display currency code (e.g. `"USD"`) |
 | `ag_rate_cache` | JSON string | Cached exchange rate: `{from, to, rate, ts}` |
@@ -827,7 +829,23 @@ All data is stored in the browser's `localStorage`. The following keys are used:
 | `ag_sort` | String | Saved sort mode (e.g. `"date-desc"`, `"custom"`) |
 | `ag_custom_order` | JSON string | Array of item IDs representing the user-defined custom sort sequence |
 
-**Storage limits:** `localStorage` is typically limited to **5–10 MB** per origin. Because item photos are stored as base64-encoded JPEGs (compressed to max 900px at 0.82 quality), each photo takes roughly 100–400 KB. A collection of 20–50 items with photos is well within typical limits, but very large collections with many high-detail photos could approach the limit. If storage is full, the browser will throw an error and the item will not be saved.
+### IndexedDB (photos)
+
+| Database | Object store | Key | Value |
+|---|---|---|---|
+| `autogallery` | `images` | item `id` | The item's `imgs` array (base64 JPEG data URLs) |
+
+At runtime, each item still carries its `imgs` array in memory, so all rendering, export, import, and share logic is unchanged. Photos only cross the storage boundary in two places: `load()` reads them from IndexedDB and reattaches them to each item, and `persist()` writes metadata to `localStorage` and syncs photos to IndexedDB (deleting records for items that no longer exist).
+
+### Automatic migration
+
+On first load after upgrading from a localStorage-only version, AutoGallery detects photos stored inline in `localStorage`, moves them into IndexedDB, and rewrites the `localStorage` item array without the image data. This happens transparently — no user action is needed, and nothing is lost.
+
+### Storage limits
+
+- **IndexedDB** typically allows hundreds of MB up to several GB per origin (browsers permit roughly 50–60% of free disk space), so photo-heavy collections are no longer constrained the way they were under `localStorage`.
+- Item photos are still stored as base64-encoded JPEGs (compressed to max 900px at 0.82 quality), roughly 100–400 KB each.
+- **Fallback:** if IndexedDB is unavailable (e.g. some private-browsing modes or very old browsers), AutoGallery automatically falls back to the original behavior of storing photos inline in `localStorage`, and shows a notice. In that mode the older 5–10 MB `localStorage` limit applies.
 
 ---
 
@@ -856,7 +874,7 @@ Each item is a JavaScript object with the following fields:
 | `acquiredHow` | string | How the item was acquired (e.g. `"In person"`, `"Mail-in"`). Optional, may be empty string. |
 | `condition` | string | Grade: one of `"Mint"`, `"Near Mint"`, `"Excellent"`, `"Very Good"`, `"Good"`, `"Fair"`, `"Poor"`, or `""`. Optional. |
 | `location` | string | Physical storage location. Optional, may be empty string. |
-| `imgs` | string[] | Array of base64 JPEG data URLs. Empty array means no photos. First element is the cover image. |
+| `imgs` | string[] | Array of base64 JPEG data URLs. Empty array means no photos. First element is the cover image. Held in memory on each item, but persisted to **IndexedDB** rather than `localStorage` (see [Data Storage](#data-storage)). |
 
 ---
 
@@ -865,7 +883,7 @@ Each item is a JavaScript object with the following fields:
 ### No External Dependencies
 
 The app uses only:
-- Native browser APIs (`localStorage`, `fetch`, `FileReader`, `HTMLCanvasElement`)
+- Native browser APIs (`localStorage`, `IndexedDB`, `fetch`, `FileReader`, `HTMLCanvasElement`)
 - Vanilla JavaScript (ES2017+, using `async/await`)
 - Inline CSS with custom properties
 
@@ -964,7 +982,7 @@ let viewMode = false;          // true when viewing a shared collection
 let viewLocalCurrency = null;  // the sharer's local currency, used for conversion
 ```
 
-`getLocalCurrency()` returns `viewLocalCurrency` when `viewMode` is true, transparently making the exchange rate system use the sharer's currency without touching `localStorage`. When `exitViewMode()` is called, both variables are reset and `load()` restores items from localStorage.
+`getLocalCurrency()` returns `viewLocalCurrency` when `viewMode` is true, transparently making the exchange rate system use the sharer's currency without touching `localStorage`. When `exitViewMode()` is called, both variables are reset and the now-async `load()` is awaited to restore your own items (metadata from `localStorage`, photos from IndexedDB).
 
 ### hashchange Listener
 
