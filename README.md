@@ -51,7 +51,7 @@ python3 -m http.server 4200
 # then open http://localhost:4200
 ```
 
-The app is blank on first launch. Click **+ Add Item** in the header to add your first piece.
+The app is blank on first launch. The empty state shows two buttons: **+ Add Item** to begin building your own collection, and **Load Demo Collection** to instantly populate the gallery with a sample set of items so you can explore the app before adding your own data.
 
 ---
 
@@ -498,6 +498,7 @@ Four row buttons, each with its own `(i)` tooltip on the right:
 - **Import Collection** — opens a file picker to load a previously exported `.json` file, **replacing** the current collection. See [Import & Export](#import--export).
 - **Merge Import** — opens a file picker to load a `.json` file and **add** its items to the existing collection without replacing anything. Useful for combining collections. See [Import & Export](#import--export).
 - **Copy Share Link** — uploads the collection to dpaste.com and copies a short shareable URL to the clipboard. See [Sharing a Collection](#sharing-a-collection).
+- **Reset Collection** — permanently deletes your entire collection (items and photos) from both localStorage and IndexedDB, and returns the gallery to the empty state. A confirmation dialog is shown first. Separated from the other buttons by a divider and labelled in red to signal it is destructive. Export a backup first if you want to keep your data.
 
 > ⚠️ In [View Mode](#view-mode) the Data tab shows a single **Save as My Collection** button instead of the backup and share buttons.
 

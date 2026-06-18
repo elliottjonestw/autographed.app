@@ -1624,6 +1624,18 @@
             </div>
             <div class="tip-box">⚠️ Uploads your collection publicly to dpaste.com and copies a shareable URL to the clipboard.</div>
           </div>
+          <div class="tip-container" style="margin-top:6px;border-top:1px solid var(--border);padding-top:10px">
+            <div class="ctrl-row">
+              <button class="settings-row-btn" style="color:var(--red)" onclick="resetCollection()">
+                <span class="settings-row-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+                </span>
+                Reset Collection
+              </button>
+              <button class="tip-btn" onclick="toggleTip(this)">i</button>
+            </div>
+            <div class="tip-box">⚠️ Permanently deletes your entire collection. Export a backup first if you want to keep your data.</div>
+          </div>
         </div>
         <div class="fg" id="settingsViewSection" style="display:none">
           <div class="tip-container">
@@ -2360,7 +2372,7 @@
           <div class="empty-icon">✍️</div>
           <div class="empty-title">${items.length ? 'No matches' : 'Your collection is empty'}</div>
           <div class="empty-sub">${items.length ? 'Try a different search term' : 'Add your first autograph to get started'}</div>
-          ${!items.length ? '<button class="btn-add" onclick="openAdd()" style="margin:0 auto">+ Add Item</button>' : ''}
+          ${!items.length ? '<div style="display:flex;gap:10px;justify-content:center"><button class="btn-add" onclick="openAdd()">+ Add Item</button><button class="btn-secondary" style="height:36px" onclick="loadDemoData()">Load Demo Collection</button></div>' : ''}
         </div>`;
       return;
     }
@@ -2835,6 +2847,40 @@
     };
     reader.readAsText(file);
     e.target.value = '';
+  }
+
+  async function resetCollection() {
+    if (!confirm('Delete your entire collection? This cannot be undone.')) return;
+    items = [];
+    customOrder = [];
+    localStorage.removeItem(KEY);
+    localStorage.removeItem('ag_custom_order');
+    if (!idbBroken && window.indexedDB) {
+      try { await idbSyncImages([]); } catch {}
+    }
+    render();
+    closeSettings();
+    toast('Collection cleared');
+  }
+
+  async function loadDemoData() {
+    try {
+      const resp = await fetch('./sample-collection.json');
+      if (!resp.ok) throw new Error('not found');
+      const parsed   = await resp.json();
+      const data     = Array.isArray(parsed) ? parsed : parsed.items;
+      const currency = Array.isArray(parsed) ? null   : parsed.currency;
+      if (!Array.isArray(data)) throw new Error('bad format');
+      if (!confirm(`Load ${data.length} sample items? This will replace your current collection.`)) return;
+      items = data.map(migrateItem);
+      persist();
+      if (currency) setLocalCurrency(currency);
+      if (parsed.settings) applySettings(parsed.settings);
+      render();
+      toast(`Loaded ${data.length} demo items`);
+    } catch {
+      toast('⚠️ Could not load demo data — make sure sample-collection.json is in the same folder');
+    }
   }
 
   function mergeImport(e) {
