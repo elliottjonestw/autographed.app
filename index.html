@@ -1648,6 +1648,18 @@
             </div>
             <div class="tip-box">⚠️ Uploads your collection publicly to dpaste.com and copies a shareable URL to the clipboard.</div>
           </div>
+          <div class="tip-container" style="margin-top:6px">
+            <div class="ctrl-row">
+              <button class="settings-row-btn" onclick="exportCSV()">
+                <span class="settings-row-icon">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                </span>
+                Download CSV
+              </button>
+              <button class="tip-btn" onclick="toggleTip(this)">i</button>
+            </div>
+            <div class="tip-box">Downloads your collection as a CSV spreadsheet. Includes all metadata fields. Photos are not included.</div>
+          </div>
           <div class="tip-container" style="margin-top:6px;border-top:1px solid var(--border);padding-top:10px">
             <div class="ctrl-row">
               <button class="settings-row-btn" style="color:var(--red)" onclick="resetCollection()">
@@ -2895,6 +2907,53 @@
     a.click();
     URL.revokeObjectURL(a.href);
     toast('Collection exported');
+  }
+
+  function exportCSV() {
+    if (!items.length) { toast('Nothing to export'); return; }
+    const currency = localStorage.getItem('ag_currency') || '';
+    const headers = [
+      'Signer(s)', 'Character', 'Film / Show', 'Item Type',
+      'Cert #', 'Cert Company', 'Condition',
+      `Paid (${currency})`, `Est. Value (${currency})`, 'Value URL',
+      'Tags', 'Signing Event', 'Signing Date', 'Acquired How',
+      'Location', 'Notes', 'Date Added',
+    ];
+    function cell(v) {
+      const s = v == null ? '' : String(v);
+      return (s.includes(',') || s.includes('"') || s.includes('\n'))
+        ? '"' + s.replace(/"/g, '""') + '"'
+        : s;
+    }
+    const rows = [headers.map(cell).join(',')];
+    items.forEach(it => {
+      rows.push([
+        it.signers && it.signers.length ? it.signers.join('; ') : (it.name || ''),
+        it.character    || '',
+        it.film         || '',
+        it.itemType     || '',
+        it.certNum      || '',
+        it.certCompany  || '',
+        it.condition    || '',
+        it.paid         || '',
+        it.value        || '',
+        it.valueUrl     || '',
+        (it.tags || []).join('; '),
+        it.signingEvent || '',
+        it.signingDate  || '',
+        it.acquiredHow  || '',
+        it.location     || '',
+        it.notes        || '',
+        it.added ? new Date(it.added).toISOString().slice(0, 10) : '',
+      ].map(cell).join(','));
+    });
+    const blob = new Blob([rows.join('\r\n')], { type: 'text/csv' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `autogallery-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('CSV downloaded');
   }
 
   function importData(e) {
