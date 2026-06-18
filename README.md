@@ -251,7 +251,7 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 | **Est. Value** | Number input | Optional. Current estimated market value, in your **local currency**. |
 | **Value Source URL** | Text input | Optional. A URL linking to a source for the estimated value (e.g. eBay sold listing). |
 | **Notes** | Textarea | Optional. Free-form notes. Resizable vertically. |
-| **Tags** | Tag input | Optional. Type a tag and press **Enter** or **,** to add it as a chip. Press **Backspace** on an empty input to remove the last tag. Click **×** on a chip to remove it. Multiple tags per item are supported. |
+| **Tags** | Tag input | Optional. Type a tag and press **Enter** or **,** to add it as a chip. Press **Backspace** on an empty input to remove the last tag. Click **×** on a chip to remove it. Multiple tags per item are supported. As you type, a dropdown suggests matching tags already used elsewhere in your collection — click a suggestion or navigate with **↑ ↓** and press **Enter** to select, **Escape** to dismiss. |
 | **Photo** | File upload / drag-and-drop | Optional. See below. |
 
 ### Advanced Fields

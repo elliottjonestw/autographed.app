@@ -767,6 +767,27 @@
       padding: 2px 0;
     }
     .tag-text-input::placeholder { color: var(--sub); opacity: 1; }
+    .tag-suggest-wrap { position: relative; }
+    .tag-suggestions {
+      position: absolute;
+      top: calc(100% + 3px);
+      left: 0; right: 0;
+      background: var(--surface);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.12);
+      z-index: 200;
+      overflow: hidden;
+      display: none;
+    }
+    .tag-suggestion-item {
+      padding: 7px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .tag-suggestion-item:hover,
+    .tag-suggestion-item.ts-active { background: var(--border); }
     .form-tag-chip {
       display: inline-flex;
       align-items: center;
@@ -1414,8 +1435,11 @@
 
       <div class="fg">
         <label class="flabel">Tags</label>
-        <div class="tag-input-wrap" id="tagInputWrap" onclick="document.getElementById('tagTextInput').focus()">
-          <input type="text" id="tagTextInput" class="tag-text-input" placeholder="Type a tag and press Enter…" onkeydown="tagKeydown(event)">
+        <div class="tag-suggest-wrap">
+          <div class="tag-input-wrap" id="tagInputWrap" onclick="document.getElementById('tagTextInput').focus()">
+            <input type="text" id="tagTextInput" class="tag-text-input" placeholder="Type a tag and press Enter…" onkeydown="tagKeydown(event)" oninput="tagInput(event)" onblur="closeTagSuggestions()">
+          </div>
+          <div class="tag-suggestions" id="tagSuggestions"></div>
         </div>
       </div>
 
@@ -2534,16 +2558,66 @@
   }
 
   function tagKeydown(e) {
-    const input = e.target;
+    const input  = e.target;
+    const box    = document.getElementById('tagSuggestions');
+    const isOpen = box.style.display !== 'none';
+    const suggs  = box.querySelectorAll('.tag-suggestion-item');
+    const active = box.querySelector('.ts-active');
+
+    if (isOpen && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+      e.preventDefault();
+      if (active) active.classList.remove('ts-active');
+      let next;
+      if (e.key === 'ArrowDown') next = active ? active.nextElementSibling : suggs[0];
+      else                        next = active ? active.previousElementSibling : suggs[suggs.length - 1];
+      if (next) next.classList.add('ts-active');
+      return;
+    }
+    if (e.key === 'Escape') { box.style.display = 'none'; return; }
+
     if (e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
+      if (isOpen && active) { selectTagSuggestion(active.dataset.tag); return; }
       const val = input.value.trim().replace(/,/g, '');
       if (val && !formTags.includes(val)) { formTags.push(val); renderFormTags(); }
       input.value = '';
+      box.style.display = 'none';
     } else if (e.key === 'Backspace' && input.value === '' && formTags.length) {
       formTags.pop();
       renderFormTags();
     }
+  }
+
+  function tagInput(e) {
+    const val = e.target.value.trim().toLowerCase();
+    const box = document.getElementById('tagSuggestions');
+    if (!val) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    const existing = new Set();
+    items.forEach(it => (it.tags || []).forEach(t => existing.add(t)));
+    const matches = [...existing]
+      .filter(t => t.toLowerCase().includes(val) && !formTags.includes(t))
+      .sort()
+      .slice(0, 8);
+    if (!matches.length) { box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.innerHTML = matches
+      .map(t => `<div class="tag-suggestion-item" data-tag="${escHtml(t)}" onmousedown="event.preventDefault();selectTagSuggestion(this.dataset.tag)">${escHtml(t)}</div>`)
+      .join('');
+    box.style.display = 'block';
+  }
+
+  function selectTagSuggestion(tag) {
+    if (!formTags.includes(tag)) { formTags.push(tag); renderFormTags(); }
+    const input = document.getElementById('tagTextInput');
+    const box   = document.getElementById('tagSuggestions');
+    input.value = '';
+    box.style.display = 'none';
+    box.innerHTML = '';
+    input.focus();
+  }
+
+  function closeTagSuggestions() {
+    const box = document.getElementById('tagSuggestions');
+    box.style.display = 'none';
   }
 
   function removeFormTag(i) { formTags.splice(i, 1); renderFormTags(); }
