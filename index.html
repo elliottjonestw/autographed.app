@@ -1493,44 +1493,63 @@
         <input type="file" accept="image/*" multiple id="imgInput" onchange="handleImg(event)" style="display:none">
       </div>
 
+      <div class="fg">
+        <label class="flabel" data-i18n="lbl_item_type">Item Type</label>
+        <select class="finput" id="fItemType" onchange="updateItemTypeFields()">
+          <option value="">— None —</option>
+          <optgroup label="Film &amp; TV">
+            <option value="Photo">Photo</option>
+            <option value="Poster">Poster</option>
+            <option value="Prop">Prop</option>
+            <option value="Script">Script</option>
+            <option value="Funko Pop">Funko Pop</option>
+            <option value="Lithograph">Lithograph</option>
+            <option value="Program">Program</option>
+            <option value="Film / TV Card">Trading Card</option>
+          </optgroup>
+          <optgroup label="Sports">
+            <option value="Jersey">Jersey</option>
+            <option value="Baseball">Baseball</option>
+            <option value="Bat">Bat</option>
+            <option value="Helmet">Helmet</option>
+            <option value="Mini Helmet">Mini Helmet</option>
+            <option value="Football">Football</option>
+            <option value="Basketball">Basketball</option>
+            <option value="Hockey Puck">Hockey Puck</option>
+            <option value="Trading Card">Trading Card</option>
+            <option value="Glove">Glove</option>
+            <option value="Shoe / Cleat">Shoe / Cleat</option>
+          </optgroup>
+          <optgroup label="Music">
+            <option value="Album / Record">Album / Record</option>
+            <option value="CD">CD</option>
+            <option value="Vinyl">Vinyl</option>
+            <option value="Instrument">Instrument</option>
+            <option value="Setlist">Setlist</option>
+          </optgroup>
+          <optgroup label="Books &amp; Literature">
+            <option value="Book">Book</option>
+            <option value="Comic">Comic</option>
+          </optgroup>
+          <optgroup label="Other">
+            <option value="Magazine">Magazine</option>
+            <option value="Canvas">Canvas</option>
+            <option value="Other">Other</option>
+          </optgroup>
+        </select>
+      </div>
+
       <div id="multiSignerSection">
         <div class="fg" id="signersList"></div>
         <div class="fg">
-          <label class="flabel" data-i18n="lbl_character">Character</label>
+          <label class="flabel" id="fCharacterLabel">Character</label>
           <input class="finput" id="fCharacter" placeholder="e.g. Darth Vader">
         </div>
       </div>
 
       <div class="fg">
-        <label class="flabel" data-i18n="lbl_film">Film / Show</label>
+        <label class="flabel" id="fFilmLabel">Film / Show</label>
         <input class="finput" id="fFilm" placeholder="e.g. A New Hope">
-      </div>
-
-      <div class="fg">
-        <label class="flabel" data-i18n="lbl_item_type">Item Type</label>
-        <select class="finput" id="fItemType">
-          <option value="">— None —</option>
-          <option value="Photo">Photo</option>
-          <option value="Poster">Poster</option>
-          <option value="Helmet">Helmet</option>
-          <option value="Jersey">Jersey</option>
-          <option value="Baseball">Baseball</option>
-          <option value="Basketball">Basketball</option>
-          <option value="Football">Football</option>
-          <option value="Bat">Bat</option>
-          <option value="Trading Card">Trading Card</option>
-          <option value="Funko Pop">Funko Pop</option>
-          <option value="Book">Book</option>
-          <option value="Comic">Comic</option>
-          <option value="Magazine">Magazine</option>
-          <option value="Record / Album">Record / Album</option>
-          <option value="Canvas">Canvas</option>
-          <option value="Lithograph">Lithograph</option>
-          <option value="Glove">Glove</option>
-          <option value="Shoe">Shoe</option>
-          <option value="Program">Program</option>
-          <option value="Other">Other</option>
-        </select>
       </div>
 
       <div class="frow">
@@ -2064,6 +2083,11 @@
       lbl_local_currency: 'Local Currency', lbl_display_currency: 'Display Currency',
       lbl_exchange_rate: 'Exchange Rate',
       tbl_signer: 'Signer', tbl_character: 'Character', tbl_film: 'Film / Show',
+      fld_player: 'Player', fld_team: 'Team',
+      fld_artist: 'Artist', fld_album: 'Album', fld_band: 'Band / Group', fld_tour: 'Tour / Show',
+      fld_author: 'Author', fld_title: 'Title',
+      fld_subject: 'Subject', fld_publication: 'Publication',
+      fld_specific1: 'Detail 1', fld_specific2: 'Detail 2',
       tip_language: 'Sets the display language for the app.',
       tip_appearance: 'Switches between light and dark color schemes. Your choice is saved automatically.',
       tip_photo_format: 'Sets the aspect ratio of image cards to match your memorabilia — e.g. 8×10 photos, index cards, or trading cards.',
@@ -2147,6 +2171,11 @@
       lbl_local_currency: '本地貨幣', lbl_display_currency: '顯示貨幣',
       lbl_exchange_rate: '匯率',
       tbl_signer: '簽名者', tbl_character: '角色', tbl_film: '電影／影集',
+      fld_player: '球員 / 選手', fld_team: '球隊 / 隊伍',
+      fld_artist: '藝術家 / 歌手', fld_album: '專輯', fld_band: '樂團 / 團體', fld_tour: '巡演 / 演出',
+      fld_author: '作者', fld_title: '標題 / 名稱',
+      fld_subject: '主體', fld_publication: '刊物',
+      fld_specific1: '詳細 1', fld_specific2: '詳細 2',
       tip_language: '設定應用程式的顯示語言。',
       tip_appearance: '在淺色與深色配色之間切換。您的選擇將自動儲存。',
       tip_photo_format: '設定圖片卡的比例以符合您的收藏品，例如 8×10 相片、索引卡或球員卡。',
@@ -2167,6 +2196,64 @@
       tip_exchange_rate: '顯示本地貨幣與顯示貨幣之間的目前匯率。匯率快取有效期為 1 小時。',
     },
   };
+
+  const ITEM_TYPE_FIELDS = {
+    // Film & TV → Character + Film / Show
+    'Photo':          { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Poster':         { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Prop':           { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Script':         { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Funko Pop':      { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Lithograph':     { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Program':        { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    'Film / TV Card': { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+    // Sports → Player + Team
+    'Jersey':         { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Baseball':       { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Bat':            { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Helmet':         { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Tom Brady',        ph2: 'e.g. New England Patriots' },
+    'Mini Helmet':    { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Tom Brady',        ph2: 'e.g. New England Patriots' },
+    'Football':       { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Tom Brady',        ph2: 'e.g. New England Patriots' },
+    'Basketball':     { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. LeBron James',     ph2: 'e.g. Los Angeles Lakers' },
+    'Hockey Puck':    { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Wayne Gretzky',    ph2: 'e.g. Edmonton Oilers' },
+    'Trading Card':   { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Glove':          { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Shoe / Cleat':   { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. LeBron James',     ph2: 'e.g. Los Angeles Lakers' },
+    // Music → Artist + Album / Band / Tour
+    'Album / Record': { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
+    'CD':             { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
+    'Vinyl':          { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
+    'Instrument':     { f1: 'fld_artist',    f2: 'fld_band',       ph1: 'e.g. John Lennon',      ph2: 'e.g. The Beatles' },
+    'Setlist':        { f1: 'fld_artist',    f2: 'fld_tour',       ph1: 'e.g. Taylor Swift',     ph2: 'e.g. Eras Tour' },
+    // Books & Literature → Author + Title
+    'Book':           { f1: 'fld_author',    f2: 'fld_title',      ph1: 'e.g. Stephen King',     ph2: 'e.g. The Shining' },
+    'Comic':          { f1: 'fld_author',    f2: 'fld_title',      ph1: 'e.g. Stan Lee',         ph2: 'e.g. The Amazing Spider-Man' },
+    // General
+    'Magazine':       { f1: 'fld_subject',   f2: 'fld_publication',ph1: 'e.g. Michael Jordan',   ph2: 'e.g. Sports Illustrated' },
+    'Canvas':         { f1: 'fld_subject',   f2: 'fld_title',      ph1: '',                       ph2: '' },
+    'Other':          { f1: 'fld_specific1', f2: 'fld_specific2',  ph1: '',                       ph2: '' },
+    // Backwards-compat aliases for old free-text values
+    'Record / Album': { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
+    'Shoe':           { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. LeBron James',     ph2: 'e.g. Los Angeles Lakers' },
+    'Index Card':     { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
+  };
+
+  function getItemTypeFields(type) {
+    return ITEM_TYPE_FIELDS[type] || { f1: 'lbl_character', f2: 'lbl_film', ph1: '', ph2: '' };
+  }
+
+  function updateItemTypeFields() {
+    const type   = (document.getElementById('fItemType') || {}).value;
+    const fields = getItemTypeFields(type);
+    const lbl1   = document.getElementById('fCharacterLabel');
+    const lbl2   = document.getElementById('fFilmLabel');
+    const inp1   = document.getElementById('fCharacter');
+    const inp2   = document.getElementById('fFilm');
+    if (lbl1) lbl1.textContent = t(fields.f1);
+    if (lbl2) lbl2.textContent = t(fields.f2);
+    if (inp1) inp1.placeholder = fields.ph1;
+    if (inp2) inp2.placeholder = fields.ph2;
+  }
 
   const SUPPORTED_LANGS = ['en', 'zh-TW'];
 
@@ -2209,6 +2296,7 @@
     });
     const langSel = document.getElementById('settingsLang');
     if (langSel) langSel.value = getLang();
+    updateItemTypeFields();
   }
 
   function getLocalCurrency()   { return (viewMode && viewLocalCurrency) ? viewLocalCurrency : (localStorage.getItem('ag_currency') || 'TWD'); }
@@ -2495,12 +2583,25 @@
       item.imgs = item.img ? [item.img] : [];
       delete item.img;
     }
+    if (Object.prototype.hasOwnProperty.call(item, 'character')) {
+      item.detail1 = item.detail1 || item.character;
+      delete item.character;
+    }
+    if (Object.prototype.hasOwnProperty.call(item, 'film')) {
+      item.detail2 = item.detail2 || item.film;
+      delete item.film;
+    }
     return item;
   }
 
   async function load() {
     let raw = [];
-    try { raw = JSON.parse(localStorage.getItem(KEY) || '[]').map(migrateItem); }
+    let needsFieldMigration = false;
+    try {
+      const rawData = JSON.parse(localStorage.getItem(KEY) || '[]');
+      needsFieldMigration = rawData.some(it => 'character' in it || 'film' in it);
+      raw = rawData.map(migrateItem);
+    }
     catch { raw = []; }
     try { customOrder = JSON.parse(localStorage.getItem('ag_custom_order') || '[]'); }
     catch { customOrder = []; }
@@ -2527,7 +2628,7 @@
 
     items = raw;
 
-    if (needsMigration && !idbBroken) persist();
+    if ((needsMigration || needsFieldMigration) && !idbBroken) persist();
   }
 
   function persist() {
@@ -2639,7 +2740,7 @@
   }
 
   /* ── Filter modal ── */
-  let activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), film: new Set(), signer: new Set() };
+  let activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), detail2: new Set(), signer: new Set() };
 
   function openFilterModal() {
     buildFilterModal();
@@ -2659,7 +2760,7 @@
       if (i.acquiredHow)  allAcquired.add(i.acquiredHow);
       if (i.signingEvent) allEvents.add(i.signingEvent);
       if (i.location)     allLocations.add(i.location);
-      if (i.film)         allFilms.add(i.film);
+      if (i.detail2)      allFilms.add(i.detail2);
       (i.signers || [i.name]).filter(Boolean).forEach(s => allSigners.add(s));
     });
 
@@ -2672,7 +2773,7 @@
     if (allAcquired.size)   sections.push({ key: 'acquiredHow',  label: t('filt_acquired'),    values: [...allAcquired].sort() });
     if (allEvents.size)     sections.push({ key: 'signingEvent', label: t('filt_event'),       values: [...allEvents].sort() });
     if (allLocations.size)  sections.push({ key: 'location',     label: t('filt_location'),    values: [...allLocations].sort() });
-    if (allFilms.size)      sections.push({ key: 'film',         label: t('filt_film'),        values: [...allFilms].sort() });
+    if (allFilms.size)      sections.push({ key: 'detail2',      label: t('filt_film'),        values: [...allFilms].sort() });
     if (allSigners.size)    sections.push({ key: 'signer',       label: t('filt_signer'),      values: [...allSigners].sort() });
 
     const body = document.getElementById('filterBody');
@@ -2704,7 +2805,7 @@
   }
 
   function clearAllFilters() {
-    activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), film: new Set(), signer: new Set() };
+    activeFilters = { tags: new Set(), itemType: new Set(), condition: new Set(), certCompany: new Set(), acquiredHow: new Set(), signingEvent: new Set(), location: new Set(), detail2: new Set(), signer: new Set() };
     updateFilterBtn();
     buildFilterModal();
     render();
@@ -2726,8 +2827,8 @@
     let res = q
       ? items.filter(i =>
           (i.signers ? i.signers.join(' ') : (i.name || '')).toLowerCase().includes(q) ||
-          (i.character    || '').toLowerCase().includes(q) ||
-          (i.film         || '').toLowerCase().includes(q) ||
+          (i.detail1      || '').toLowerCase().includes(q) ||
+          (i.detail2      || '').toLowerCase().includes(q) ||
           (i.certNum      || '').toLowerCase().includes(q) ||
           (i.itemType     || '').toLowerCase().includes(q) ||
           (i.signingEvent || '').toLowerCase().includes(q) ||
@@ -2747,7 +2848,7 @@
         if (af.acquiredHow.size  && !af.acquiredHow.has(i.acquiredHow || ''))                             return false;
         if (af.signingEvent.size && !af.signingEvent.has(i.signingEvent || ''))                           return false;
         if (af.location.size     && !af.location.has(i.location || ''))                                   return false;
-        if (af.film.size         && !af.film.has(i.film || ''))                                           return false;
+        if (af.detail2.size      && !af.detail2.has(i.detail2 || ''))                                     return false;
         if (af.signer.size       && !(i.signers || [i.name]).filter(Boolean).some(s => af.signer.has(s))) return false;
         return true;
       });
@@ -2844,8 +2945,8 @@
           ${imgHtml}
           <div class="card-body">
             <div class="card-name">${item.signers && item.signers.length > 1 ? t('multiple_signers') : escHtml(item.signers ? item.signers[0] : item.name)}</div>
-            ${item.character ? `<div class="card-character">${escHtml(item.character)}</div>` : ''}
-            ${item.film ? `<div class="card-character">${escHtml(item.film)}</div>` : ''}
+            ${item.detail1 ? `<div class="card-character">${escHtml(item.detail1)}</div>` : ''}
+            ${item.detail2 ? `<div class="card-character">${escHtml(item.detail2)}</div>` : ''}
             ${rows ? `<hr class="card-divider">${rows}` : ''}
           </div>
         </div>`;
@@ -2878,8 +2979,8 @@
     document.getElementById('editId').value    = id;
     document.getElementById('formTitle').textContent = t('form_edit_title');
     renderSignersList(item.signers && item.signers.length ? item.signers : [item.name || '']);
-    document.getElementById('fCharacter').value = item.character || '';
-    document.getElementById('fFilm').value      = item.film      || '';
+    document.getElementById('fCharacter').value = item.detail1 || '';
+    document.getElementById('fFilm').value      = item.detail2 || '';
     document.getElementById('fCertNum').value       = item.certNum     || '';
     document.getElementById('fCertCompany').value  = item.certCompany || '';
     document.getElementById('fPaid').value      = item.paid      || '';
@@ -2887,6 +2988,7 @@
     document.getElementById('fValueUrl').value  = item.valueUrl  || '';
     document.getElementById('fNotes').value        = item.notes        || '';
     document.getElementById('fItemType').value     = item.itemType     || '';
+    updateItemTypeFields();
     document.getElementById('fSigningEvent').value = item.signingEvent || '';
     document.getElementById('fSigningDate').value  = item.signingDate  || '';
     document.getElementById('fAcquiredHow').value  = item.acquiredHow  || '';
@@ -2901,9 +3003,11 @@
   }
 
   function resetForm() {
-    ['fCharacter','fFilm','fItemType','fCertNum','fCertCompany','fPaid','fValue','fValueUrl','fNotes',
+    ['fCharacter','fFilm','fCertNum','fCertCompany','fPaid','fValue','fValueUrl','fNotes',
      'fSigningEvent','fSigningDate','fAcquiredHow','fCondition','fLocation']
       .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('fItemType').value = 'Photo';
+    updateItemTypeFields();
     renderSignersList(['']);
     pendingImgs = [];
     renderImgThumbnails();
@@ -3055,8 +3159,8 @@
     const data = {
       name    : vals[0],
       signers : vals,
-      character : document.getElementById('fCharacter').value.trim(),
-      film      : document.getElementById('fFilm').value.trim(),
+      detail1   : document.getElementById('fCharacter').value.trim(),
+      detail2   : document.getElementById('fFilm').value.trim(),
       certNum     : document.getElementById('fCertNum').value.trim(),
       certCompany : document.getElementById('fCertCompany').value,
       paid      : document.getElementById('fPaid').value || null,
@@ -3154,8 +3258,9 @@
       const signerName = item.signers ? item.signers[0] : item.name;
       html += detailRow(t('det_signer'), `<a class="card-link" href="${escHtml(signerUrl(signerName))}" target="_blank" rel="noopener">${escHtml(signerName)}</a>`);
     }
-    if (item.character) html += detailRow(t('det_character'), escHtml(item.character));
-    if (item.film)      html += detailRow(t('det_film'), `<a class="card-link" href="${escHtml(filmUrl(item.film))}" target="_blank" rel="noopener">${escHtml(item.film)}</a>`);
+    const _tf = getItemTypeFields(item.itemType);
+    if (item.detail1) html += detailRow(t(_tf.f1), escHtml(item.detail1));
+    if (item.detail2) html += detailRow(t(_tf.f2), `<a class="card-link" href="${escHtml(filmUrl(item.detail2))}" target="_blank" rel="noopener">${escHtml(item.detail2)}</a>`);
     if (item.itemType)     html += detailRow(t('det_item_type'), escHtml(item.itemType));
     if (item.condition)    html += detailRow(t('det_condition'), escHtml(item.condition));
     if (item.certNum) {
@@ -3218,9 +3323,9 @@
 
     let charFilm = '';
     if (!isMult) {
-      if (item.character && item.film) charFilm = ` (${item.character} in ${item.film})`;
-      else if (item.character)         charFilm = ` (${item.character})`;
-      else if (item.film)              charFilm = ` (${item.film})`;
+      if (item.detail1 && item.detail2) charFilm = ` (${item.detail1} in ${item.detail2})`;
+      else if (item.detail1)            charFilm = ` (${item.detail1})`;
+      else if (item.detail2)            charFilm = ` (${item.detail2})`;
     }
 
     const paras = [`${signerStr}${charFilm} signed ${type}.`];
@@ -3363,7 +3468,7 @@
     if (!items.length) { toast('Nothing to export'); return; }
     const currency = localStorage.getItem('ag_currency') || '';
     const headers = [
-      'Signer(s)', 'Character', 'Film / Show', 'Item Type',
+      'Signer(s)', 'Detail 1', 'Detail 2', 'Item Type',
       'Cert #', 'Cert Company', 'Condition',
       `Paid (${currency})`, `Est. Value (${currency})`, 'Value URL',
       'Tags', 'Signing Event', 'Signing Date', 'Acquired How',
@@ -3379,8 +3484,8 @@
     items.forEach(it => {
       rows.push([
         it.signers && it.signers.length ? it.signers.join('; ') : (it.name || ''),
-        it.character    || '',
-        it.film         || '',
+        it.detail1      || '',
+        it.detail2      || '',
         it.itemType     || '',
         it.certNum      || '',
         it.certCompany  || '',
@@ -3537,8 +3642,8 @@
       return `<tr onclick="openDetail('${item.id}')">
         <td>${thumb}</td>
         <td><div class="tbl-name">${(() => { const sn = item.signers ? item.signers[0] : item.name; return item.signers && item.signers.length > 1 ? 'Multiple Signers' : `<a class="card-link" href="${escHtml(signerUrl(sn))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(sn)}</a>`; })()}</div></td>
-        <td>${escHtml(item.character) || '—'}</td>
-        <td>${item.film ? `<a class="card-link" href="${escHtml(filmUrl(item.film))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.film)}</a>` : '—'}</td>
+        <td>${escHtml(item.detail1) || '—'}</td>
+        <td>${item.detail2 ? `<a class="card-link" href="${escHtml(filmUrl(item.detail2))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${escHtml(item.detail2)}</a>` : '—'}</td>
         <td>${certCell}</td>
         <td>${item.paid ? `<span class="priv-val">${escHtml(fmt(item.paid))}</span>` : '—'}</td>
         <td>${valueCell}</td>
@@ -3888,7 +3993,7 @@
       nameEl.textContent = item.signers && item.signers.length > 1
         ? 'Multiple Signers'
         : (item.name || '');
-      subEl.textContent = [item.character, item.film].filter(Boolean).join(' · ');
+      subEl.textContent = [item.detail1, item.detail2].filter(Boolean).join(' · ');
 
       img.classList.add('visible');
 
@@ -4008,8 +4113,8 @@
         ${imgHtml}
         <div class="pv-card-body">
           <div class="pv-card-name">${escHtml(name)}</div>
-          ${it.character ? `<div class="pv-card-sub">${escHtml(it.character)}</div>` : ''}
-          ${it.film ? `<div class="pv-card-sub">${escHtml(it.film)}</div>` : ''}
+          ${it.detail1 ? `<div class="pv-card-sub">${escHtml(it.detail1)}</div>` : ''}
+          ${it.detail2 ? `<div class="pv-card-sub">${escHtml(it.detail2)}</div>` : ''}
           ${rows ? `<hr class="pv-card-divider">${rows}` : ''}
         </div>
       </div>`;

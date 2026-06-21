@@ -107,8 +107,8 @@ Below the stats bar is a row of controls for filtering and viewing the collectio
 A text input with a magnifying-glass icon. Filters items in real time (on every keystroke) across:
 
 - Signer name(s) — all signers are searched for multi-signer items
-- Character name
-- Film/show title
+- Detail 1 (e.g. Character, Player, Artist, Author — depends on item type)
+- Detail 2 (e.g. Film/Show, Team, Album, Title — depends on item type)
 - Tags
 - Notes
 
@@ -131,7 +131,7 @@ The modal shows sections populated from values that actually exist in the curren
 | **Acquisition Method** | All acquisition methods in the collection |
 | **Signing Event** | All signing events or venues in the collection |
 | **Location** | All physical storage locations in the collection |
-| **Film / Show** | All film and show titles in the collection |
+| **Film / Show** | All Detail 2 values in the collection (film/show titles, team names, album titles, etc.) |
 | **Signer** | All signer names in the collection |
 
 Each option is a toggleable chip. Click a chip to select it (turns gold); click again to deselect. **Multiple chips can be selected simultaneously.**
@@ -197,8 +197,8 @@ Each card from top to bottom:
 
 2. **Card body** (below the image):
    - **Signer name** — bold, 14px. Plain text (not a link) in the grid view. For items with multiple signers, this shows **"Multiple Signers"** instead of individual names.
-   - **Character name** — smaller, muted color, on its own line. Plain text.
-   - **Film/show title** — smaller, muted color, on its own line below character name. Plain text.
+   - **Detail 1** (e.g. character name, player name) — smaller, muted color, on its own line. Plain text.
+   - **Detail 2** (e.g. film/show title, team name) — smaller, muted color, on its own line below Detail 1. Plain text.
    - A thin horizontal divider
    - **Cert** label + a gold clickable link to the authentication company's verification page (if a cert company is selected). Clicking the link **also copies the cert number to the clipboard** and shows a toast. The link click does **not** open the detail modal.
    - **Paid** label + value (or `—` if not set)
@@ -219,8 +219,8 @@ An alternative view available on desktop. Items are shown as rows in a sortable 
 |---|---|
 | (thumbnail) | 52×40px cropped thumbnail of the photo, or a placeholder icon |
 | **Signer** | Signer name as a clickable link (Wikipedia or IMDb per the Info Links setting), or **"Multiple Signers"** for multi-signer items |
-| **Character** | Character name, plain text |
-| **Film / Show** | Film or show title as a clickable link (Wikipedia or IMDb per the Info Links setting) |
+| **Detail 1** | First contextual field value (e.g. character name, player name, artist, author) — plain text |
+| **Detail 2** | Second contextual field value (e.g. film/show, team, album, title) — clickable link (Wikipedia or IMDb per the Info Links setting) |
 | **Paid** | Amount paid in display currency |
 | **Est. Value** | Estimated value in display currency, colored green (positive) or red (negative) relative to paid. If a value URL is set, the value is a clickable link that opens in a new tab. |
 | **ROI** | Whole-number percentage, green or red pill |
@@ -228,7 +228,7 @@ An alternative view available on desktop. Items are shown as rows in a sortable 
 | **Added** | Date the item was added, formatted as `MMM D, YYYY` |
 
 - Clicking any **row** opens the **Item Detail Modal** for that item.
-- Clicking the **Est. Value link**, **Cert link**, **Signer link**, or **Film link** opens the URL in a new tab without opening the detail modal (click propagation is stopped).
+- Clicking the **Est. Value link**, **Cert link**, **Signer link**, or **Detail 2 link** opens the URL in a new tab without opening the detail modal (click propagation is stopped).
 - Rows have a hover background highlight.
 
 ---
@@ -241,11 +241,12 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 
 | Field | Type | Notes |
 |---|---|---|
+| **Photos** | File upload / drag-and-drop | Optional. See [Photo Upload](#photo-upload) below. |
+| **Item Type** | Dropdown | Optional. The kind of memorabilia. Choose from a predefined grouped list (see [Item Types](#item-types) below). Defaults to **Photo** for new items. Filterable. |
+| **Detail 1** | Text input | Optional. First contextual field — label and placeholder change based on Item Type (e.g. "Character" for film/TV items, "Player" for sports items, "Artist" for music items). |
+| **Detail 2** | Text input | Optional. Second contextual field — label and placeholder change based on Item Type (e.g. "Film / Show", "Team", "Album"). The value is used as a Wikipedia or IMDb link in the table and detail views. |
 | **Signer 1** | Text input | Required. The first (or only) autograph signer's real name. |
 | **+ button** | Button | Adds a Signer 2 field. Each additional signer row has a − button to remove it. There is no upper limit on the number of signers. |
-| **Character** | Text input | Optional. Character name (e.g. "Darth Vader"). Applies to the item, not per signer. |
-| **Film / Show** | Text input | Optional. The title of the film or show. |
-| **Item Type** | Text input | Optional. The kind of memorabilia (e.g. "Photo", "Helmet", "Jersey", "Trading Card"). Filterable. |
 | **Cert #** | Text input | Optional. The authentication certificate number. |
 | **Cert Company** | Dropdown | Options: *(none)*, Beckett, PSA, JSA, SWAU. Controls the verification URL. |
 | **Paid** | Number input | Optional. What you paid, in your **local currency**. |
@@ -253,7 +254,6 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 | **Value Source URL** | Text input | Optional. A URL linking to a source for the estimated value (e.g. eBay sold listing). |
 | **Notes** | Textarea | Optional. Free-form notes. Resizable vertically. |
 | **Tags** | Tag input | Optional. Type a tag and press **Enter** or **,** to add it as a chip. Press **Backspace** on an empty input to remove the last tag. Click **×** on a chip to remove it. Multiple tags per item are supported. As you type, a dropdown suggests matching tags already used elsewhere in your collection — click a suggestion or navigate with **↑ ↓** and press **Enter** to select, **Escape** to dismiss. |
-| **Photo** | File upload / drag-and-drop | Optional. See below. |
 
 ### Advanced Fields
 
@@ -283,6 +283,26 @@ The form always shows a **Signer 1** field. Click the **+** button to the right 
 - **Sorting by name** — sorts by the first signer's name.
 
 Single-signer items (Signer 1 only) behave identically to the original behavior — the signer's name is shown normally everywhere.
+
+### Item Types
+
+The **Item Type** dropdown at the top of the form contains a predefined grouped list. Selecting a type automatically relabels the **Detail 1** and **Detail 2** fields with labels and placeholder examples appropriate for that type. Leaving Item Type blank shows no Detail 1 / Detail 2 fields by default.
+
+| Category | Item Types | Detail 1 label | Detail 2 label |
+|---|---|---|---|
+| **Film & TV** | Photo, Poster, Prop, Script, Funko Pop, Lithograph, Program, Film / TV Card | Character | Film / Show |
+| **Sports** | Jersey, Baseball, Bat, Helmet, Mini Helmet, Football, Basketball, Hockey Puck, Trading Card, Glove, Shoe / Cleat | Player | Team |
+| **Music** | Album / Record, CD, Vinyl | Artist | Album |
+| **Music** | Instrument | Artist | Band / Group |
+| **Music** | Setlist | Artist | Tour / Show |
+| **Books & Literature** | Book, Comic | Author | Title |
+| **Other** | Magazine | Subject | Publication |
+| **Other** | Canvas | Subject | Title |
+| **Other** | Other | Detail 1 | Detail 2 |
+
+> **Default:** New items default to **Photo** (Film & TV), showing the Character and Film / Show labels.
+
+The Detail 1 and Detail 2 labels also update instantly when you switch languages — they are always displayed in the current language.
 
 ### Photo Upload
 
@@ -321,8 +341,8 @@ Clicking any card (grid) or row (table) opens a read-only detail view for that i
 - **Photo thumbnail strip** — if the item has more than one photo, a row of 52×52 thumbnail chips appears directly below the main photo. Clicking a thumbnail swaps it into the main photo position. The active thumbnail is highlighted with a gold border.
 - All fields displayed as label/value rows in a table:
   - **Signer** — clickable link (Wikipedia or IMDb). For multi-signer items, individual **Signer 1 / Signer 2 / …** rows, each a link.
-  - Character — plain text
-  - Film / Show — clickable link (Wikipedia or IMDb)
+  - **Detail 1** — plain text; label reflects the item type (e.g. "Character", "Player", "Artist", "Author")
+  - **Detail 2** — clickable link (Wikipedia or IMDb); label reflects the item type (e.g. "Film / Show", "Team", "Album")
   - Item Type — plain text (only shown if set)
   - Condition — plain text (only shown if set)
   - Cert # — clickable link to the cert company's verification page. Clicking **also copies the cert number to the clipboard** and shows a toast confirmation.
@@ -347,10 +367,10 @@ A **Description** section appears at the bottom of every detail modal. It auto-g
 
 **Format:**
 
-> *[Signer(s)] ([Character] in [Film/Show]) signed [item type]. Professionally authenticated by [Cert Company] (Certificate #[Cert #]). The [item type] is in [condition] condition. The [item type] was signed at [Signing Event] on [Date Signed].*
+> *[Signer(s)] ([Detail 1] in [Detail 2]) signed [item type]. Professionally authenticated by [Cert Company] (Certificate #[Cert #]). The [item type] is in [condition] condition. The [item type] was signed at [Signing Event] on [Date Signed].*
 
 Rules:
-- The signer name and character/film parenthetical open the description. For multi-signer items the character parenthetical is omitted.
+- The signer name and Detail 1 / Detail 2 parenthetical open the description. For multi-signer items the parenthetical is omitted.
 - Item type is always lowercase (e.g. "photo", not "Photo").
 - The cert sentence is included only if a cert number is set. The condition sentence is included only if condition is set. The signing sentence is included only if a signing event or signing date is set — it uses whichever of the two are available.
 - If Notes are set they are appended at the end.
@@ -404,7 +424,7 @@ Only items that have at least one photo are included. The **first (cover) photo*
 Each slide fills the entire screen against a black background (`object-fit: contain` — no cropping). A caption overlay at the bottom shows:
 
 - **Signer name** — large, bold white text. Shows "Multiple Signers" for items with more than one signer.
-- **Character · Film/Show** — smaller, dimmed text below the name (omitted if neither field is set).
+- **Detail 1 · Detail 2** — smaller, dimmed text below the name (e.g. "Han Solo · Star Wars" or "Derek Jeter · New York Yankees"). Omitted if neither field is set.
 
 A thin **gold progress bar** runs along the very bottom edge of the screen and animates from left to right over the 5-second display duration, then resets for the next slide.
 
@@ -517,11 +537,11 @@ When privacy mode is on, an **eye button** appears in the header (to the left of
 
 #### Info Links
 
-A dropdown to choose which site signer names and film/show titles link to in the table view and detail modal:
+A dropdown to choose which site signer names and Detail 2 values link to in the table view and detail modal:
 
-| Option | Signer links to | Film / Show links to |
+| Option | Signer links to | Detail 2 links to |
 |---|---|---|
-| **Wikipedia** *(default)* | `en.wikipedia.org/wiki/[Name]` | `en.wikipedia.org/wiki/[Title]` |
+| **Wikipedia** *(default)* | `en.wikipedia.org/wiki/[Name]` | `en.wikipedia.org/wiki/[Value]` |
 | **IMDb** | IMDb name search (`&s=nm`) | IMDb title search (`&s=tt`) |
 
 - Saved to `localStorage` (`ag_info_link`). Takes effect immediately (gallery re-renders on change).
@@ -538,7 +558,7 @@ Eight row buttons, each with its own `(i)` tooltip on the right:
 - **Merge Import** — opens a file picker to load a `.json` file and **add** its items to the existing collection without replacing anything. Useful for combining collections. See [Import & Export](#import--export).
 - **Batch Import Photos** — opens a multi-file picker to select multiple images at once. Creates one stub item per image, using the filename (minus extension) as the signer name, with all other fields blank to fill in later. You can also drag image files directly onto the page anywhere outside the form to trigger the same flow. See [Import & Export](#import--export).
 - **Copy Share Link** — uploads the collection to dpaste.com and copies a short shareable URL to the clipboard. See [Sharing a Collection](#sharing-a-collection).
-- **Download CSV** — downloads all item metadata as a `.csv` spreadsheet (photos are not included). Columns cover every field: signers, character, film, item type, cert number, cert company, condition, paid, estimated value, value URL, tags, signing event, signing date, acquired how, location, notes, and date added. Paid and Est. Value column headers include the local currency code. Values containing commas or quotes are properly escaped.
+- **Download CSV** — downloads all item metadata as a `.csv` spreadsheet (photos are not included). Columns cover every field: signers, **Detail 1**, **Detail 2**, item type, cert number, cert company, condition, paid, estimated value, value URL, tags, signing event, signing date, acquired how, location, notes, and date added. Paid and Est. Value column headers include the local currency code. Values containing commas or quotes are properly escaped.
 - **Print Collection** — generates and opens a print-ready A4 layout of the collection. See [Print Layout](#print-layout).
 - **Reset Collection** — permanently deletes your entire collection (items and photos) from both localStorage and IndexedDB, and returns the gallery to the empty state. A confirmation dialog is shown first. Separated from the other buttons by a divider and labelled in red to signal it is destructive. Export a backup first if you want to keep your data.
 
@@ -622,7 +642,7 @@ The page is formatted for **A4 paper** (`@page { size: A4; margin: 12mm 14mm }`)
 - Items are sorted **by estimated value, high to low** (independent of the active gallery sort).
 - Each card mirrors the grid view layout:
   - Photo at the top, using the current **Photo Format** aspect ratio and **Image Fit** mode from Display settings.
-  - Signer name in bold, followed by character name and film/show title on separate lines.
+  - Signer name in bold, followed by Detail 1 (e.g. character name) and Detail 2 (e.g. film/show title) on separate lines.
   - A thin divider, then rows for Cert #, Paid, Est. Value, and ROI — each label on the left, value on the right. Monetary rows are omitted if Privacy Mode is on.
 - Cards with no photo show a "No photo" placeholder in the image area.
 - Cards use `break-inside: avoid` so a single card is never split across two pages.
@@ -814,8 +834,8 @@ Click **Export Collection** in the Settings Modal (⚙️ → Data). The browser
       "added": "2024-11-15T08:30:00.000Z",
       "name": "Harrison Ford",
       "signers": ["Harrison Ford"],
-      "character": "Han Solo",
-      "film": "Star Wars",
+      "detail1": "Han Solo",
+      "detail2": "Star Wars",
       "itemType": "Photo",
       "certNum": "A1234567",
       "certCompany": "beckett",
@@ -873,7 +893,7 @@ Click **Batch Import Photos** in the Settings Modal (⚙️ → Data), or drag o
 
 **Batch import behavior:**
 
-- One stub item is created per image file. The filename (minus extension) is used as the signer name; all other fields (character, film, cert, paid, value, tags, etc.) are left blank for you to fill in later.
+- One stub item is created per image file. The filename (minus extension) is used as the signer name; all other fields (detail1, detail2, cert, paid, value, tags, etc.) are left blank for you to fill in later.
 - Images are run through the same compression pipeline as manual photo uploads — resized to a maximum of 900px on the longest edge, re-encoded as JPEG at 0.82 quality, and stripped of EXIF metadata.
 - Items land at the top of the collection (newest first when sorted by date added). The sort order depends on the active sort setting.
 - A toast confirms how many stubs were created (e.g. "Created 5 stub items — fill in details on each card"). Settings close automatically after import.
@@ -892,7 +912,7 @@ The app is designed to work on small screens. On viewports **640px wide or narro
 - **Columns selector is hidden** — the column count is not adjustable on mobile.
 - **Grid is forced** — even if `ag_view` is set to `"table"` in localStorage, the app renders grid view. This is enforced both in CSS (with `!important` overrides hiding `.table-wrap` and showing `.gallery`) and in JavaScript (a `isMobile` check in the render function).
 - **Grid is 2 columns** — a CSS media query sets `--cols: 2` on mobile, overriding any saved column preference.
-- **Cards go full width** — the text (signer name, character, film) spans the full card width rather than being cramped next to a fixed-width image column.
+- **Cards go full width** — the text (signer name, Detail 1, Detail 2) spans the full card width rather than being cramped next to a fixed-width image column.
 - **Horizontal scroll is prevented** — all layout uses `box-sizing: border-box` and the gallery padding is reduced to `12px` on mobile to prevent content from overflowing the viewport.
 - **Sort and Filter share a row** — the Sort dropdown and Filter button appear side by side on a second row below the search bar, each taking half the available width.
 
@@ -933,6 +953,8 @@ At runtime, each item still carries its `imgs` array in memory, so all rendering
 
 On first load after upgrading from a localStorage-only version, AutoGallery detects photos stored inline in `localStorage`, moves them into IndexedDB, and rewrites the `localStorage` item array without the image data. This happens transparently — no user action is needed, and nothing is lost.
 
+AutoGallery also automatically migrates items that used the older `character` and `film` field names (from before the Item Type redesign) to the new `detail1` and `detail2` names. This runs on first load and on import — the renamed fields are written back to storage immediately. No data is lost in the process.
+
 ### Storage limits
 
 - **IndexedDB** typically allows hundreds of MB up to several GB per origin (browsers permit roughly 50–60% of free disk space), so photo-heavy collections are no longer constrained the way they were under `localStorage`.
@@ -951,8 +973,8 @@ Each item is a JavaScript object with the following fields:
 | `added` | string | ISO 8601 timestamp of when the item was first saved (e.g. `"2024-11-15T08:30:00.000Z"`) |
 | `name` | string | First (or only) signer's name. Always set — used as the sort key. |
 | `signers` | string[] | Array of all signer names. Always present; single-signer items have `["Name"]`. Multi-signer items have two or more entries. |
-| `character` | string | Character name (optional, may be empty string) |
-| `film` | string | Film or show title (optional, may be empty string) |
+| `detail1` | string | First contextual field value — label depends on item type (e.g. character name, player name, artist, author). Optional, may be empty string. |
+| `detail2` | string | Second contextual field value — label depends on item type (e.g. film/show title, team name, album, title). Used as a Wikipedia/IMDb link target. Optional, may be empty string. |
 | `certNum` | string | Certificate number (optional, may be empty string) |
 | `certCompany` | string | One of: `"beckett"`, `"psa"`, `"jsa"`, `"swau"`, or `""` (none) |
 | `paid` | number \| null | Amount paid, in the local currency |
@@ -1023,7 +1045,7 @@ User picks file(s)
   → Appended to item.imgs[]
 ```
 
-Multiple files selected in one picker dialog are processed in parallel and appended in the order they finish compressing. Old data exported with a single `img` field is automatically migrated to `imgs: [img]` on load.
+Multiple files selected in one picker dialog are processed in parallel and appended in the order they finish compressing. Old data exported with a single `img` field is automatically migrated to `imgs: [img]` on load. Old data with `character`/`film` fields is automatically migrated to `detail1`/`detail2` (see [Automatic migration](#automatic-migration)).
 
 ### Modal Behavior
 
