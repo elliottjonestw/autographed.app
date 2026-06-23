@@ -131,7 +131,7 @@ The modal shows sections populated from values that actually exist in the curren
 | **Acquisition Method** | All acquisition methods in the collection |
 | **Signing Event** | All signing events or venues in the collection |
 | **Location** | All physical storage locations in the collection |
-| **Film / Show** | All Detail 2 values in the collection (film/show titles, team names, album titles, etc.) |
+| **Detail 2** | All Detail 2 values in the collection (film/show titles, team names, album titles, etc.) |
 | **Signer** | All signer names in the collection |
 
 Each option is a toggleable chip. Click a chip to select it (turns gold); click again to deselect. **Multiple chips can be selected simultaneously.**
