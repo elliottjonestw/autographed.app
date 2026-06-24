@@ -355,7 +355,7 @@ Clicking any card (grid) or row (table) opens a read-only detail view for that i
   - Acquisition Method — plain text (only shown if set)
   - Physical Location — plain text (only shown if set)
   - Tags — clickable chips. Clicking a tag closes the modal and filters the gallery to items with that tag.
-  - Notes
+  - **Notes** — displayed under a "NOTES" section label, in a lightly styled box. Only shown if notes are set.
   - Date Added
 - **Description** — an auto-generated text block, separated by a divider. See [Description](#description) below.
 - **Date Added** — shown below the Description section.
