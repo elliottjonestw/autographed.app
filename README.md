@@ -602,9 +602,10 @@ A set of checkboxes that control which elements are shown on each card in the gr
 
 ### Data Tab
 
-Eight row buttons, each with its own `(i)` tooltip on the right:
+Eight row buttons plus one toggle, each with its own `(i)` tooltip on the right:
 
 - **Export Collection** — downloads the full collection as a `.json` file. See [Import & Export](#import--export).
+- **Export reminder** — a toggle switch (off by default). When enabled, the browser shows a confirmation dialog if you try to leave or close the page after making changes to your collection since the last export. The reminder is automatically cleared after each successful export, so it only fires when there are genuinely unsaved changes.
 - **Import Collection** — opens a file picker to load a previously exported `.json` file, **replacing** the current collection. See [Import & Export](#import--export).
 - **Merge Import** — opens a file picker to load a `.json` file and **add** its items to the existing collection without replacing anything. Useful for combining collections. See [Import & Export](#import--export).
 - **Batch Import Photos** — opens a multi-file picker to select multiple images at once. Creates one stub item per image, using the filename (minus extension) as the signer name, with all other fields blank to fill in later. You can also drag image files directly onto the page anywhere outside the form to trigger the same flow. See [Import & Export](#import--export).
@@ -1004,6 +1005,7 @@ autographed.app uses a **hybrid storage model**: lightweight item metadata and p
 | `ag_grid_value` | String | Grid card Est. Value row visibility: `"1"` or `"0"`. Absent = visible. |
 | `ag_grid_roi` | String | Grid card ROI row visibility: `"1"` or `"0"`. Absent = visible. |
 | `ag_desc_notes` | String | Whether notes are included in the auto-generated description: `"1"` (include) or `"0"` / absent (exclude, default). |
+| `ag_export_reminder` | String | Whether the export reminder is enabled: `"1"` (on) or `"0"` / absent (off, default). |
 
 ### IndexedDB (photos)
 
