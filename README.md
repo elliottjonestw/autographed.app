@@ -32,7 +32,7 @@ A single-file, no-backend browser app for managing an autograph and memorabilia 
 
 ## Overview
 
-autographed.app is a **single HTML file** (`index.html`). There is no server, no database, no external JavaScript libraries, and no external CSS files. Everything — markup, styles, and logic — lives inside one self-contained file.
+autographed.app is a **single HTML file** (`dashboard.html`). There is no server, no database, no external JavaScript libraries, and no external CSS files. Everything — markup, styles, and logic — lives inside one self-contained file.
 
 Key characteristics:
 
@@ -45,7 +45,7 @@ Key characteristics:
 
 ## Getting Started
 
-Open `index.html` in any modern browser. If you need URL-based navigation or want to load images from disk, serve it locally:
+Open `dashboard.html` in any modern browser. If you need URL-based navigation or want to load images from disk, serve it locally:
 
 ```bash
 python3 -m http.server 4200
@@ -488,7 +488,7 @@ A dropdown to set the display language for the entire app. Currently supported:
 
 This priority means first-time visitors and shared-link viewers always see the app in their own browser language (if supported), without any setting from the original creator overriding it. Shared collections never carry language preferences that would force a language on the viewer.
 
-All translations live inside `index.html` in a `TRANSLATIONS` object. The `data-i18n` attribute on static HTML elements is updated by `applyI18n()` on startup and whenever the language changes. Dynamic content uses the `t(key)` helper function.
+All translations live inside `dashboard.html` in a `TRANSLATIONS` object. The `data-i18n` attribute on static HTML elements is updated by `applyI18n()` on startup and whenever the language changes. Dynamic content uses the `t(key)` helper function.
 
 **Dropdown option translation** — item types, condition grades, and acquisition methods are stored in English as raw values in the JSON data (`itemType`, `condition`, `acquiredHow`). This keeps exports and imports language-neutral. Display-only translation is layered on top via three lookup maps and corresponding helper functions:
 
@@ -721,7 +721,7 @@ autographed.app can generate a short URL that lets anyone view your collection i
 4. Click **Share publicly** to proceed. The button label changes to "Uploading…" while the collection is sent to dpaste.com.
 5. Once uploaded, a short URL is copied to your clipboard automatically — e.g.:
    ```
-   http://localhost:4200/index.html#blob=G9GW3KB53
+   http://localhost:4200/dashboard.html#blob=G9GW3KB53
    ```
 5. Send that URL to anyone. When they open it, autographed.app loads and immediately displays your collection in read-only [View Mode](#view-mode)
 
