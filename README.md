@@ -477,12 +477,13 @@ A dropdown to set the display language for the entire app. Currently supported:
 | Value | Language |
 |---|---|
 | **English** *(default)* | English |
+| **Español** | Spanish (neutral — suitable for all Spanish-speaking regions) |
 | **繁體中文** | Traditional Chinese (Taiwan) |
 
 **Language priority:**
 
 1. If the user has previously changed the language in Settings, that choice is stored in `localStorage` (`ag_lang`) and used on every visit.
-2. If no preference is saved, the app checks the browser's language preference (`navigator.languages`). If the browser language matches a supported language, it is used automatically.
+2. If no preference is saved, the app checks the browser's language preference (`navigator.languages`). If the browser language matches a supported language, it is used automatically. Any `es-*` locale (e.g. `es-MX`, `es-AR`, `es-ES`) maps to the neutral Spanish translation.
 3. If the browser language is not supported, the app falls back to English.
 
 This priority means first-time visitors and shared-link viewers always see the app in their own browser language (if supported), without any setting from the original creator overriding it. Shared collections never carry language preferences that would force a language on the viewer.

@@ -1713,6 +1713,7 @@
           <div class="ctrl-row">
             <select class="finput" id="settingsLang" onchange="setLang(this.value)">
               <option value="en">English</option>
+              <option value="es">Español</option>
               <option value="zh-TW">繁體中文</option>
             </select>
             <button class="tip-btn" onclick="toggleTip(this)">i</button>
@@ -2186,6 +2187,132 @@
       tip_display_currency: 'The currency shown in the gallery UI. If different from your local currency, values are converted automatically.',
       tip_exchange_rate: 'Shows the current conversion rate between your local and display currencies. Rates are cached for 1 hour.',
     },
+    es: {
+      lbl_items: 'Artículos', lbl_total_paid: 'Total pagado', lbl_est_value: 'Valor est.', lbl_return: 'Retorno',
+      search_ph: 'Buscar nombre, personaje, película…',
+      filter_btn: 'Filtrar',
+      sort_newest: 'Más recientes', sort_oldest: 'Más antiguos', sort_name: 'Nombre A–Z',
+      sort_value: 'Valor: mayor a menor', sort_paid: 'Pagado: mayor a menor', sort_roi: 'Mejor retorno', sort_custom: 'Orden personalizado',
+      cols_3: '3 por fila', cols_4: '4 por fila', cols_5: '5 por fila',
+      cols_6: '6 por fila', cols_7: '7 por fila', cols_8: '8 por fila',
+      no_photo: 'Sin foto', multiple_signers: 'Varios firmantes',
+      cert_lbl: 'Cert. #', paid_lbl: 'Pagado', est_val_lbl: 'Valor est.', roi_lbl: 'Retorno',
+      no_matches: 'Sin resultados', no_matches_sub: 'Intenta con otro término de búsqueda',
+      empty_title: 'Tu colección está vacía', empty_sub: 'Agrega tu primer autógrafo para comenzar',
+      add_item: '+ Agregar artículo', load_demo: 'Cargar colección de ejemplo',
+      viewing_shared: '👁 Viendo una colección compartida — tu colección no se ha modificado',
+      back_to_mine: '← Volver a mi colección',
+      settings_title: 'Configuración', tab_display: 'Pantalla', tab_data: 'Datos', tab_currency: 'Moneda',
+      lbl_appearance: 'Apariencia', switch_dark: 'Cambiar a modo oscuro', switch_light: 'Cambiar a modo claro',
+      lbl_photo_format: 'Formato de foto',
+      fmt_8x10L: '8×10 Horizontal', fmt_8x10P: '8×10 Vertical',
+      fmt_5x7L: '5×7 Horizontal', fmt_5x7P: '5×7 Vertical',
+      fmt_4x6L: '4×6 Horizontal', fmt_4x6P: '4×6 Vertical',
+      fmt_3x5: 'Tarjeta índice (3×5)', fmt_trading: 'Tarjeta coleccionable (2.5×3.5)', fmt_square: 'Cuadrado (1×1)',
+      lbl_image_fit: 'Ajuste de imagen',
+      fit_cover: 'Recortar para llenar', fit_contain: 'Ajustar con barras negras', fit_blurbg: 'Ajustar con fondo difuminado',
+      lbl_info_links: 'Enlaces de información', lbl_privacy: 'Modo privacidad',
+      privacy_off: 'Desactivado', privacy_on: 'Activado — ocultar valores monetarios',
+      lbl_desc_settings: 'Descripción automática', desc_notes_label: 'Incluir notas en la descripción automática',
+      lbl_grid_visibility: 'Visibilidad en cuadrícula',
+      grid_vis_image: 'Imagen', grid_vis_signer: 'Nombre del firmante',
+      grid_vis_detail1: 'Detalle 1', grid_vis_detail2: 'Detalle 2',
+      grid_vis_cert: 'Cert. #', grid_vis_paid: 'Pagado',
+      grid_vis_value: 'Valor est.', grid_vis_roi: 'Retorno',
+      lbl_language: 'Idioma', lang_tip: 'Establece el idioma de visualización de la aplicación.',
+      export_collection: 'Exportar colección', import_collection: 'Importar colección',
+      merge_import: 'Importar y combinar', batch_import: 'Importación por lotes de fotos',
+      copy_share: 'Copiar enlace para compartir', download_csv: 'Descargar CSV',
+      share_warn_title: 'Tus datos serán públicos',
+      share_warn_p1: 'Generar un enlace para compartir sube tu <strong>colección completa</strong> — detalles de artículos, fotos, montos pagados, valores estimados y números de certificado — a <strong>dpaste.com</strong>, un servicio público de pegado de texto. Cualquier persona que obtenga el enlace puede ver toda esta información.',
+      share_warn_p2: 'Si tu galería contiene información financiera o personal que no deseas que otros vean, no continúes. Considera usar <strong>Exportar colección</strong> para guardar un archivo <code>.json</code> y compartirlo de forma privada.',
+      share_warn_p3: 'Los enlaces para compartir expiran después de 365 días.',
+      share_publicly: 'Compartir públicamente',
+      print_collection: 'Imprimir colección', reset_collection: 'Reiniciar colección',
+      save_as_mine: 'Guardar como mi colección',
+      det_signer: 'Firmante', det_character: 'Personaje', det_film: 'Película / Serie',
+      type_film_tv_card: 'Tarjeta coleccionable',
+      // Item type display names
+      type_photo: 'Foto', type_poster: 'Póster', type_prop: 'Utilería', type_script: 'Guion',
+      type_funko_pop: 'Funko Pop', type_lithograph: 'Litografía', type_program: 'Programa',
+      type_trading_card: 'Tarjeta coleccionable',
+      type_jersey: 'Camiseta', type_baseball: 'Pelota de béisbol', type_bat: 'Bate',
+      type_helmet: 'Casco', type_mini_helmet: 'Mini casco', type_football: 'Balón de fútbol americano',
+      type_basketball: 'Balón de baloncesto', type_hockey_puck: 'Disco de hockey',
+      type_glove: 'Guante', type_shoe_cleat: 'Tenis / Tacos',
+      type_album_record: 'Álbum / Disco', type_cd: 'CD', type_vinyl: 'Vinilo',
+      type_instrument: 'Instrumento', type_setlist: 'Lista de canciones',
+      type_book: 'Libro', type_comic: 'Cómic', type_magazine: 'Revista', type_other: 'Otro',
+      // Item type optgroup labels
+      grp_film_tv: 'Cine y Televisión', grp_sports: 'Deportes', grp_music: 'Música',
+      grp_books: 'Libros y Literatura', grp_other: 'Otro',
+      // Condition grades
+      cond_mint: 'Perfecto', cond_near_mint: 'Casi perfecto', cond_excellent: 'Excelente',
+      cond_very_good: 'Muy bueno', cond_good: 'Bueno', cond_fair: 'Regular', cond_poor: 'Deficiente',
+      // Acquisition methods
+      opt_none: '— Ninguno —', opt_select: '— Seleccionar —',
+      acq_in_person: 'En persona', acq_mail_in: 'Por correo / TTM', acq_convention: 'Convención',
+      acq_purchased_online: 'Comprado en línea', acq_purchased_show: 'Comprado en el evento',
+      acq_auction: 'Subasta', acq_gift: 'Regalo', acq_trade: 'Intercambio',
+      acq_gallery: 'Galería / Distribuidor', acq_other: 'Otro',
+      det_item_type: 'Tipo de artículo', det_condition: 'Estado', det_cert: 'Cert. #',
+      det_est_val: 'Valor estimado', det_signing_date: 'Fecha de firma',
+      det_signing_event: 'Evento de firma', det_acquired: 'Adquirido',
+      det_location: 'Ubicación', det_tags: 'Etiquetas', det_added: 'Agregado',
+      description: 'Descripción', description_sub: 'Generado automáticamente a partir de los detalles del artículo.', copy: 'Copiar', edit: 'Editar', delete: 'Eliminar',
+      form_add_title: 'Agregar artículo', form_edit_title: 'Editar artículo',
+      add_photo: 'Agregar foto', add_photo_more: 'Agregar',
+      lbl_photos: 'Fotos', lbl_character: 'Personaje', lbl_film: 'Película / Serie',
+      lbl_item_type: 'Tipo de artículo', hint_item_type: 'Si no encuentras un tipo adecuado, selecciona "Otro".',
+      lbl_cert_num: 'Número de certificado', lbl_cert_co: 'Empresa certificadora',
+      lbl_amount_paid: 'Monto pagado', lbl_est_val: 'Valor est.', lbl_value_url: 'URL del valor',
+      lbl_notes: 'Notas', lbl_tags: 'Etiquetas', lbl_advanced: 'Campos avanzados',
+      lbl_signing_event: 'Evento / Lugar de firma', lbl_signing_date: 'Fecha de firma',
+      lbl_acquired: 'Método de adquisición', lbl_condition: 'Estado', lbl_location: 'Ubicación física',
+      cancel: 'Cancelar', save_item: 'Guardar artículo',
+      filt_tags: 'Etiquetas', filt_item_type: 'Tipo de artículo', filt_condition: 'Estado',
+      filt_cert_co: 'Empresa certificadora', filt_acquired: 'Método de adquisición',
+      filt_event: 'Evento de firma', filt_location: 'Ubicación física',
+      filt_film: 'Detalle 2', filt_signer: 'Firmante', filt_empty: 'No hay artículos para filtrar.',
+      clear_all: 'Borrar todo', done: 'Listo',
+      drop_title: 'Soltar fotos para importar', drop_sub: 'Se creará un artículo por imagen',
+      print_generated: 'Generado', print_items: 'Artículos',
+      print_total_paid: 'Total pagado', print_est_val: 'Valor est.', print_return: 'Retorno',
+      print_no_photo: 'Sin foto',
+      lbl_local_currency: 'Moneda local', lbl_display_currency: 'Moneda de visualización',
+      lbl_exchange_rate: 'Tipo de cambio',
+      rate_refresh: '↻ Actualizar',
+      rate_same_currency: 'Misma moneda — sin conversión necesaria',
+      rate_fetching: 'Obteniendo tipo de cambio…',
+      rate_error: 'No se pudo obtener el tipo de cambio — revisa tu conexión',
+      rate_just_now: 'justo ahora',
+      rate_min_ago: 'hace {n} min',
+      rate_updated: 'Actualizado {ago}',
+      tbl_signer: 'Firmante', tbl_character: 'Detalle 1', tbl_film: 'Detalle 2',
+      fld_player: 'Jugador', fld_team: 'Equipo',
+      fld_artist: 'Artista', fld_album: 'Álbum', fld_band: 'Banda / Grupo', fld_tour: 'Gira / Espectáculo',
+      fld_author: 'Autor', fld_title: 'Título',
+      fld_subject: 'Sujeto', fld_publication: 'Publicación',
+      fld_specific1: 'Detalle 1', fld_specific2: 'Detalle 2',
+      tip_language: 'Establece el idioma de visualización de la aplicación.',
+      tip_appearance: 'Cambia entre esquemas de color claro y oscuro. Tu elección se guarda automáticamente.',
+      tip_photo_format: 'Establece la relación de aspecto de las tarjetas de imagen para que coincida con tus artículos — p. ej., fotos 8×10, tarjetas índice o tarjetas coleccionables.',
+      tip_image_fit: 'Controla cómo se muestran las fotos cuando la imagen subida no coincide con el formato seleccionado.',
+      tip_info_links: 'Elige a qué sitio enlazan los nombres de los firmantes y los títulos de películas/series en la vista de tabla y en el detalle del artículo.',
+      tip_privacy: 'Oculta los valores monetarios (montos pagados y estimados). Puedes mostrarlos con el botón de ojo en el encabezado.',
+      tip_export: 'Guarda una copia de seguridad completa de tu colección como archivo JSON.',
+      tip_import: '⚠️ Carga un archivo JSON y reemplaza tu colección actual completa. Exporta una copia de seguridad primero si deseas conservarla.',
+      tip_merge: 'Agrega artículos de un archivo JSON a tu colección existente sin eliminar nada.',
+      tip_batch_import: 'Selecciona varias fotos para crear un artículo borrador por imagen. Cada uno usa el nombre del archivo como firmante — completa el resto más tarde. También puedes arrastrar fotos a cualquier parte de la página.',
+      tip_share: '⚠️ Sube tu colección públicamente a dpaste.com y copia un enlace para compartir al portapapeles.',
+      tip_csv: 'Descarga tu colección como hoja de cálculo CSV. Incluye todos los campos de metadatos. Las fotos no se incluyen.',
+      tip_print: 'Imprime un diseño A4 de tu colección ordenado por valor, según tu configuración actual de formato de foto.',
+      tip_reset: '⚠️ Elimina permanentemente toda tu colección. Exporta una copia de seguridad primero si deseas conservar tus datos.',
+      tip_save_as_mine: 'Guarda la colección que estás viendo como tuya propia, reemplazando tus datos existentes.',
+      tip_local_currency: 'La moneda utilizada al registrar los montos de Pagado y Valor estimado en tus artículos.',
+      tip_display_currency: 'La moneda mostrada en la interfaz de la galería. Si es diferente de tu moneda local, los valores se convierten automáticamente.',
+      tip_exchange_rate: 'Muestra el tipo de cambio actual entre tu moneda local y la moneda de visualización. Los tipos de cambio se almacenan en caché por 1 hora.',
+    },
     'zh-TW': {
       lbl_items: '項目', lbl_total_paid: '總購入', lbl_est_value: '估計價值', lbl_return: '回報率',
       search_ph: '搜尋名稱、角色、影視…',
@@ -2412,13 +2539,14 @@
     if (inp2) inp2.placeholder = fields.ph2;
   }
 
-  const SUPPORTED_LANGS = ['en', 'zh-TW'];
+  const SUPPORTED_LANGS = ['en', 'es', 'zh-TW'];
 
   function detectBrowserLang(supported) {
     const langs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'en'];
     for (const lang of langs) {
       const l = lang.toLowerCase();
       if (l === 'zh-tw' || l === 'zh-hant' || l === 'zh-hk') { if (supported.includes('zh-TW')) return 'zh-TW'; }
+      if (l.startsWith('es') && supported.includes('es')) return 'es';
       if (l.startsWith('en') && supported.includes('en')) return 'en';
     }
     return 'en';
