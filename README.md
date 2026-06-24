@@ -243,7 +243,7 @@ Opened by clicking **+ Add Item** (new item) or **Edit** inside the detail modal
 | Field | Type | Notes |
 |---|---|---|
 | **Photos** | File upload / drag-and-drop | Optional. See [Photo Upload](#photo-upload) below. |
-| **Item Type** | Dropdown | Optional. The kind of memorabilia. Choose from a predefined grouped list (see [Item Types](#item-types) below). Defaults to **Photo** for new items. Filterable. |
+| **Item Type** | Dropdown | Optional. The kind of memorabilia. Choose from a predefined grouped list (see [Item Types](#item-types) below). Defaults to **Photo** for new items. Filterable. A hint below the label reads "If you can't find a suitable Item Type, select 'Other'." |
 | **Detail 1** | Text input | Optional. First contextual field — label and placeholder change based on Item Type (e.g. "Character" for film/TV items, "Player" for sports items, "Artist" for music items). |
 | **Detail 2** | Text input | Optional. Second contextual field — label and placeholder change based on Item Type (e.g. "Film / Show", "Team", "Album"). The value is used as a Wikipedia or IMDb link in the table and detail views. |
 | **Signer 1** | Text input | Required. The first (or only) autograph signer's real name. |
@@ -291,19 +291,20 @@ The **Item Type** dropdown at the top of the form contains a predefined grouped 
 
 | Category | Item Types | Detail 1 label | Detail 2 label |
 |---|---|---|---|
-| **Film & TV** | Photo, Poster, Prop, Script, Funko Pop, Lithograph, Program, Trading Card¹ | Character | Film / Show |
-| **Sports** | Jersey, Baseball, Bat, Helmet, Mini Helmet, Football, Basketball, Hockey Puck, Trading Card, Glove, Shoe / Cleat | Player | Team |
-| **Music** | Album / Record, CD, Vinyl | Artist | Album |
+| **Film & TV** | Photo², Poster², Prop, Script, Funko Pop, Lithograph, Program, Trading Card¹ | Character | Film / Show |
+| **Sports** | Photo², Poster², Jersey, Baseball, Bat, Helmet, Mini Helmet, Football, Basketball, Hockey Puck, Trading Card¹, Glove, Shoe / Cleat | Player | Team |
+| **Music** | Photo², Poster², Album / Record, CD, Vinyl | Artist | Album |
 | **Music** | Instrument | Artist | Band / Group |
 | **Music** | Setlist | Artist | Tour / Show |
 | **Books & Literature** | Book, Comic | Author | Title |
-| **Other** | Magazine | Subject | Publication |
-| **Other** | Canvas | Subject | Title |
+| **Books & Literature** | Magazine | Subject | Publication |
 | **Other** | Other | Detail 1 | Detail 2 |
 
 > **Default:** New items default to **Photo** (Film & TV), showing the Character and Film / Show labels.
 
-> ¹ The Film & TV **Trading Card** type is stored internally as `"Film / TV Card"` to distinguish it from the Sports **Trading Card** (stored as `"Trading Card"`). In the UI it is always displayed as "Trading Card" (English) or "交換卡" (Traditional Chinese). In the filter modal, both types share a single **Trading Card** chip — selecting it matches items of either stored value.
+> ¹ Types that share a display name across categories use distinct internal stored values to preserve the correct Detail 1 / Detail 2 field labels per category. In the filter modal they merge into a single chip. Specifically: the Film & TV **Trading Card** is stored as `"Film / TV Card"`, the Sports **Trading Card** as `"Trading Card"`; Sports **Photo/Poster** as `"Sports Photo"` / `"Sports Poster"`; Music **Photo/Poster** as `"Music Photo"` / `"Music Poster"`. Film & TV Photo and Poster use the plain `"Photo"` / `"Poster"` stored values.
+
+> ² Shared display name — see note ¹ above.
 
 The Detail 1 and Detail 2 labels also update instantly when you switch languages — they are always displayed in the current language.
 
@@ -488,7 +489,19 @@ This priority means first-time visitors and shared-link viewers always see the a
 
 All translations live inside `index.html` in a `TRANSLATIONS` object. The `data-i18n` attribute on static HTML elements is updated by `applyI18n()` on startup and whenever the language changes. Dynamic content uses the `t(key)` helper function.
 
-Item type display names that differ from their stored value are also translated — for example, the Film & TV Trading Card type (stored as `"Film / TV Card"`) uses the `type_film_tv_card` key, which maps to "Trading Card" in English and "交換卡" in Traditional Chinese. The `displayItemType()` helper applies this mapping wherever item types are shown as text (detail modal, filter chips, eBay description builder). The filter set is also built from display names rather than raw stored values, so the Film & TV and Sports Trading Card types merge into a single filter chip that matches both.
+Item type display names that differ from their stored value are resolved by the `displayItemType()` helper, which is called wherever item types are shown as text (detail modal, filter chips, eBay description builder). The filter set is built from display names rather than raw stored values, so types that share a name across categories merge into a single filter chip that matches all of them.
+
+Current mappings in `displayItemType()`:
+
+| Stored value | Display name | Translation key |
+|---|---|---|
+| `"Film / TV Card"` | Trading Card / 交換卡 | `type_film_tv_card` |
+| `"Sports Photo"` | Photo | *(hardcoded)* |
+| `"Sports Poster"` | Poster | *(hardcoded)* |
+| `"Music Photo"` | Photo | *(hardcoded)* |
+| `"Music Poster"` | Poster | *(hardcoded)* |
+
+Photo and Poster are hardcoded rather than keyed because Film & TV Photo/Poster (stored as plain `"Photo"` / `"Poster"`) are already displayed as-is in all languages, so the mapped variants match that behaviour without requiring additional translation keys.
 
 #### Appearance
 

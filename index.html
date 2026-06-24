@@ -985,6 +985,12 @@
       margin-bottom: 5px;
     }
 
+    .fhint {
+      font-size: 11px;
+      color: var(--sub);
+      margin-bottom: 5px;
+    }
+
     .finput, .fselect, .ftextarea {
       width: 100%;
       background: var(--surface);
@@ -1507,6 +1513,7 @@
 
       <div class="fg">
         <label class="flabel" data-i18n="lbl_item_type">Item Type</label>
+        <div class="fhint" data-i18n="hint_item_type">If you can't find a suitable Item Type, select "Other".</div>
         <select class="finput" id="fItemType" onchange="updateItemTypeFields()">
           <option value="">— None —</option>
           <optgroup label="Film &amp; TV">
@@ -1520,6 +1527,8 @@
             <option value="Film / TV Card">Trading Card</option>
           </optgroup>
           <optgroup label="Sports">
+            <option value="Sports Photo">Photo</option>
+            <option value="Sports Poster">Poster</option>
             <option value="Jersey">Jersey</option>
             <option value="Baseball">Baseball</option>
             <option value="Bat">Bat</option>
@@ -1533,6 +1542,8 @@
             <option value="Shoe / Cleat">Shoe / Cleat</option>
           </optgroup>
           <optgroup label="Music">
+            <option value="Music Photo">Photo</option>
+            <option value="Music Poster">Poster</option>
             <option value="Album / Record">Album / Record</option>
             <option value="CD">CD</option>
             <option value="Vinyl">Vinyl</option>
@@ -1542,10 +1553,9 @@
           <optgroup label="Books &amp; Literature">
             <option value="Book">Book</option>
             <option value="Comic">Comic</option>
+            <option value="Magazine">Magazine</option>
           </optgroup>
           <optgroup label="Other">
-            <option value="Magazine">Magazine</option>
-            <option value="Canvas">Canvas</option>
             <option value="Other">Other</option>
           </optgroup>
         </select>
@@ -2096,7 +2106,8 @@
       form_add_title: 'Add Item', form_edit_title: 'Edit Item',
       add_photo: 'Add photo', add_photo_more: 'Add',
       lbl_photos: 'Photos', lbl_character: 'Character', lbl_film: 'Film / Show',
-      lbl_item_type: 'Item Type', lbl_cert_num: 'Cert Number', lbl_cert_co: 'Cert Company',
+      lbl_item_type: 'Item Type', hint_item_type: 'If you can\'t find a suitable Item Type, select "Other".',
+      lbl_cert_num: 'Cert Number', lbl_cert_co: 'Cert Company',
       lbl_amount_paid: 'Amount Paid', lbl_est_val: 'Est. Value', lbl_value_url: 'Value URL',
       lbl_notes: 'Notes', lbl_tags: 'Tags', lbl_advanced: 'Advanced Fields',
       lbl_signing_event: 'Signing Event / Venue', lbl_signing_date: 'Signing Date',
@@ -2190,7 +2201,8 @@
       form_add_title: '新增項目', form_edit_title: '編輯項目',
       add_photo: '新增相片', add_photo_more: '新增',
       lbl_photos: '相片', lbl_character: '角色', lbl_film: '電影／影集',
-      lbl_item_type: '項目類型', lbl_cert_num: '證書編號', lbl_cert_co: '認證公司',
+      lbl_item_type: '項目類型', hint_item_type: '若找不到合適的項目類型，請選擇「其他」。',
+      lbl_cert_num: '證書編號', lbl_cert_co: '認證公司',
       lbl_amount_paid: '購入金額', lbl_est_val: '估計價值', lbl_value_url: '價值來源網址',
       lbl_notes: '備註', lbl_tags: '標籤', lbl_advanced: '進階欄位',
       lbl_signing_event: '簽名活動／場地', lbl_signing_date: '簽名日期',
@@ -2245,6 +2257,8 @@
     'Program':        { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
     'Film / TV Card': { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
     // Sports → Player + Team
+    'Sports Photo':   { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
+    'Sports Poster':  { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
     'Jersey':         { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
     'Baseball':       { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
     'Bat':            { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
@@ -2257,6 +2271,8 @@
     'Glove':          { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. Derek Jeter',      ph2: 'e.g. New York Yankees' },
     'Shoe / Cleat':   { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. LeBron James',     ph2: 'e.g. Los Angeles Lakers' },
     // Music → Artist + Album / Band / Tour
+    'Music Photo':    { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. Paul McCartney',   ph2: 'e.g. Abbey Road' },
+    'Music Poster':   { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. Paul McCartney',   ph2: 'e.g. Abbey Road' },
     'Album / Record': { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
     'CD':             { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
     'Vinyl':          { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
@@ -2267,9 +2283,9 @@
     'Comic':          { f1: 'fld_author',    f2: 'fld_title',      ph1: 'e.g. Stan Lee',         ph2: 'e.g. The Amazing Spider-Man' },
     // General
     'Magazine':       { f1: 'fld_subject',   f2: 'fld_publication',ph1: 'e.g. Michael Jordan',   ph2: 'e.g. Sports Illustrated' },
-    'Canvas':         { f1: 'fld_subject',   f2: 'fld_title',      ph1: '',                       ph2: '' },
     'Other':          { f1: 'fld_specific1', f2: 'fld_specific2',  ph1: '',                       ph2: '' },
     // Backwards-compat aliases for old free-text values
+    'Canvas':         { f1: 'fld_subject',   f2: 'fld_title',      ph1: '',                       ph2: '' },
     'Record / Album': { f1: 'fld_artist',    f2: 'fld_album',      ph1: 'e.g. John Lennon',      ph2: 'e.g. Abbey Road' },
     'Shoe':           { f1: 'fld_player',    f2: 'fld_team',       ph1: 'e.g. LeBron James',     ph2: 'e.g. Los Angeles Lakers' },
     'Index Card':     { f1: 'lbl_character', f2: 'lbl_film',       ph1: 'e.g. Darth Vader',      ph2: 'e.g. A New Hope' },
@@ -2280,7 +2296,10 @@
   }
 
   function displayItemType(type) {
-    return type === 'Film / TV Card' ? t('type_film_tv_card') : type;
+    if (type === 'Film / TV Card')                           return t('type_film_tv_card');
+    if (type === 'Sports Photo' || type === 'Music Photo')   return 'Photo';
+    if (type === 'Sports Poster' || type === 'Music Poster') return 'Poster';
+    return type;
   }
 
   function updateItemTypeFields() {
