@@ -2087,6 +2087,7 @@
       print_collection: 'Print Collection', reset_collection: 'Reset Collection',
       save_as_mine: 'Save as My Collection',
       det_signer: 'Signer', det_character: 'Character', det_film: 'Film / Show',
+      type_film_tv_card: 'Trading Card',
       det_item_type: 'Item Type', det_condition: 'Condition', det_cert: 'Cert #',
       det_est_val: 'Estimated Value', det_signing_date: 'Signing Date',
       det_signing_event: 'Signing Event', det_acquired: 'Acquired',
@@ -2180,6 +2181,7 @@
       print_collection: '列印收藏', reset_collection: '重置收藏',
       save_as_mine: '儲存為我的收藏',
       det_signer: '簽名者', det_character: '角色', det_film: '電影／影集',
+      type_film_tv_card: '交換卡',
       det_item_type: '項目類型', det_condition: '品相', det_cert: '證書 #',
       det_est_val: '估計價值', det_signing_date: '簽名日期',
       det_signing_event: '簽名活動', det_acquired: '取得方式',
@@ -2275,6 +2277,10 @@
 
   function getItemTypeFields(type) {
     return ITEM_TYPE_FIELDS[type] || { f1: 'lbl_character', f2: 'lbl_film', ph1: '', ph2: '' };
+  }
+
+  function displayItemType(type) {
+    return type === 'Film / TV Card' ? t('type_film_tv_card') : type;
   }
 
   function updateItemTypeFields() {
@@ -2793,7 +2799,7 @@
           allLocations = new Set(), allFilms = new Set(), allSigners = new Set();
     items.forEach(i => {
       (i.tags || []).forEach(t => allTags.add(t));
-      if (i.itemType)     allItemTypes.add(i.itemType);
+      if (i.itemType)     allItemTypes.add(displayItemType(i.itemType));
       if (i.condition)    allConditions.add(i.condition);
       if (i.certCompany)  allCerts.add(i.certCompany);
       if (i.acquiredHow)  allAcquired.add(i.acquiredHow);
@@ -2825,7 +2831,7 @@
         <div class="filter-section-label">${s.label}</div>
         <div class="filter-chips">
           ${s.values.map(v => {
-            const label = s.display ? (s.display[v] || v) : v;
+            const label = s.display ? (typeof s.display === 'function' ? s.display(v) : (s.display[v] || v)) : v;
             const active = activeFilters[s.key].has(v) ? ' active' : '';
             return `<button class="filter-chip${active}" data-key="${s.key}" data-val="${escHtml(v)}" onclick="toggleFilterChip(this)">${escHtml(label)}</button>`;
           }).join('')}
@@ -2881,7 +2887,7 @@
     if (Object.values(af).some(s => s.size)) {
       res = res.filter(i => {
         if (af.tags.size         && !(i.tags || []).some(t => af.tags.has(t)))                            return false;
-        if (af.itemType.size     && !af.itemType.has(i.itemType || ''))                                   return false;
+        if (af.itemType.size     && !af.itemType.has(displayItemType(i.itemType) || ''))                  return false;
         if (af.condition.size    && !af.condition.has(i.condition || ''))                                  return false;
         if (af.certCompany.size  && !af.certCompany.has(i.certCompany || ''))                             return false;
         if (af.acquiredHow.size  && !af.acquiredHow.has(i.acquiredHow || ''))                             return false;
@@ -3311,7 +3317,7 @@
     const _tf = getItemTypeFields(item.itemType);
     if (item.detail1) html += detailRow(t(_tf.f1), escHtml(item.detail1));
     if (item.detail2) html += detailRow(t(_tf.f2), `<a class="card-link" href="${escHtml(filmUrl(item.detail2))}" target="_blank" rel="noopener">${escHtml(item.detail2)}</a>`);
-    if (item.itemType)     html += detailRow(t('det_item_type'), escHtml(item.itemType));
+    if (item.itemType)     html += detailRow(t('det_item_type'), escHtml(displayItemType(item.itemType)));
     if (item.condition)    html += detailRow(t('det_condition'), escHtml(item.condition));
     if (item.certNum) {
       const cUrl = getCertUrl(item);
@@ -3365,7 +3371,7 @@
   function buildEbayDescription(item) {
     const signers = item.signers && item.signers.length ? item.signers : [item.name || ''];
     const isMult  = signers.length > 1;
-    const type    = (item.itemType || 'item').toLowerCase();
+    const type    = (displayItemType(item.itemType || '') || 'item').toLowerCase();
 
     const signerStr = isMult
       ? signers.slice(0, -1).join(', ') + ' and ' + signers[signers.length - 1]

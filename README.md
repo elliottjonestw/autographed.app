@@ -291,7 +291,7 @@ The **Item Type** dropdown at the top of the form contains a predefined grouped 
 
 | Category | Item Types | Detail 1 label | Detail 2 label |
 |---|---|---|---|
-| **Film & TV** | Photo, Poster, Prop, Script, Funko Pop, Lithograph, Program, Film / TV Card | Character | Film / Show |
+| **Film & TV** | Photo, Poster, Prop, Script, Funko Pop, Lithograph, Program, Trading Card¹ | Character | Film / Show |
 | **Sports** | Jersey, Baseball, Bat, Helmet, Mini Helmet, Football, Basketball, Hockey Puck, Trading Card, Glove, Shoe / Cleat | Player | Team |
 | **Music** | Album / Record, CD, Vinyl | Artist | Album |
 | **Music** | Instrument | Artist | Band / Group |
@@ -302,6 +302,8 @@ The **Item Type** dropdown at the top of the form contains a predefined grouped 
 | **Other** | Other | Detail 1 | Detail 2 |
 
 > **Default:** New items default to **Photo** (Film & TV), showing the Character and Film / Show labels.
+
+> ¹ The Film & TV **Trading Card** type is stored internally as `"Film / TV Card"` to distinguish it from the Sports **Trading Card** (stored as `"Trading Card"`). In the UI it is always displayed as "Trading Card" (English) or "交換卡" (Traditional Chinese). In the filter modal, both types share a single **Trading Card** chip — selecting it matches items of either stored value.
 
 The Detail 1 and Detail 2 labels also update instantly when you switch languages — they are always displayed in the current language.
 
@@ -485,6 +487,8 @@ A dropdown to set the display language for the entire app. Currently supported:
 This priority means first-time visitors and shared-link viewers always see the app in their own browser language (if supported), without any setting from the original creator overriding it. Shared collections never carry language preferences that would force a language on the viewer.
 
 All translations live inside `index.html` in a `TRANSLATIONS` object. The `data-i18n` attribute on static HTML elements is updated by `applyI18n()` on startup and whenever the language changes. Dynamic content uses the `t(key)` helper function.
+
+Item type display names that differ from their stored value are also translated — for example, the Film & TV Trading Card type (stored as `"Film / TV Card"`) uses the `type_film_tv_card` key, which maps to "Trading Card" in English and "交換卡" in Traditional Chinese. The `displayItemType()` helper applies this mapping wherever item types are shown as text (detail modal, filter chips, eBay description builder). The filter set is also built from display names rather than raw stored values, so the Film & TV and Sports Trading Card types merge into a single filter chip that matches both.
 
 #### Appearance
 
