@@ -652,12 +652,12 @@ This is a free, public API that requires no authentication.
 
 | State | Display |
 |---|---|
-| Same currency | No rate box shown (rate = 1) |
-| Loading | "Fetching rate…" with a spinner |
-| Loaded | "1 TWD = 0.0312 USD · updated just now" (example) |
-| Error | "Could not fetch rate" with a Retry button |
+| Same currency | "Same currency — no conversion needed"; Refresh button hidden |
+| Loading | "Fetching rate…"; Refresh button disabled |
+| Loaded | "1 $USD = 31.6335 NT$TWD" with a timestamp ("Updated just now" / "Updated Xm ago") |
+| Error | "Could not fetch rate — check your connection" |
 
-A **Refresh** button allows manually re-fetching the rate at any time (bypasses the 1-hour cache).
+A **Refresh** button allows manually re-fetching the rate at any time (bypasses the 1-hour cache). All status strings and the Refresh button label are fully translated (currently English and Traditional Chinese).
 
 **Behavior when currencies match:** If local and display currencies are set to the same value, no exchange rate is fetched, and `exchangeRate` is set to `1` internally. All displayed values are identical to stored values.
 
