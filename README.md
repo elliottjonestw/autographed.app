@@ -315,7 +315,7 @@ Items support **multiple photos**. The **Photos** section of the form shows a ro
 - **Click "Add photo"** to open the system file picker (accepts `image/*`; you can select multiple files at once)
 - Each selected file is compressed client-side and added to the thumbnail row
 
-Each thumbnail has an **✕** button to remove that individual photo. The first photo in the row is the **cover image** shown on the card and in the table view. There is no limit on the number of photos per item beyond IndexedDB capacity.
+Each thumbnail has an **✕** button to remove that individual photo. When an item has more than one photo, thumbnails can be **dragged and dropped** to reorder them — grab a thumbnail and drop it onto another position to rearrange. The first photo in the row is the **cover image** shown on the card and in the table view. There is no limit on the number of photos per item beyond IndexedDB capacity.
 
 **Compression per image:**
 
