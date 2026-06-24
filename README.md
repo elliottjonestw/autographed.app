@@ -75,7 +75,7 @@ The header is sticky — it stays at the top of the viewport while you scroll. I
 
 The Settings button is a 36×36px square icon button with rounded corners. On hover it brightens slightly.
 
-The **+ Add Item** button is styled in gold with black text to make it the primary call to action.
+The **+ Add Item** button is styled in gold with black text to make it the primary call to action. On mobile (≤640px), the text label is hidden and only the **+** icon is shown to save header space.
 
 ---
 
