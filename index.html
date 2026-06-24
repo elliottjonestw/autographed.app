@@ -3471,7 +3471,12 @@
   }
 
   /* ── Modal helpers ── */
-  function open(id)  { document.getElementById(id).classList.add('open'); }
+  function open(id)  {
+    const el = document.getElementById(id);
+    el.classList.add('open');
+    const body = el.querySelector('.modal-body');
+    if (body) body.scrollTop = 0;
+  }
   function close(id) { document.getElementById(id).classList.remove('open'); }
 
   function overlayClick(e, id) {
