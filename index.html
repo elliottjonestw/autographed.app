@@ -1786,6 +1786,12 @@
           <div class="tip-box" data-i18n="tip_privacy">Hides monetary values (paid amounts and estimates) from view. Reveal them using the eye button in the header.</div>
         </div>
         <div class="fg">
+          <label class="flabel" data-i18n="lbl_desc_settings">Auto-Description</label>
+          <div class="grid-vis-checks" style="grid-template-columns:1fr;">
+            <label><input type="checkbox" id="desc_notes" onchange="setDescNotes(this.checked)"><span data-i18n="desc_notes_label">Include notes in auto-description</span></label>
+          </div>
+        </div>
+        <div class="fg">
           <label class="flabel" data-i18n="lbl_grid_visibility">Grid View Visibility</label>
           <div class="grid-vis-checks">
             <label><input type="checkbox" id="gv_image"   onchange="setGridVis('ag_grid_image',this.checked)">  <span data-i18n="grid_vis_image">Image</span></label>
@@ -2080,6 +2086,7 @@
       fit_cover: 'Crop to fill', fit_contain: 'Fit with black bars', fit_blurbg: 'Fit with blurred background',
       lbl_info_links: 'Info Links', lbl_privacy: 'Privacy Mode',
       privacy_off: 'Off', privacy_on: 'On — blur monetary values',
+      lbl_desc_settings: 'Auto-Description', desc_notes_label: 'Include notes in auto-description',
       lbl_grid_visibility: 'Grid View Visibility',
       grid_vis_image: 'Image', grid_vis_signer: 'Signer\'s Name',
       grid_vis_detail1: 'Detail 1', grid_vis_detail2: 'Detail 2',
@@ -2175,6 +2182,7 @@
       fit_cover: '裁切填滿', fit_contain: '完整顯示（黑邊）', fit_blurbg: '完整顯示（模糊背景）',
       lbl_info_links: '資訊連結', lbl_privacy: '隱私模式',
       privacy_off: '關閉', privacy_on: '開啟 — 模糊金額顯示',
+      lbl_desc_settings: '自動描述', desc_notes_label: '在自動描述中包含備註',
       lbl_grid_visibility: '格狀視圖顯示設定',
       grid_vis_image: '圖片', grid_vis_signer: '簽名者姓名',
       grid_vis_detail1: '詳細 1', grid_vis_detail2: '詳細 2',
@@ -2549,6 +2557,8 @@
       const el = document.getElementById('gv_' + k);
       if (el) el.checked = getGridVis('ag_grid_' + k);
     });
+    const descNotesEl = document.getElementById('desc_notes');
+    if (descNotesEl) descNotesEl.checked = getDescNotes();
     const langSel = document.getElementById('settingsLang');
     if (langSel) langSel.value = getLang();
     document.getElementById('settingsDataSection').style.display  = viewMode ? 'none' : '';
@@ -3426,7 +3436,7 @@
       paras.push(s + '.');
     }
 
-    if (item.notes) paras.push(item.notes);
+    if (item.notes && getDescNotes()) paras.push(item.notes);
 
     return paras.join(' ');
   }
@@ -3494,7 +3504,8 @@
                   'ag_photo_format', 'ag_img_fit', 'ag_info_link', 'ag_privacy',
                   'ag_sort', 'ag_custom_order', 'ag_lang',
                   'ag_grid_image', 'ag_grid_signer', 'ag_grid_detail1', 'ag_grid_detail2',
-                  'ag_grid_cert', 'ag_grid_paid', 'ag_grid_value', 'ag_grid_roi'];
+                  'ag_grid_cert', 'ag_grid_paid', 'ag_grid_value', 'ag_grid_roi',
+                  'ag_desc_notes'];
     const s = {};
     keys.forEach(k => { const v = localStorage.getItem(k); if (v !== null) s[k] = v; });
     return s;
@@ -3523,7 +3534,8 @@
       try { customOrder = JSON.parse(s.ag_custom_order); saveCustomOrder(); } catch {}
     }
     ['ag_grid_image','ag_grid_signer','ag_grid_detail1','ag_grid_detail2',
-     'ag_grid_cert','ag_grid_paid','ag_grid_value','ag_grid_roi'].forEach(k => {
+     'ag_grid_cert','ag_grid_paid','ag_grid_value','ag_grid_roi',
+     'ag_desc_notes'].forEach(k => {
       if (s[k] !== undefined) localStorage.setItem(k, s[k]);
     });
   }
@@ -3946,6 +3958,9 @@
     localStorage.setItem(key, checked ? '1' : '0');
     render();
   }
+
+  function getDescNotes() { return localStorage.getItem('ag_desc_notes') === '1'; }
+  function setDescNotes(checked) { localStorage.setItem('ag_desc_notes', checked ? '1' : '0'); }
 
   function getPrivacyMode() { return localStorage.getItem('ag_privacy') || 'off'; }
   function applyPrivacyMode(val) {

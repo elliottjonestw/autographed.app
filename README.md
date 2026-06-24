@@ -377,7 +377,7 @@ Rules:
 - The signer name and Detail 1 / Detail 2 parenthetical open the description. For multi-signer items the parenthetical is omitted.
 - Item type is always lowercase (e.g. "photo", not "Photo").
 - The cert sentence is included only if a cert number is set. The condition sentence is included only if condition is set. The signing sentence is included only if a signing event or signing date is set — it uses whichever of the two are available.
-- If Notes are set they are appended at the end.
+- If Notes are set **and** the **Include notes in auto-description** setting is enabled (Settings → Display → Auto-Description), they are appended at the end. Notes are excluded by default.
 - Paid, Est. Value, ROI, and tags are never included.
 
 The text is editable directly in the textarea before copying — changes are local to the open modal and not saved to the item. Click **Copy** to copy the current text to the clipboard; the button briefly reads "Copied!" to confirm.
@@ -456,7 +456,7 @@ Opened by clicking the **⚙️ gear icon** in the header. Settings are organize
 
 | Tab | Contents |
 |---|---|
-| **Display** | Language, Appearance, Photo Format, Image Fit, Info Links, Privacy Mode |
+| **Display** | Language, Appearance, Photo Format, Image Fit, Info Links, Privacy Mode, Auto-Description, Grid View Visibility |
 | **Data** | Backup & Share (normal mode) or Save as My Collection (view mode) |
 | **Currency** | Local Currency, Display Currency, Exchange Rate (Local Currency hidden in view mode) |
 
@@ -564,6 +564,18 @@ A dropdown to choose which site signer names and Detail 2 values link to in the 
 
 - Saved to `localStorage` (`ag_info_link`). Takes effect immediately (gallery re-renders on change).
 - Links appear in **table view** (Signer column, Film / Show column) and **detail modal** (Signer row, Film / Show row). Grid card text is plain — no links.
+
+#### Auto-Description
+
+A checkbox that controls whether item notes are appended to the auto-generated description in the detail modal.
+
+| Checkbox | Default | Behaviour |
+|---|---|---|
+| **Include notes in auto-description** | Unchecked | When checked, the item's Notes field is appended as an extra paragraph at the end of the auto-generated description text |
+
+- Saved to `localStorage` (`ag_desc_notes`). Value is `"1"` (include) or `"0"` / absent (exclude).
+- Included in Export/Import and shared collections.
+- Notes are always visible in the detail modal itself regardless of this setting — this only controls whether they appear in the copyable description text.
 
 #### Grid View Visibility
 
@@ -985,6 +997,7 @@ AutoGallery uses a **hybrid storage model**: lightweight item metadata and prefe
 | `ag_grid_paid` | String | Grid card Paid row visibility: `"1"` or `"0"`. Absent = visible. |
 | `ag_grid_value` | String | Grid card Est. Value row visibility: `"1"` or `"0"`. Absent = visible. |
 | `ag_grid_roi` | String | Grid card ROI row visibility: `"1"` or `"0"`. Absent = visible. |
+| `ag_desc_notes` | String | Whether notes are included in the auto-generated description: `"1"` (include) or `"0"` / absent (exclude, default). |
 
 ### IndexedDB (photos)
 
