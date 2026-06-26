@@ -1147,7 +1147,7 @@ Dragging image files over the browser window (when the Add/Edit form is not open
 
 ## Footer
 
-A footer is fixed to the bottom of the page and contains three navigation links: **Home** (the marketing page), **Dashboard** (the app), and **Blog**. It appears on all pages of the site, including the dashboard, the marketing page, and all blog pages.
+A footer is fixed to the bottom of the page and contains four navigation links: **Home** (the marketing page), **My Collection** (the app, `dashboard.html`), **Publicly Shared Collections** (`shared.html`), and **Blog**. It appears on all pages of the site.
 
 ---
 
