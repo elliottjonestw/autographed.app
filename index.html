@@ -220,14 +220,6 @@
     .trust-item p { font-size: 13px; color: var(--sub); }
 
     /* ── Section headings ── */
-    .section-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 10px;
-    }
     .section-heading {
       font-size: clamp(26px, 4vw, 40px);
       font-weight: 800;
@@ -242,68 +234,13 @@
       max-width: 480px;
     }
 
-    /* ── Feature split rows ── */
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-      max-width: 1080px;
-      margin: 0 auto;
-    }
-    .split.reverse { direction: rtl; }
-    .split.reverse > * { direction: ltr; }
-
-    .split-img {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--r);
-      overflow: hidden;
-    }
-    .split-img img { width: 100%; height: auto; display: block; }
-    .split-img svg { opacity: .25; }
-
-    .feature-list {
-      list-style: none;
-      margin-top: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .feature-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 15px;
-      color: var(--sub);
-      line-height: 1.5;
-    }
-    .feature-list li::before {
-      content: '';
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
-      border-radius: 50%;
-      background: var(--gold-dim);
-      border: 2px solid var(--gold);
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23c9a435' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-size: 70%;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-    .feature-list li strong { color: var(--text); }
-
     /* ── Feature cards grid ── */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
       max-width: 1080px;
-      margin: 48px auto 0;
+      margin: 0 auto;
     }
     .feat-card {
       background: var(--card);
@@ -379,12 +316,6 @@
     footer a { color: var(--gold); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* ── Divider ── */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-    }
-
     /* ── Mobile ── */
     @media (max-width: 720px) {
       section { padding: 60px 20px; }
@@ -392,10 +323,6 @@
       .hero h1 { font-size: clamp(28px, 7vw, 40px); }
 
       .trust-grid { grid-template-columns: 1fr; gap: 20px; }
-
-      .split { grid-template-columns: 1fr; gap: 32px; }
-      .split.reverse { direction: ltr; }
-      .split-img { aspect-ratio: unset; }
 
       .features-grid { grid-template-columns: 1fr 1fr; }
 
@@ -447,156 +374,38 @@
     </div>
   </div>
 
-  <!-- Feature: Grid & Table views -->
+  <!-- Features -->
   <section id="features">
-    <div class="split">
-      <div>
-        <p class="section-label">Views</p>
-        <h2 class="section-heading">Grid and Table, your way</h2>
-        <p class="section-sub">Browse your collection as a photo-forward card grid or a data-dense table. Switch between them instantly. Customize how many columns appear, and choose which fields show on each card.</p>
-        <ul class="feature-list">
-          <li><span><strong>Grid view</strong>: photo cards with signer, cert, value, and ROI at a glance</span></li>
-          <li><span><strong>Table view</strong>: sortable rows with all fields, clickable signer and title links</span></li>
-          <li><span><strong>3–8 columns</strong> per row, saved between visits</span></li>
-          <li><span><strong>Custom order</strong>: drag items into any sequence you like</span></li>
-        </ul>
-      </div>
-      <div class="split-img">
-        <img src="images/table-grid.png" alt="Grid and Table view">
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Feature: Authentication -->
-  <section>
-    <div class="split reverse">
-      <div>
-        <p class="section-label">Authentication</p>
-        <h2 class="section-heading">All cert types supported</h2>
-        <p class="section-sub">Log which company authenticated each piece. Cert numbers become clickable links that open the authentication company's official verification page and copy the number to your clipboard in one tap.</p>
-      </div>
-      <!-- REPLACE: screenshot of cert number link on a card or detail modal -->
-      <div class="split-img">
-        <img src="images/cert-support.png" alt="Cert support">
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Feature: Search & Filter -->
-  <section>
-    <div class="split">
-      <div>
-        <p class="section-label">Search & Filter</p>
-        <h2 class="section-heading">Find anything, instantly</h2>
-        <p class="section-sub">Live search across signers, characters, films, tags, and notes. Layer in multi-select filters for cert type, item type, condition, signing event, location, and more, all active simultaneously.</p>
-        <ul class="feature-list">
-          <li><span><strong>Live search</strong>: results update on every keystroke</span></li>
-          <li><span><strong>Multi-select filters</strong>: mix and match tags, cert type, condition, acquisition method, and more</span></li>
-          <li><span><strong>Sort</strong> by date, name, value, paid, ROI, or your own custom order</span></li>
-        </ul>
-      </div>
-      <!-- REPLACE: screenshot of filter modal or search in action -->
-      <div class="split-img">
-        <img src="images/find-anything.png" alt="Search and filter">
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Feature: Sharing & Export -->
-  <section>
-    <div class="split reverse">
-      <div>
-        <p class="section-label">Sharing & Export</p>
-        <h2 class="section-heading">Share/export everything</h2>
-        <p class="section-sub">Generate a shareable link that lets anyone browse your collection read-only in their own browser, no app install needed. Export to JSON for backup or CSV for spreadsheets. Print a beautifully laid-out A4 catalog.</p>
-        <ul class="feature-list">
-          <li><span><strong>Share link</strong>: one click creates a public read-only URL for your collection</span></li>
-          <li><span><strong>JSON export / import</strong>: full backup including photos, restore on any device</span></li>
-          <li><span><strong>CSV export</strong>: open in Excel, Numbers, or Google Sheets</span></li>
-          <li><span><strong>Print layout</strong>: A4 card grid with stats header, ready to print</span></li>
-          <li><span><strong>Merge import</strong>: combine collections without overwriting existing data</span></li>
-        </ul>
-      </div>
-      <!-- REPLACE: screenshot of the share link dialog or print layout -->
-      <div class="split-img">
-        <img src="images/export.png" alt="Share and export">
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Feature: Item Detail -->
-  <section>
-    <div class="split">
-      <div>
-        <p class="section-label">Item Detail</p>
-        <h2 class="section-heading">Every detail, on display</h2>
-        <p class="section-sub">Tap any card to open a full detail view. Multiple photos with a thumbnail strip to flip through. Auto-generated descriptions ready to paste into a listing. ROI tracking that updates live as values change.</p>
-        <ul class="feature-list">
-          <li><span><strong>Multiple photos</strong> per item: tap to browse, pinch/scroll to zoom</span></li>
-          <li><span><strong>Auto-description</strong>: generates a ready-to-paste listing description from your fields</span></li>
-          <li><span><strong>ROI tracking</strong>: see your return on every piece, colored green or red</span></li>
-          <li><span><strong>Clickable tags</strong>: tap a tag to filter the gallery instantly</span></li>
-          <li><span><strong>Presentation mode</strong>: full-screen slideshow for displaying on a TV</span></li>
-        </ul>
-      </div>
-      <!-- REPLACE: screenshot of the item detail modal -->
-      <div class="split-img">
-        <img src="images/details.png" alt="Item detail">
-      </div>
-    </div>
-  </section>
-
-  <hr class="divider">
-
-  <!-- Feature cards grid -->
-  <section style="padding-top: 60px; padding-bottom: 80px;">
-    <div class="container" style="text-align: center;">
-      <p class="section-label" style="margin-bottom: 10px;">Everything else</p>
-      <h2 class="section-heading">Packed with features</h2>
-    </div>
     <div class="features-grid">
 
       <div class="feat-card">
-        <h3>Live Currency Conversion</h3>
-        <p>Record values in your local currency, display in any of 152 national currencies. Live exchange rates fetched automatically and cached for 1 hour.</p>
+        <h3>Grid & Table Views</h3>
+        <p>Browse as a photo-forward card grid or a data-dense table. Choose 3–8 columns, toggle which fields show on each card, and arrange items in any custom order.</p>
       </div>
 
       <div class="feat-card">
-        <h3>Multi-Language Support</h3>
-        <p>Full UI translations included. The app auto-detects your browser language on first visit, with no setup required.</p>
+        <h3>Authentication Certificates</h3>
+        <p>Log the cert company for each piece. Cert numbers become clickable links to the authenticator's official verification page and copy to your clipboard in one tap.</p>
       </div>
 
       <div class="feat-card">
-        <h3>Dark & Light Mode</h3>
-        <p>Toggle between a rich dark theme and a clean light theme. Your preference is saved between visits.</p>
+        <h3>Live Search & Filters</h3>
+        <p>Search across signers, characters, films, tags, and notes on every keystroke. Layer multi-select filters for cert type, condition, item type, signing event, location, and more.</p>
       </div>
 
       <div class="feat-card">
-        <h3>Mobile Friendly</h3>
-        <p>Fully responsive layout. Two-column grid on phones, full filter and search support, touch-friendly throughout.</p>
+        <h3>Value & ROI Tracking</h3>
+        <p>Log what you paid and your estimated market value for every item. See return on investment colored green or red. Link any item to eBay sold listings to check real market prices.</p>
       </div>
 
       <div class="feat-card">
-        <h3>Tags & Metadata</h3>
-        <p>Add freeform tags to any item. Log signing event, signing date, acquisition method, condition, and physical storage location.</p>
+        <h3>Rich Item Detail</h3>
+        <p>Every item gets a full detail view with multiple photos, zoom, auto-generated listing descriptions, and clickable tags. Plus a full-screen slideshow for displaying on a TV.</p>
       </div>
 
       <div class="feat-card">
-        <h3>Flexible Photo Formats</h3>
-        <p>Nine aspect ratios covering 8×10, 5×7, 4×6, index cards, trading cards, and square formats. Crop, contain, or fill with a blurred background.</p>
-      </div>
-
-      <div class="feat-card">
-        <h3>Privacy Mode</h3>
-        <p>Blur all monetary values with one toggle, perfect for displaying your collection without revealing what you paid.</p>
+        <h3>Share & Export</h3>
+        <p>Generate a read-only share link, export to JSON or CSV, and print a formatted A4 catalog. Merge imports let you combine collections without overwriting existing items.</p>
       </div>
 
       <div class="feat-card">
@@ -605,8 +414,28 @@
       </div>
 
       <div class="feat-card">
-        <h3>Wikipedia & IMDb Links</h3>
-        <p>Signer names and titles automatically link to Wikipedia or IMDb, your choice. One click from any card to the right page.</p>
+        <h3>Tags & Metadata</h3>
+        <p>Add freeform tags to any item. Log signing event, signing date, acquisition method, condition, and physical storage location.</p>
+      </div>
+
+      <div class="feat-card">
+        <h3>Live Currency Conversion</h3>
+        <p>Record values in your local currency, display in any of 152 national currencies. Live exchange rates fetched automatically and cached for 1 hour.</p>
+      </div>
+
+      <div class="feat-card">
+        <h3>Privacy Mode</h3>
+        <p>Blur all monetary values with one toggle, perfect for displaying your collection without revealing what you paid.</p>
+      </div>
+
+      <div class="feat-card">
+        <h3>Mobile Friendly</h3>
+        <p>Fully responsive layout. Two-column grid on phones, full filter and search support, touch-friendly throughout.</p>
+      </div>
+
+      <div class="feat-card">
+        <h3>Multi-Language Support</h3>
+        <p>Full UI translations in English, Spanish, German, and Traditional Chinese. The app auto-detects your browser language on first visit.</p>
       </div>
 
     </div>
