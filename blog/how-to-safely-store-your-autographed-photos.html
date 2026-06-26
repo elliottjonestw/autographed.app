@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How to Safely Store Your Autographed Photos · Blog</title>
+  <meta name="description" content="Sleeves, toploaders, humidity boxes, and the environmental basics that do the most quiet damage — a practical guide to keeping signed photos safe for decades.">
+  <meta name="date" content="2026-06-26">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #f0f0f5;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --card-hover: #f8f8fc;
+      --border: #dcdce8;
+      --border-light: #c8c8da;
+      --gold: #c9a435;
+      --text: #18182a;
+      --sub: #70708a;
+      --r: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 19px; font-weight: 800; letter-spacing: -0.6px; color: var(--gold); text-decoration: none; }
+    .logo span { color: var(--text); font-weight: 400; }
+    .nav-cta { background: var(--gold); color: #000; font-weight: 700; font-size: 14px; padding: 8px 18px; border-radius: 8px; text-decoration: none; transition: opacity .15s; }
+    .nav-cta:hover { opacity: .85; }
+
+    .article-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px 44px;
+      text-align: center;
+    }
+    .article-back {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      text-decoration: none;
+      margin-bottom: 22px;
+    }
+    .article-back:hover { text-decoration: underline; }
+    .article-title {
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -.8px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .article-date { font-size: 13px; color: var(--sub); }
+
+    .article-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+      flex: 1;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    .article-body h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      margin: 40px 0 14px;
+      color: var(--text);
+    }
+    .article-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 28px 0 10px;
+    }
+    .article-body h2:first-child, .article-body h3:first-child { margin-top: 0; }
+    .article-body p { margin: 0 0 20px; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body ul, .article-body ol { margin: 0 0 20px; padding-left: 24px; }
+    .article-body li { margin-bottom: 8px; }
+    .article-body li:last-child { margin-bottom: 0; }
+    .article-body a { color: var(--gold); word-break: break-all; }
+    .article-body a:hover { text-decoration: underline; }
+    .article-body strong { font-weight: 700; }
+    .article-body em { font-style: italic; }
+    .article-body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    .article-body code {
+      background: rgba(0,0,0,.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    }
+    .article-body pre {
+      background: rgba(0,0,0,.05);
+      padding: 18px 20px;
+      border-radius: var(--r);
+      overflow-x: auto;
+      margin: 0 0 24px;
+    }
+    .article-body pre code { background: none; padding: 0; font-size: 14px; }
+    .article-body blockquote {
+      border-left: 3px solid var(--gold);
+      margin: 0 0 24px;
+      padding: 6px 0 6px 20px;
+      color: var(--sub);
+    }
+    .article-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      display: block;
+      margin: 4px 0 24px;
+    }
+
+    .article-promo {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 52px 24px;
+      text-align: center;
+    }
+    .promo-inner { max-width: 560px; margin: 0 auto; }
+    .promo-logo { font-size: 22px; font-weight: 800; letter-spacing: -.6px; color: var(--gold); margin-bottom: 14px; }
+    .promo-logo span { color: var(--text); font-weight: 400; }
+    .promo-headline { font-size: 22px; font-weight: 700; letter-spacing: -.3px; line-height: 1.25; margin-bottom: 12px; }
+    .promo-sub { font-size: 15px; color: var(--sub); line-height: 1.6; margin-bottom: 28px; }
+    .promo-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .promo-btn:hover { opacity: .85; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 13px; color: var(--sub); }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .article-header { padding: 36px 20px 32px; }
+      .article-body { padding: 40px 20px 60px; font-size: 15px; }
+      .article-promo { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="../index.html">autographed<span>.app</span></a>
+  <a class="nav-cta" href="../dashboard.html">Dashboard →</a>
+</nav>
+
+<div class="article-header">
+  <a class="article-back" href="index.html">← Blog</a>
+  <h1 class="article-title">How to Safely Store Your Autographed Photos</h1>
+  <time class="article-date">June 26, 2026</time>
+</div>
+
+<div class="article-body" id="article-output"></div>
+
+<script type="text/markdown" id="post-content">
+The difference between a signed photo that survives decades and one that fades, smears, or sticks to a sleeve usually comes down to a few unglamorous decisions about plastic, humidity, and light. Here's what actually matters.
+
+## What you're protecting against
+
+Four things damage autographed photos:
+
+- **Bad plastics.** The wrong storage material can chemically attack a photo, causing discoloration, sticking, and physical damage to the emulsion and ink.
+- **Humidity.** Too much invites mold, warping, and insects. Too little makes paper brittle. Swings between the two are worse than a steady imperfect level.
+- **Light.** Ultraviolet exposure fades both the image and the signature — cumulative and irreversible.
+- **Handling.** Skin oils and fingerprints cause damage that builds up invisibly over time.
+
+## Choosing safe sleeves
+
+**Avoid PVC in direct contact with your photos.** Polyvinyl chloride breaks down over time and releases chemicals that damage paper and ink, sometimes causing sticking or holes.
+
+Archival-safe materials for direct contact:
+
+- **Polyester (Mylar / Melinex):** the gold standard — chemically inert, recommended by conservation institutions.
+- **Polypropylene (PP):** safe, widely available, used in most quality collector pages and penny sleeves.
+- **Polyethylene (PE):** also safe and inert.
+
+Look for sleeves labeled "archival," "archival safe," or "PVC-free." If a product doesn't say what it's made of, skip it.
+
+### How to sleeve correctly
+
+- **One item per sleeve.** Don't stack signed photos inside a single pocket.
+- **Use a sleeve slightly larger than the photo.** Any edge poking past the plastic is the part that gets damaged.
+- **Add a rigid backing board** behind each photo to prevent bending and curling over time.
+- **Never use glue or adhesive.** Use acid-free photo corners instead. Glue discolors, oozes, and becomes impossible to remove without destroying the item.
+
+## Itoya portfolios
+
+The **Itoya Art Profolio** is the most widely recommended option, endorsed by conservation suppliers. It's a bound book of top-loading sleeves made from **acid-free, PVC-free polypropylene** with **acid-free black mounting paper** inside each page. Available in sizes from 8x10 to 11x17 and larger.
+
+![Itoya Art Profolio storage book](images/itoya-art-profolio.jpg)
+
+- Standard book holds **24 pages / up to 48 photos**, permanently bound.
+- The **ring-binder version** (Art+Photo Binder) uses the same archival pockets with moveable pages.
+- Black paper inserts are usually removable for double-sided use.
+
+## Toploaders
+
+Rigid **toploaders** protect against bending, creasing, scratches, and water, good for photos you handle frequently.
+
+The catch: **most rigid toploaders are made of PVC.** The fix: **sleeve the photo in archival polyester (Mylar) or polypropylene first, then slide it into the toploader.** The inner sleeve acts as the barrier.
+
+- PVC toploaders can off-gas over time in enclosed spaces. **Replace them every few years** rather than disturbing the inner sleeve.
+- Some manufacturers now sell **PVC-free toploaders** specifically for photos and autographs.
+
+Keep toploaders out of direct light — the plastic does nothing to stop UV fading.
+
+## Building a humidity-controlled box
+
+For humid climates or valuable pieces, a sealed box with a humidity pack is cheap insurance. **One number matters**, and most guides get it wrong because they're written for cigars.
+
+### The build
+
+1. **New, airtight container** — food-grade plastic (Sistema, Komax, Rubbermaid) or airtight glass.
+2. **Leave 20–25% headspace** so air can circulate.
+3. **Add a two-way humidity pack** — it both releases and absorbs moisture to hold a steady level.
+4. **Add a digital hygrometer** — cheap analog dials drift out of calibration.
+5. **Seal and wait.** Check after a day or two, then periodically. Replace the pack when it goes stiff.
+
+### The number everyone gets wrong
+
+Cigar boxes target **69% RH — far too humid for paper.** Above 65% RH, mold can develop within days.
+
+Conservation targets:
+
+- **Below 50% RH.** Major archives target **40–45%**.
+- **Not below 15% RH** — paper becomes brittle and prone to cracking.
+- Paper lasts roughly **twice as long at 30% RH as at 50%**, so drier-but-stable is better.
+
+Use a **two-way pack rated ~49% RH**, not 69%. Don't mix different RH packs in the same container.
+
+## Environmental basics
+
+**Temperature.** Below 75°F (24°C), stable. Avoid spots with big swings.
+
+**Light.** Store in the dark when not being viewed.
+
+**Location.** No basements, attics, or garages. Keep boxes off the floor, away from pipes, windows, food sources, and acidic materials like newsprint.
+
+**Handling.** Clean, dry hands or cotton gloves. Touch edges, not faces — never let bare fingers rest on a signature.
+</script>
+
+<script>
+  document.getElementById('article-output').innerHTML =
+    marked.parse(document.getElementById('post-content').textContent.trim());
+</script>
+
+<div class="article-promo">
+  <div class="promo-inner">
+    <div class="promo-logo">autographed<span>.app</span></div>
+    <p class="promo-headline">Your autograph collection,<br>beautifully organized.</p>
+    <p class="promo-sub">A free, private app for collectors. Track autographs and memorabilia, log cert numbers, monitor value, and share your collection — no account required.</p>
+    <a class="promo-btn" href="../dashboard.html">Try it free →</a>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">Home</a> · <a href="../dashboard.html">Dashboard</a> · <a href="index.html">Blog</a>
+</footer>
+
+</body>
+</html>

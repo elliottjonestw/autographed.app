@@ -77,6 +77,9 @@
       font-family: var(--font);
       -webkit-font-smoothing: antialiased;
       line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     /* ── Nav ── */
@@ -101,6 +104,10 @@
       text-decoration: none;
     }
     .logo span { color: var(--text); font-weight: 400; }
+
+    .nav-links { display: flex; gap: 24px; }
+    .nav-link { color: var(--sub); font-size: 14px; font-weight: 500; text-decoration: none; transition: color .15s; }
+    .nav-link:hover { color: var(--text); }
 
     .nav-cta {
       background: var(--gold);
@@ -312,12 +319,14 @@
       text-align: center;
       font-size: 13px;
       color: var(--sub);
+      margin-top: auto;
     }
     footer a { color: var(--gold); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
     /* ── Mobile ── */
     @media (max-width: 720px) {
+      .nav-links { display: none; }
       section { padding: 60px 20px; }
       .hero { padding: 44px 20px 48px; }
       .hero h1 { font-size: clamp(28px, 7vw, 40px); }
@@ -450,7 +459,7 @@
 
   <!-- Footer -->
   <footer>
-    <a href="dashboard.html">autographed.app</a> · A free, private web app for autograph collectors.
+    <a href="index.html">Home</a> · <a href="dashboard.html">Dashboard</a> · <a href="blog/">Blog</a>
   </footer>
 
 </body>
