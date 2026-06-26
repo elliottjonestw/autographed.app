@@ -2652,7 +2652,7 @@
       acct_pw_mismatch: 'Passwords do not match', acct_pw_updated: 'Password updated successfully',
       public_enable_btn: 'Make collection public', public_enable_confirm: 'Enable', public_disable_btn: 'Disable',
       public_warn: 'Your entire collection — including photos, paid amounts, and certificate numbers — will be publicly accessible to anyone who knows the URL.',
-      public_copy_link: 'Copy link', public_url_label: 'Public URL:',
+      public_copy_link: 'Copy link', public_url_label: 'Public URL:', public_on_label: 'Your collection is public, and accessible at:',
       public_enabled_toast: 'Public access enabled', public_disabled_toast: 'Public access disabled',
       public_link_copied: 'Public link copied to clipboard',
       sync_to_cloud: 'Sync to cloud', restore_from_cloud: 'Restore from cloud',
@@ -2804,7 +2804,7 @@
       acct_pw_mismatch: 'Las contraseñas no coinciden', acct_pw_updated: 'Contraseña actualizada correctamente',
       public_enable_btn: 'Hacer la colección pública', public_enable_confirm: 'Activar', public_disable_btn: 'Desactivar',
       public_warn: 'Toda tu colección — incluyendo fotos, montos pagados y números de certificado — será accesible públicamente para cualquiera que conozca la URL.',
-      public_copy_link: 'Copiar enlace', public_url_label: 'URL pública:',
+      public_copy_link: 'Copiar enlace', public_url_label: 'URL pública:', public_on_label: 'Tu colección es pública y accesible en:',
       public_enabled_toast: 'Acceso público activado', public_disabled_toast: 'Acceso público desactivado',
       public_link_copied: 'Enlace público copiado al portapapeles',
       sync_to_cloud: 'Sincronizar con la nube', restore_from_cloud: 'Restaurar desde la nube',
@@ -2956,7 +2956,7 @@
       acct_pw_mismatch: '密碼不相符', acct_pw_updated: '密碼已成功更新',
       public_enable_btn: '公開收藏', public_enable_confirm: '啟用', public_disable_btn: '停用',
       public_warn: '您的整個收藏——包括照片、購入金額和證書編號——將可供任何知道網址的人公開存取。',
-      public_copy_link: '複製連結', public_url_label: '公開網址：',
+      public_copy_link: '複製連結', public_url_label: '公開網址：', public_on_label: '您的收藏已公開，可透過以下網址存取：',
       public_enabled_toast: '已啟用公開存取', public_disabled_toast: '已停用公開存取',
       public_link_copied: '公開連結已複製到剪貼簿',
       sync_to_cloud: '同步至雲端', restore_from_cloud: '從雲端還原',
@@ -3108,7 +3108,7 @@
       acct_pw_mismatch: 'Passwörter stimmen nicht überein', acct_pw_updated: 'Passwort erfolgreich aktualisiert',
       public_enable_btn: 'Sammlung öffentlich machen', public_enable_confirm: 'Aktivieren', public_disable_btn: 'Deaktivieren',
       public_warn: 'Deine gesamte Sammlung — einschließlich Fotos, gezahlter Beträge und Zertifikatsnummern — wird für jeden öffentlich zugänglich sein, der die URL kennt.',
-      public_copy_link: 'Link kopieren', public_url_label: 'Öffentliche URL:',
+      public_copy_link: 'Link kopieren', public_url_label: 'Öffentliche URL:', public_on_label: 'Deine Sammlung ist öffentlich und erreichbar unter:',
       public_enabled_toast: 'Öffentlicher Zugang aktiviert', public_disabled_toast: 'Öffentlicher Zugang deaktiviert',
       public_link_copied: 'Öffentlicher Link in die Zwischenablage kopiert',
       sync_to_cloud: 'Mit Cloud synchronisieren', restore_from_cloud: 'Aus Cloud wiederherstellen',
@@ -3256,7 +3256,7 @@
       acct_pw_mismatch: 'Les mots de passe ne correspondent pas', acct_pw_updated: 'Mot de passe mis à jour avec succès',
       public_enable_btn: 'Rendre la collection publique', public_enable_confirm: 'Activer', public_disable_btn: 'Désactiver',
       public_warn: "Toute votre collection — y compris les photos, les montants payés et les numéros de certificat — sera publiquement accessible à toute personne connaissant l'URL.",
-      public_copy_link: 'Copier le lien', public_url_label: 'URL publique :',
+      public_copy_link: 'Copier le lien', public_url_label: 'URL publique :', public_on_label: 'Votre collection est publique et accessible à :',
       public_enabled_toast: 'Accès public activé', public_disabled_toast: 'Accès public désactivé',
       public_link_copied: 'Lien public copié dans le presse-papiers',
       sync_to_cloud: 'Synchroniser avec le cloud', restore_from_cloud: 'Restaurer depuis le cloud',
@@ -5793,12 +5793,12 @@
             </div>
             <button type="button" class="btn-secondary" id="sbPublicEnableBtn" onclick="sbPublicEnableWarn(true)" style="width:100%;height:34px;font-size:13px" data-i18n="public_enable_btn">Make collection public</button>
           </div>
-          <div id="sbPublicOn" style="display:none">
-            <p style="font-size:12px;color:var(--sub);margin-bottom:4px" data-i18n="public_url_label">Public URL:</p>
+          <div id="sbPublicOn" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px">
+            <p style="font-size:12px;color:var(--sub);margin-bottom:8px" data-i18n="public_on_label">Your collection is public, and accessible at:</p>
             <p id="sbPublicUrl" style="font-size:12px;font-weight:600;word-break:break-all;margin-bottom:10px;color:var(--gold)"></p>
             <div style="display:flex;gap:8px">
               <button type="button" class="btn-secondary" onclick="sbCopyPublicUrl()" style="flex:1;height:34px;font-size:13px" data-i18n="public_copy_link">Copy link</button>
-              <button type="button" class="btn-secondary" onclick="sbDisablePublic()" style="flex:1;height:34px;font-size:13px;color:var(--sub)" data-i18n="public_disable_btn">Disable</button>
+              <button type="button" class="btn-secondary" onclick="sbDisablePublic()" style="flex:1;height:34px;font-size:13px" data-i18n="public_disable_btn">Disable</button>
             </div>
           </div>
         </div>
