@@ -3787,7 +3787,7 @@
           <div class="empty-icon">✍️</div>
           <div class="empty-title">${items.length ? t('no_matches') : t('empty_title')}</div>
           <div class="empty-sub">${items.length ? t('no_matches_sub') : t('empty_sub')}</div>
-          ${!items.length ? `<div style="display:flex;gap:10px;justify-content:center"><button class="btn-add" onclick="openAdd()">${t('add_item')}</button><button class="btn-secondary" style="height:36px" onclick="loadDemoData()">${t('load_demo')}</button></div>` : ''}
+          ${!items.length ? `<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn-add" onclick="openAdd()">${t('add_item')}</button><button class="btn-secondary" style="height:36px" onclick="loadDemoData()">${t('load_demo')}</button></div>` : ''}
         </div>`;
       return;
     }
@@ -4589,7 +4589,7 @@
           <div class="empty-icon">✍️</div>
           <div class="empty-title">${items.length ? t('no_matches') : t('empty_title')}</div>
           <div class="empty-sub">${items.length ? t('no_matches_sub') : t('empty_sub')}</div>
-          ${!items.length ? `<div style="display:flex;gap:10px;justify-content:center"><button class="btn-add" onclick="openAdd()">${t('add_item')}</button><button class="btn-secondary" style="height:36px" onclick="loadDemoData()">${t('load_demo')}</button></div>` : ''}
+          ${!items.length ? `<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn-add" onclick="openAdd()">${t('add_item')}</button><button class="btn-secondary" style="height:36px" onclick="loadDemoData()">${t('load_demo')}</button></div>` : ''}
         </div>
       </td></tr>`;
       return;
