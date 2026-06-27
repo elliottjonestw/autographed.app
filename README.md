@@ -784,6 +784,10 @@ Click **Disable** in the Account modal. Your collection immediately becomes inac
 
 `shared.html` is a separate static page (same visual style as the rest of the site) that lists all collections where the owner has both enabled public access **and** checked the "List my collection" option.
 
+The page heading is **Publicly Shared Collections** with the subheading *"Browse autograph collections shared by users."* A gold-tinted warning box below the subheading reads:
+
+> ⚠️ Publicly shared collections may not have yet been reviewed by autographed.app admins, and may contain content not suitable for all audiences.
+
 ### What It Shows
 
 A table with one row per listed collection:
