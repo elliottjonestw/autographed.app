@@ -2651,6 +2651,8 @@
       acct_tab_signin: 'Sign in', acct_tab_create: 'Create account',
       acct_lbl_email: 'Email', acct_lbl_password: 'Password',
       acct_pw_hint: 'Minimum 8 characters',
+      acct_pw_warning: '⚠️ Do not use a password you have previously used for any other online service. Never re-use the password you use for this site. Doing so could result in your accounts being compromised if autographed.app\'s databases are ever breached!',
+      acct_terms_agree_html: 'I agree to the <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">terms and conditions</a>',
       acct_btn_signin: 'Sign in', acct_btn_create: 'Create account',
       acct_checking: 'Checking cloud…', acct_checking_op: 'Checking…', acct_syncing: 'Syncing…',
       acct_no_backup: 'No cloud backup yet — click Sync to cloud to create one.',
@@ -2803,6 +2805,8 @@
       acct_tab_signin: 'Iniciar sesión', acct_tab_create: 'Crear cuenta',
       acct_lbl_email: 'Correo electrónico', acct_lbl_password: 'Contraseña',
       acct_pw_hint: 'Mínimo 8 caracteres',
+      acct_pw_warning: '⚠️ No utilices una contraseña que hayas usado anteriormente en ningún otro servicio en línea. Nunca reutilices la contraseña que usas en este sitio. Hacerlo podría comprometer tus cuentas si las bases de datos de autographed.app son vulneradas alguna vez.',
+      acct_terms_agree_html: 'Acepto los <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">términos y condiciones</a>',
       acct_btn_signin: 'Iniciar sesión', acct_btn_create: 'Crear cuenta',
       acct_checking: 'Verificando nube…', acct_checking_op: 'Verificando…', acct_syncing: 'Sincronizando…',
       acct_no_backup: 'Sin copia de seguridad en la nube — haz clic en Sincronizar para crear una.',
@@ -2955,6 +2959,8 @@
       acct_tab_signin: '登入', acct_tab_create: '建立帳號',
       acct_lbl_email: '電子郵件', acct_lbl_password: '密碼',
       acct_pw_hint: '最少 8 個字元',
+      acct_pw_warning: '⚠️ 請勿使用您曾在其他線上服務使用過的密碼。切勿重複使用您在本站使用的密碼。否則，若 autographed.app 的資料庫遭到入侵，您的帳號可能因此受到危害！',
+      acct_terms_agree_html: '我同意<a href="termsandconditions.html" target="_blank" style="color:var(--gold)">使用條款與條件</a>',
       acct_btn_signin: '登入', acct_btn_create: '建立帳號',
       acct_checking: '正在檢查雲端…', acct_checking_op: '檢查中…', acct_syncing: '同步中…',
       acct_no_backup: '尚無雲端備份——點擊「同步至雲端」以建立備份。',
@@ -3107,6 +3113,8 @@
       acct_tab_signin: 'Anmelden', acct_tab_create: 'Konto erstellen',
       acct_lbl_email: 'E-Mail', acct_lbl_password: 'Passwort',
       acct_pw_hint: 'Mindestens 8 Zeichen',
+      acct_pw_warning: '⚠️ Verwende kein Passwort, das du bereits für einen anderen Online-Dienst verwendet hast. Verwende das Passwort für diese Website niemals anderswo. Andernfalls könnten deine Konten gefährdet werden, falls die Datenbanken von autographed.app jemals gehackt werden!',
+      acct_terms_agree_html: 'Ich stimme den <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">Nutzungsbedingungen</a> zu',
       acct_btn_signin: 'Anmelden', acct_btn_create: 'Konto erstellen',
       acct_checking: 'Cloud wird geprüft…', acct_checking_op: 'Prüfen…', acct_syncing: 'Synchronisieren…',
       acct_no_backup: 'Noch kein Cloud-Backup — klicke auf „Mit Cloud synchronisieren", um eines zu erstellen.',
@@ -3255,6 +3263,8 @@
       acct_tab_signin: 'Se connecter', acct_tab_create: 'Créer un compte',
       acct_lbl_email: 'E-mail', acct_lbl_password: 'Mot de passe',
       acct_pw_hint: '8 caractères minimum',
+      acct_pw_warning: '⚠️ N\'utilisez pas un mot de passe que vous avez déjà utilisé pour un autre service en ligne. Ne réutilisez jamais le mot de passe que vous utilisez sur ce site. Cela pourrait compromettre vos comptes si les bases de données d\'autographed.app venaient à être piratées !',
+      acct_terms_agree_html: 'J\'accepte les <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">conditions générales d\'utilisation</a>',
       acct_btn_signin: 'Se connecter', acct_btn_create: 'Créer un compte',
       acct_checking: 'Vérification du cloud…', acct_checking_op: 'Vérification…', acct_syncing: 'Synchronisation…',
       acct_no_backup: 'Aucune sauvegarde cloud — cliquez sur « Synchroniser » pour en créer une.',
@@ -5924,10 +5934,11 @@
             <input class="finput" type="password" id="sbPassUp" autocomplete="new-password" required minlength="8">
             <div class="fhint" data-i18n="acct_pw_hint">Minimum 8 characters</div>
           </div>
-          <div style="background:rgba(192,48,48,.08);border:1px solid rgba(192,48,48,.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--sub);line-height:1.5">⚠️ Do not use a password you have previously used for any other online service. Never re-use the password you use for this site. Doing so could result in your accounts being compromised if autographed.app's databases are ever breached!</div>
+          <div data-i18n="acct_pw_warning" style="background:rgba(192,48,48,.08);border:1px solid rgba(192,48,48,.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--sub);line-height:1.5">⚠️ Do not use a password you have previously used for any other online service. Never re-use the password you use for this site. Doing so could result in your accounts being compromised if autographed.app's databases are ever breached!</div>
           <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--sub);margin-bottom:12px;cursor:pointer;line-height:1.5">
             <input type="checkbox" id="sbTermsCheckbox" required style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer;margin-top:2px;flex-shrink:0">
-            <span>I agree to the <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">terms and conditions</a></span>
+            <span data-i18n-html="acct_terms_agree_html">I agree to the <a href="termsandconditions.html" target="_blank" style="color:var(--gold)">terms and conditions</a></span>
+
           </label>
           <div id="sbMsgUp" class="auth-msg err" style="display:none"></div>
           <button class="btn-add" type="submit" id="sbBtnUp" style="width:100%;justify-content:center;height:38px" data-i18n="acct_btn_create">Create account</button>
@@ -5984,7 +5995,7 @@
               <input class="finput" type="password" id="sbConfirmPw" autocomplete="new-password" required minlength="8">
               <div class="fhint" data-i18n="acct_pw_hint">Minimum 8 characters</div>
             </div>
-            <div style="background:rgba(192,48,48,.08);border:1px solid rgba(192,48,48,.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--sub);line-height:1.5">⚠️ Do not use a password you have previously used for any other online service. Never re-use the password you use for this site. Doing so could result in your accounts being compromised if autographed.app's databases are ever breached!</div>
+            <div data-i18n="acct_pw_warning" style="background:rgba(192,48,48,.08);border:1px solid rgba(192,48,48,.3);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--sub);line-height:1.5">⚠️ Do not use a password you have previously used for any other online service. Never re-use the password you use for this site. Doing so could result in your accounts being compromised if autographed.app's databases are ever breached!</div>
             <div id="sbMsgPw" class="auth-msg err" style="display:none"></div>
             <div style="display:flex;gap:8px">
               <button type="button" class="btn-secondary" onclick="sbShowChangePw(false)" style="flex:1;height:36px;font-size:13px" data-i18n="cancel">Cancel</button>
