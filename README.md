@@ -756,6 +756,19 @@ https://autographed.app/dashboard.html?shared=<username>
 
 Click **Copy link** to copy it to your clipboard. Send it to anyone — they open it in a browser and see your collection immediately.
 
+### Showing Your Email Address to Visitors
+
+When your public URL is enabled, a checkbox appears in the Account modal:
+
+> ☐ **Show my email address to visitors**
+
+When checked, visitors viewing your shared collection will see a **Contact information** button in the gold view banner. Clicking it opens a modal with a simple math CAPTCHA (e.g. "What is 4 + 7?"). Once answered correctly, the visitor is shown your account email address as a clickable `mailto:` link.
+
+- This defaults to **unchecked**. Your email is never exposed unless you explicitly enable it.
+- The email address is stored in a separate `contact_info` table. It is only readable by anonymous clients when `public_profiles.show_email = true AND public_profiles.enabled = true` — enforced entirely by Supabase Row Level Security. The math CAPTCHA is an additional friction layer against automated scraping, but is not the primary security gate.
+- Disabling public access also clears `show_email` and deletes the row from `contact_info`.
+- This setting is stored in `public_profiles.show_email`.
+
 ### Listing Your Collection in the Public Directory
 
 When your public URL is enabled, a checkbox appears in the Account modal:
@@ -835,6 +848,35 @@ USING (EXISTS (
 
 Until this migration is run, the listing checkbox has no effect (the column doesn't exist, so `listed` is treated as `false` everywhere). The dashboard falls back gracefully — if the `listed` column is missing from the query response, it retries without that column so the rest of public sharing continues to work.
 
+To enable the **Show my email address to visitors** feature, run this additional migration:
+
+```sql
+ALTER TABLE public_profiles ADD COLUMN IF NOT EXISTS show_email boolean NOT NULL DEFAULT false;
+
+CREATE TABLE IF NOT EXISTS contact_info (
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+  email text NOT NULL
+);
+
+ALTER TABLE contact_info ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage own contact info"
+ON contact_info FOR ALL TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Public can read contact info when show_email enabled"
+ON contact_info FOR SELECT TO public
+USING (EXISTS (
+  SELECT 1 FROM public_profiles
+  WHERE public_profiles.user_id = contact_info.user_id
+    AND public_profiles.enabled = true
+    AND public_profiles.show_email = true
+));
+```
+
+Until this migration is run, the "Show my email address to visitors" checkbox has no effect. The dashboard falls back gracefully — if `show_email` is missing from the query response it defaults to `false` and the Contact information button is never shown.
+
 ---
 
 ## View Mode
@@ -847,11 +889,14 @@ View mode is entered automatically when a `?shared=<username>` query parameter i
 
 ### Visual Indicator
 
-A gold banner appears directly below the header:
+A gold banner appears directly below the header reading **"Viewing a shared collection"**. The banner contains two buttons on the right side:
 
-> 👁 Viewing a shared collection — your own collection is untouched
+- **Contact information** — only visible when the collection owner has enabled the "Show my email address to visitors" option. Opens the Contact modal (see below).
+- **← Back to my collection** — exits view mode and restores your own collection.
 
-The banner contains a **← Back to my collection** button on the right side.
+#### Contact Modal
+
+Clicking **Contact information** opens a modal with a simple randomised math question (e.g. "What is 4 + 7?"). Once the correct answer is entered, the owner's email address is revealed as a clickable `mailto:` link. Entering the wrong answer shows an error and allows retrying. This CAPTCHA provides friction against automated scraping — the actual security gate is a Supabase RLS policy that only allows reading from `contact_info` when `public_profiles.show_email = true`.
 
 ### What Is Disabled in View Mode
 
@@ -984,7 +1029,8 @@ The **Sync to cloud** and **Restore from cloud** buttons also appear in the **Se
 | **Supabase Auth** | Email/password authentication. Session tokens are managed by the Supabase JS SDK and stored in the browser. |
 | **Storage bucket: `collections`** | Private bucket. Each user's collection is stored at `{uid}/collection.json`. The file format is identical to the local export format: `{ currency, settings, items }` including base64-encoded photos. Normally private; an additional RLS policy allows anonymous reads for users who have enabled public sharing. |
 | **Table: `collection_meta`** | Stores `{ user_id, last_modified, item_count, app_version }`. Used for the conflict dialog without downloading the full file. `user_id` has `ON DELETE CASCADE` to `auth.users`. |
-| **Table: `public_profiles`** | Stores `{ user_id, username, enabled, listed }`. `username` is a randomly generated 10-character alphanumeric string assigned on first enable. `listed` is a boolean (default `false`) controlling whether the collection appears on `shared.html`. Authenticated users can manage their own row; the `enabled = true` rows are publicly readable (by both authenticated and anonymous clients) so the public URL can resolve `username → user_id`. |
+| **Table: `public_profiles`** | Stores `{ user_id, username, enabled, listed, show_email }`. `username` is a randomly generated 10-character alphanumeric string assigned on first enable. `listed` (default `false`) controls whether the collection appears on `shared.html`. `show_email` (default `false`) controls whether visitors can request the owner's email address via the Contact modal. Authenticated users can manage their own row; the `enabled = true` rows are publicly readable so the public URL can resolve `username → user_id`. |
+| **Table: `contact_info`** | Stores `{ user_id, email }`. Created when the owner enables "Show my email address to visitors"; deleted when they disable it or turn off public access entirely. RLS restricts anonymous reads to rows where `public_profiles.show_email = true AND public_profiles.enabled = true`. |
 
 ### Security
 
@@ -996,6 +1042,8 @@ The Supabase **publishable key** (prefixed `sb_publishable_`) is embedded client
 - **collection_meta (public read for listed profiles)**: any client can SELECT rows where the owner has `public_profiles.enabled = true AND public_profiles.listed = true` — this powers the item count and last-updated columns on `shared.html`. SQL: `CREATE POLICY "Anyone can read meta of listed collections" ON collection_meta FOR SELECT TO public USING (EXISTS (SELECT 1 FROM public_profiles WHERE public_profiles.user_id = collection_meta.user_id AND public_profiles.enabled = true AND public_profiles.listed = true));`
 - **public_profiles (own row)**: `auth.uid() = user_id` — users can INSERT/UPDATE/SELECT their own profile, including when `enabled = false`.
 - **public_profiles (public read)**: any client can SELECT rows where `enabled = true` — this is how the public URL resolves `username → user_id`.
+- **contact_info (own row)**: `auth.uid() = user_id` — authenticated users can INSERT/UPDATE/DELETE/SELECT their own contact info row.
+- **contact_info (public read)**: any client can SELECT a row when `public_profiles.enabled = true AND public_profiles.show_email = true` for that user — this powers the Contact modal on shared collections.
 
 Never use the Supabase `service_role` key in client-side code — it bypasses all RLS policies.
 
@@ -1013,7 +1061,7 @@ Click **Change password** in the signed-in panel of the Account modal. This reve
 See [Public Collections](#public-collections) for full details. The toggle in the signed-in panel of the Account modal controls whether your collection is accessible at a public URL.
 
 - **Off (default)** — collection is private; only you can read it via cloud sync
-- **On** — collection is readable by anyone who knows your URL; the Account modal shows the URL, a **Copy link** button, a **Disable** button, and a checkbox to opt into the [Publicly Shared Collections](#publicly-shared-collections-page) directory
+- **On** — collection is readable by anyone who knows your URL; the Account modal shows the URL, a **Copy link** button, a **Disable** button, a **Show my email address to visitors** checkbox (see [Public Collections](#public-collections)), and a **List my collection on Publicly Shared Collections** checkbox
 
 The public URL is tied to a randomly generated username, not your email address.
 

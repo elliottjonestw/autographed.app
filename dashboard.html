@@ -230,6 +230,11 @@
       font-family: var(--font);
     }
     .view-banner-btn:hover { background: rgba(0,0,0,.25); }
+    @media (max-width: 640px) {
+      .view-banner { flex-direction: column; align-items: stretch; padding: 10px 16px; gap: 8px; text-align: center; }
+      .view-banner > div { justify-content: center; }
+      .view-banner-btn { flex: 1; }
+    }
 
     .settings-row-btn {
       width: 100%;
@@ -1481,8 +1486,11 @@
 </div>
 
 <div id="viewBanner" style="display:none" class="view-banner">
-  <span data-i18n="viewing_shared">👁 Viewing a shared collection — your own collection is untouched</span>
-  <button class="view-banner-btn" onclick="exitViewMode()" data-i18n="back_to_mine">← Back to my collection</button>
+  <span data-i18n="viewing_shared">Viewing a shared collection</span>
+  <div style="display:flex;gap:8px">
+    <button class="view-banner-btn" id="viewContactBtn" style="display:none" onclick="openContactModal()">Contact information</button>
+    <button class="view-banner-btn" onclick="exitViewMode()" data-i18n="back_to_mine">← Back to my collection</button>
+  </div>
 </div>
 
 <div class="stats-bar" id="statsBar">
@@ -2524,7 +2532,7 @@
       no_matches: 'No matches', no_matches_sub: 'Try a different search term',
       empty_title: 'Your collection is empty', empty_sub: 'Add your first autograph to get started',
       add_item: '+ Add Item', load_demo: 'Load Demo Collection',
-      viewing_shared: '👁 Viewing a shared collection — your own collection is untouched',
+      viewing_shared: 'Viewing a shared collection',
       back_to_mine: '← Back to my collection',
       settings_title: 'Settings', tab_display: 'General', tab_data: 'Data', tab_currency: 'Currency',
       lbl_appearance: 'Appearance', switch_dark: 'Switch to Dark Mode', switch_light: 'Switch to Light Mode',
@@ -3537,6 +3545,7 @@
       applySettings(settings);
     }
     document.getElementById('viewBanner').style.display = '';
+    document.getElementById('viewContactBtn').style.display = _viewModeShowEmail ? '' : 'none';
     document.getElementById('btnAdd').style.display = 'none';
     document.getElementById('btnDetailDelete').style.display = 'none';
     document.getElementById('btnDetailEdit').style.display = 'none';
@@ -3564,9 +3573,13 @@
     viewMode = false;
     viewLocalCurrency = null;
     viewSettings = null;
+    _viewModeUserId = null;
+    _viewModeShowEmail = false;
+    _viewCaptchaAnswer = null;
     if (savedSettings) { applySettings(savedSettings); savedSettings = null; }
     await load();
     document.getElementById('viewBanner').style.display = 'none';
+    document.getElementById('viewContactBtn').style.display = 'none';
     document.getElementById('btnAdd').style.display = '';
     document.getElementById('btnDetailDelete').style.display = '';
     document.getElementById('btnDetailEdit').style.display = '';
@@ -4890,10 +4903,12 @@
       const sb = await sbInit();
       const { data: profile, error: profErr } = await sb
         .from('public_profiles')
-        .select('user_id')
+        .select('user_id, show_email')
         .eq('username', sharedUser)
         .single();
       if (profErr || !profile) throw new Error('Collection not found or public access is not enabled');
+      _viewModeUserId    = profile.user_id;
+      _viewModeShowEmail = profile.show_email ?? false;
       const { data: blob, error: dlErr } = await sb.storage
         .from('collections')
         .download(`${profile.user_id}/collection.json`);
@@ -5325,6 +5340,10 @@
   let _sbPublicEnabled = false;
   let _sbPublicUsername = null;
   let _sbPublicListed = false;
+  let _sbPublicShowEmail = false;
+  let _viewModeUserId = null;
+  let _viewModeShowEmail = false;
+  let _viewCaptchaAnswer = null;
 
   function sbLoadSdk() {
     if (_sbSdkPromise) return _sbSdkPromise;
@@ -5507,30 +5526,43 @@
     try {
       const { data, error } = await _sbClient
         .from('public_profiles')
-        .select('enabled, username, listed')
+        .select('enabled, username, listed, show_email')
         .eq('user_id', uid)
         .maybeSingle();
-      if (error && error.message?.includes('listed')) {
-        // listed column not yet added — fall back to basic fetch
-        const { data: d2 } = await _sbClient
+      if (error && (error.message?.includes('show_email') || error.message?.includes('listed'))) {
+        // New columns not yet migrated — fall back gracefully
+        const { data: d2, error: e2 } = await _sbClient
           .from('public_profiles')
-          .select('enabled, username')
+          .select('enabled, username, listed')
           .eq('user_id', uid)
           .maybeSingle();
-        _sbPublicEnabled = d2?.enabled ?? false;
-        _sbPublicUsername = d2?.username ?? null;
-        _sbPublicListed = false;
+        if (e2) {
+          const { data: d3 } = await _sbClient
+            .from('public_profiles')
+            .select('enabled, username')
+            .eq('user_id', uid)
+            .maybeSingle();
+          _sbPublicEnabled = d3?.enabled ?? false;
+          _sbPublicUsername = d3?.username ?? null;
+        } else {
+          _sbPublicEnabled = d2?.enabled ?? false;
+          _sbPublicUsername = d2?.username ?? null;
+          _sbPublicListed = d2?.listed ?? false;
+        }
+        _sbPublicShowEmail = false;
       } else if (error) {
         throw error;
       } else {
-        _sbPublicEnabled = data?.enabled ?? false;
-        _sbPublicUsername = data?.username ?? null;
-        _sbPublicListed = data?.listed ?? false;
+        _sbPublicEnabled   = data?.enabled    ?? false;
+        _sbPublicUsername  = data?.username   ?? null;
+        _sbPublicListed    = data?.listed     ?? false;
+        _sbPublicShowEmail = data?.show_email ?? false;
       }
     } catch {
-      _sbPublicEnabled = false;
-      _sbPublicUsername = null;
-      _sbPublicListed = false;
+      _sbPublicEnabled   = false;
+      _sbPublicUsername  = null;
+      _sbPublicListed    = false;
+      _sbPublicShowEmail = false;
     }
     sbUpdatePublicUI();
   }
@@ -5548,6 +5580,8 @@
     }
     const listedCb = document.getElementById('sbListedCheckbox');
     if (listedCb) listedCb.checked = _sbPublicListed;
+    const showEmailCb = document.getElementById('sbShowEmailCheckbox');
+    if (showEmailCb) showEmailCb.checked = _sbPublicShowEmail;
   }
 
   function sbPublicEnableWarn(show) {
@@ -5574,9 +5608,11 @@
   async function sbDisablePublic() {
     const { data: { user } } = await _sbClient.auth.getUser();
     const { error } = await _sbClient.from('public_profiles')
-      .upsert({ user_id: user.id, username: _sbPublicUsername, enabled: false });
+      .upsert({ user_id: user.id, username: _sbPublicUsername, enabled: false, show_email: false });
     if (error) { toast('⚠️ Could not disable public access'); return; }
+    await _sbClient.from('contact_info').delete().eq('user_id', user.id);
     _sbPublicEnabled = false;
+    _sbPublicShowEmail = false;
     sbUpdatePublicUI();
     toast(t('public_disabled_toast'));
   }
@@ -5597,6 +5633,95 @@
       return;
     }
     _sbPublicListed = val;
+  }
+
+  async function sbSetShowEmail(val) {
+    const { data: { user }, error: authErr } = await _sbClient.auth.getUser();
+    if (authErr || !user) {
+      toast('⚠️ Could not update email visibility');
+      document.getElementById('sbShowEmailCheckbox').checked = _sbPublicShowEmail;
+      return;
+    }
+    // Update show_email flag on public_profiles
+    const { error: profErr } = await _sbClient.from('public_profiles')
+      .upsert({ user_id: user.id, username: _sbPublicUsername, enabled: true, show_email: val });
+    if (profErr) {
+      toast('⚠️ Could not update email visibility');
+      document.getElementById('sbShowEmailCheckbox').checked = _sbPublicShowEmail;
+      return;
+    }
+    if (val) {
+      // Store email in contact_info so visitors can retrieve it (RLS enforces show_email=true)
+      const { error: ciErr } = await _sbClient.from('contact_info')
+        .upsert({ user_id: user.id, email: user.email });
+      if (ciErr) {
+        toast('⚠️ Could not save contact info');
+        // Roll back the profile change
+        await _sbClient.from('public_profiles')
+          .upsert({ user_id: user.id, username: _sbPublicUsername, enabled: true, show_email: false });
+        document.getElementById('sbShowEmailCheckbox').checked = _sbPublicShowEmail;
+        return;
+      }
+    } else {
+      // Remove email from contact_info immediately
+      await _sbClient.from('contact_info').delete().eq('user_id', user.id);
+    }
+    _sbPublicShowEmail = val;
+  }
+
+  function openContactModal() {
+    const modal = document.getElementById('contactModal');
+    document.getElementById('contactCaptchaBox').style.display = '';
+    document.getElementById('contactResultBox').style.display = 'none';
+    document.getElementById('contactCaptchaErr').style.display = 'none';
+    document.getElementById('contactCaptchaInput').value = '';
+    // Generate a simple math question
+    const a = Math.floor(Math.random() * 12) + 1;
+    const b = Math.floor(Math.random() * 12) + 1;
+    const ops = [
+      { sym: '+', ans: a + b },
+      { sym: '−', ans: a - b < 0 ? b - a : a - b, qa: a - b < 0 ? b : a, qb: a - b < 0 ? a : b },
+      { sym: '×', ans: Math.min(a, 5) * Math.min(b, 5) },
+    ];
+    const op = ops[Math.floor(Math.random() * ops.length)];
+    const qa = op.qa ?? a;
+    const qb = op.qb ?? (op.sym === '×' ? Math.min(b, 5) : b);
+    _viewCaptchaAnswer = op.sym === '×' ? Math.min(a, 5) * Math.min(b, 5) : op.ans;
+    document.getElementById('contactCaptchaQuestion').textContent =
+      `What is ${op.sym === '×' ? Math.min(a,5) : qa} ${op.sym} ${op.sym === '×' ? Math.min(b,5) : qb}?`;
+    modal.style.display = 'flex';
+    setTimeout(() => document.getElementById('contactCaptchaInput').focus(), 50);
+  }
+
+  function closeContactModal() {
+    document.getElementById('contactModal').style.display = 'none';
+    _viewCaptchaAnswer = null;
+  }
+
+  async function submitContactCaptcha() {
+    const input = parseInt(document.getElementById('contactCaptchaInput').value, 10);
+    if (isNaN(input) || input !== _viewCaptchaAnswer) {
+      document.getElementById('contactCaptchaErr').style.display = '';
+      document.getElementById('contactCaptchaInput').value = '';
+      document.getElementById('contactCaptchaInput').focus();
+      return;
+    }
+    // Correct — fetch email from contact_info (RLS enforces show_email=true)
+    const sb = await sbInit();
+    const { data, error } = await sb.from('contact_info')
+      .select('email')
+      .eq('user_id', _viewModeUserId)
+      .maybeSingle();
+    if (error || !data?.email) {
+      toast('⚠️ Could not retrieve contact information');
+      closeContactModal();
+      return;
+    }
+    document.getElementById('contactCaptchaBox').style.display = 'none';
+    document.getElementById('contactResultBox').style.display = '';
+    const link = document.getElementById('contactEmailLink');
+    link.textContent = data.email;
+    link.href = `mailto:${data.email}`;
   }
 
   function sbFormatDate(d) {
@@ -5827,6 +5952,10 @@
           <div id="sbPublicOn" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px">
             <p style="font-size:12px;color:var(--sub);margin-bottom:8px" data-i18n="public_on_label">Anyone with the following URL can see your collection:</p>
             <p id="sbPublicUrl" style="font-size:8px;font-weight:600;word-break:break-all;margin-bottom:10px;color:var(--gold)"></p>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-bottom:8px;cursor:pointer">
+              <input type="checkbox" id="sbShowEmailCheckbox" onchange="sbSetShowEmail(this.checked)" style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer">
+              <span>Show my email address to visitors</span>
+            </label>
             <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);margin-bottom:10px;cursor:pointer">
               <input type="checkbox" id="sbListedCheckbox" onchange="sbSetListed(this.checked)" style="accent-color:var(--gold);width:14px;height:14px;cursor:pointer">
               <span><span data-i18n="public_listed_label">List my collection on</span> <a href="shared.html" style="color:var(--gold);font-size:12px;text-decoration:underline" data-i18n="public_listed_link">Publicly Shared Collections</a></span>
@@ -5863,6 +5992,31 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- Contact information modal -->
+<div id="contactModal" onclick="if(event.target===this)closeContactModal()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:16px">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-head">
+      <span class="modal-title">Contact Information</span>
+      <button class="btn-x" onclick="closeContactModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="contactCaptchaBox">
+        <p style="font-size:13px;color:var(--sub);margin-bottom:16px;line-height:1.5">To reveal the owner's contact details, please answer the following question:</p>
+        <p id="contactCaptchaQuestion" style="font-size:18px;font-weight:700;text-align:center;margin-bottom:16px;color:var(--text)"></p>
+        <div class="fg" style="margin-bottom:12px">
+          <input class="finput" type="number" id="contactCaptchaInput" placeholder="Your answer" style="text-align:center;font-size:16px" onkeydown="if(event.key==='Enter')submitContactCaptcha()">
+        </div>
+        <div id="contactCaptchaErr" style="display:none;color:var(--red);font-size:12px;margin-bottom:10px;text-align:center">Incorrect — please try again.</div>
+        <button class="btn-add" onclick="submitContactCaptcha()" style="width:100%;justify-content:center;height:38px;font-size:13px">Reveal contact details</button>
+      </div>
+      <div id="contactResultBox" style="display:none">
+        <p style="font-size:12px;color:var(--sub);margin-bottom:10px">The owner of this collection can be contacted at:</p>
+        <a id="contactEmailLink" href="#" style="display:block;font-size:14px;font-weight:600;color:var(--gold);word-break:break-all;margin-bottom:4px"></a>
+      </div>
     </div>
   </div>
 </div>
