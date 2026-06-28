@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Best Pens for Autograph Signings · Blog</title>
+  <meta name="description" content="Getting the autograph is only half the battle. The pen you hand over in that quick interaction determines whether your signature still looks crisp in twenty years, or whether it bleeds, smudges, or fades into a ghost of itself within a season.">
+  <meta name="date" content="2026-06-28">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    :root {
+      --bg: #f0f0f5;
+      --surface: #ffffff;
+      --card: #ffffff;
+      --card-hover: #f8f8fc;
+      --border: #dcdce8;
+      --border-light: #c8c8da;
+      --gold: #c9a435;
+      --text: #18182a;
+      --sub: #70708a;
+      --r: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font); -webkit-font-smoothing: antialiased; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 19px; font-weight: 800; letter-spacing: -0.6px; color: var(--gold); text-decoration: none; }
+    .logo span { color: var(--text); font-weight: 400; }
+    .nav-cta { background: var(--gold); color: #000; font-weight: 700; font-size: 13px; padding: 0 16px; height: 36px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; transition: opacity .15s; }
+    .nav-cta:hover { opacity: .85; }
+
+    .article-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 24px 44px;
+      text-align: center;
+    }
+    .article-back {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      text-decoration: none;
+      margin-bottom: 22px;
+    }
+    .article-back:hover { text-decoration: underline; }
+    .article-title {
+      font-size: clamp(24px, 4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -.8px;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+    .article-date { font-size: 13px; color: var(--sub); }
+
+    .article-body {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 56px 24px 80px;
+      flex: 1;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    .article-body h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      margin: 40px 0 14px;
+      color: var(--text);
+    }
+    .article-body h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 28px 0 10px;
+    }
+    .article-body h2:first-child, .article-body h3:first-child { margin-top: 0; }
+    .article-body p { margin: 0 0 20px; }
+    .article-body p:last-child { margin-bottom: 0; }
+    .article-body ul, .article-body ol { margin: 0 0 20px; padding-left: 24px; }
+    .article-body li { margin-bottom: 8px; }
+    .article-body li:last-child { margin-bottom: 0; }
+    .article-body a { color: var(--gold); word-break: break-all; }
+    .article-body a:hover { text-decoration: underline; }
+    .article-body strong { font-weight: 700; }
+    .article-body em { font-style: italic; }
+    .article-body hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    .article-body code {
+      background: rgba(0,0,0,.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: 'Menlo', 'Monaco', 'Consolas', monospace;
+    }
+    .article-body pre {
+      background: rgba(0,0,0,.05);
+      padding: 18px 20px;
+      border-radius: var(--r);
+      overflow-x: auto;
+      margin: 0 0 24px;
+    }
+    .article-body pre code { background: none; padding: 0; font-size: 14px; }
+    .article-body blockquote {
+      border-left: 3px solid var(--gold);
+      margin: 0 0 24px;
+      padding: 6px 0 6px 20px;
+      color: var(--sub);
+    }
+    .article-body img {
+      max-width: 100%;
+      height: auto;
+      border-radius: var(--r);
+      border: 1px solid var(--border);
+      display: block;
+      margin: 4px 0 24px;
+    }
+
+    .article-promo {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 52px 24px;
+      text-align: center;
+    }
+    .promo-inner { max-width: 560px; margin: 0 auto; }
+    .promo-logo { font-size: 22px; font-weight: 800; letter-spacing: -.6px; color: var(--gold); margin-bottom: 14px; }
+    .promo-logo span { color: var(--text); font-weight: 400; }
+    .promo-headline { font-size: 22px; font-weight: 700; letter-spacing: -.3px; line-height: 1.25; margin-bottom: 12px; }
+    .promo-sub { font-size: 15px; color: var(--sub); line-height: 1.6; margin-bottom: 28px; }
+    .promo-btn {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .promo-btn:hover { opacity: .85; }
+
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 13px; color: var(--sub); }
+    footer a { color: var(--gold); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .article-header { padding: 36px 20px 32px; }
+      .article-body { padding: 40px 20px 60px; font-size: 15px; }
+      .article-promo { padding: 40px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="../index.html">autographed<span>.app</span></a>
+  <a class="nav-cta" href="../dashboard.html">My Collection →</a>
+</nav>
+
+<div class="article-header">
+  <a class="article-back" href="index.html">← Blog</a>
+  <h1 class="article-title">The Best Pens for Autograph Signings</h1>
+  <time class="article-date">June 28, 2026</time>
+</div>
+
+<div class="article-body" id="article-output"></div>
+
+<script type="text/markdown" id="post-content">
+The pen you hand over determines whether a signature still looks crisp in twenty years or fades into nothing. This guide breaks down what to use on each surface, with a constant eye on **long-term archival quality.**
+
+
+## The One Rule That Governs Everything: Paint Beats Ink
+
+Across nearly every surface, pigment-based **paint** outperforms dye-based **ink** for longevity. The reason is physical. Ink, whether from a Sharpie, a ballpoint, or a felt marker, is dye-based and tends to soak *into* a porous surface, then fade as the dye breaks down under light and time. Paint is a thicker, pigmented substance that sits *on top* of the surface, where it stays bold and resists fading far longer.
+
+Memorabilia companies that have handled millions of signatures consistently report the same pattern: ink sinks in and eventually fades off, while paint stays put. Paint markers are typically oil-based and acid-free, which is what makes them archival quality in the first place.
+
+When shopping, look for these words on the label:
+
+- Archival
+- Lightfast
+- Fade-resistant
+- Pigment-based
+- Acid-free
+
+Note that "permanent" is *not* on that list. Permanent ink resists water and smudging, but it can still fade under UV light. Lightfastness is the property that actually protects a signature over the decades.
+
+> **The one big exception:** baseballs. More on that below; it's the single surface where a humble ballpoint pen wins.
+
+
+## A Reality Check on Color
+
+There's a long-standing belief in the hobby that blue is the safest, most fade-resistant color. The truth is more nuanced.
+
+For permanent markers, the genuinely **lightfast** colors are black, yellow, orange, and brown. Black pens often explicitly advertise that they're lightfast; their blue counterparts frequently carry no such claim. Plenty of veteran collectors report blue signatures turning dark or blackish over a decade, even when framed behind UV glass on acid-free matting.
+
+The practical takeaways:
+
+- **Black** is the most reliably lightfast ink color.
+- **Blue** looks fantastic and is a hobby staple, but it's less of a sure thing than folklore suggests.
+- **Red, green, and purple** fade the fastest, so avoid them for anything you intend to keep.
+- For **dark surfaces**, switch to opaque **silver, gold, or white paint** so the signature is visible at all.
+
+
+## Surface-by-Surface Recommendations
+
+### Baseballs: The Ballpoint Exception
+
+This is the one place where you should **never** use a marker or paint pen. The porous leather causes markers to bleed and fade, eventually leaving you with almost nothing.
+
+**Use a blue medium ballpoint pen.** Ballpoint ink resists the leather and stays on the surface rather than soaking in. Even in direct sunlight it fades only slightly while keeping clean lines.
+
+- **Recommended:** Bic Round Stic, Staedtler Triplus, Zebra 0.7mm, or the Uni-ball Jetstream (fast-drying, smudge-resistant, fade-resistant).
+- **Color:** Blue over black, since black can shift toward purple with some brands, while blue stays truer.
+- **Avoid:** Permanent markers and paint pens entirely.
+
+### Photos
+
+A fine or medium **paint pen** is the longevity choice, with DecoColor being the dealer favorite. Sharpies are convenient and common but fade under light and don't pop the way paint does.
+
+- **Tip:** Choose **matte** photos over glossy. Glossy stock doesn't hold ink well and creates reflection problems.
+
+### Trading Cards
+
+This is the rare case where **Sharpie wins.** Cards have tiny, varied, often glossy surfaces, and Sharpie's versatility and quick dry time handle them best. A thin paint pen is a viable secondary option if you let it dry fully. A clean, well-adhered signature also matters here because grading companies assign autograph grades.
+
+### Jerseys & Fabric: The Hardest Surface
+
+Fabric is the trickiest material to sign because ink wants to bleed and spread. Your approach depends on the number color:
+
+- **White numbers:** A Sharpie or almost any paint color works, with minimal bleeding.
+- **Colored or dark numbers:** A **silver or gold paint pen** is the clear winner. In side-by-side testing, Prisma and Deco broad paint pens popped on colored numbers while silver Sharpie disappointed. Paint also keeps the letters crisp, where Sharpie ink spreads wide on fabric and can make a signature look bloated or run together.
+
+Practical tips for fabric:
+
+- Pull the fabric taut so it doesn't bunch or shift during signing.
+- A light mist of hairspray on the signing area can help prevent a Sharpie from bleeding.
+- **Avoid white paint pens.** They flow poorly and tend to change color.
+- For game-used jerseys, many serious collectors prefer to leave the exterior untouched (an autograph can be seen as "defacing" a gamer) and instead sign inside on the back of the crest.
+
+### Helmets, Footballs, Basketballs, Bats, Pucks, Shoes & Funkos
+
+For any hard, non-porous surface, reach for an **oil-based paint pen.** Paint pops on these items and essentially lasts forever. On shoes specifically, oil-based paint markers are permanent, water-resistant, and abrasion-resistant, which matters on a textured, frequently handled surface.
+
+- **Color:** Silver or gold on dark items; black on light ones.
+
+
+## Pens Collectors Trust
+
+- **DecoColor oil-based paint markers** — Industry standard for photos, helmets, and most hard surfaces. Oil-based, acid-free, archival, wide color range.
+- **Sharpie oil-based paint markers** — Widely available, durable, and abrasion-resistant. Good for shoes and hard surfaces.
+- **Posca** — Popular paint pen for hard surfaces. Pricier; sold at craft stores.
+- **Molotow acrylic** — UV-resistant, fast-drying, and refillable. Best for display items exposed to light.
+- **Sakura Pigma Micron** — Bold, pigmented, lightfast, and fade-resistant. Great for paper and tickets.
+- **Schneider Maxx 270 / Staedtler Lumocolor** — Opaque ink that resists smudging, UV, fading, and abrasion. Good for paper and photos.
+- **Prisma broad paint pens** — Top performer on colored jersey numbers.
+- **Bic Round Stic / Uni-ball Jetstream / Staedtler / Zebra** — Blue ballpoints for baseballs only; resist the leather and stay crisp.
+
+
+## Choosing the Right Tip Size
+
+- **Extra-fine** — Tickets, trading cards, hockey pucks.
+- **Medium** — Funko Pops, bats, shoes, helmets, photos.
+- **Broad** — Jerseys and large items.
+
+When in doubt, **medium is the safe default.** It looks good on most items regardless of size. For pieces meant to hold multiple signatures, stick with medium so every autograph stays legible and you maximize the space.
+
+
+## Storage & Archival: As Important as the Pen
+
+Even a perfect signature with the perfect pen will fade if the item is displayed carelessly. Protecting it is half the job.
+
+For framed paper and photos:
+
+- Use **UV-protective glass.**
+- Choose a **deep-set frame** so the item never touches the glass, which prevents moisture buildup and stops the paper from adhering to the surface.
+- Use **conservation-grade, acid-free matting.**
+- Add a **UV-protective spray** as a second layer of defense, since UV glass alone isn't absolute protection.
+
+For cards and flat items:
+
+- Archival, PVC-free sleeves
+- Acrylic top-loaders
+- Photo boxes or binders
+
+**The single most important habit:** keep signed items out of direct and display lighting. Sunlight and those picture lights mounted above framed pieces are major culprits; over years they do more damage than the difference between any two good pens. A signature stored in a dark, stable environment will almost always outlast one on permanent display, no matter how it was signed.
+
+
+## Quick Reference Cheat Sheet
+
+- **Baseball:** Blue medium ballpoint (*never* a marker).
+- **Photo:** Paint pen (DecoColor); matte over glossy.
+- **Trading card:** Sharpie.
+- **White jersey number:** Sharpie or any paint color.
+- **Colored/dark jersey number:** Silver or gold paint pen (Prisma, Deco).
+- **Helmet / ball / bat / shoe / puck / Funko:** Oil-based paint pen; silver/gold on dark, black on light.
+- **Always:** Look for *lightfast* and *acid-free.* Black is the safest ink color.
+- **Display:** UV glass, acid-free matting, and above all, keep it out of the light.
+
+
+*Bottom line: match the pen to the surface, favor archival pigment-based paint everywhere except baseballs, lean on black or opaque metallics for longevity, and store your pieces away from light. Do that, and your collection will still look sharp decades from now.*
+</script>
+
+<script>
+  document.getElementById('article-output').innerHTML =
+    marked.parse(document.getElementById('post-content').textContent.trim());
+</script>
+
+<div class="article-promo">
+  <div class="promo-inner">
+    <div class="promo-logo">autographed<span>.app</span></div>
+    <p class="promo-headline">Your autograph collection,<br>beautifully organized.</p>
+    <p class="promo-sub">A free, private app for collectors. Track autographs and memorabilia, log cert numbers, monitor value, and share your collection — no account required.</p>
+    <a class="promo-btn" href="../dashboard.html">Try it free →</a>
+  </div>
+</div>
+
+<footer>
+  <a href="../index.html">Home</a> · <a href="../dashboard.html">My Collection</a> · <a href="../shared.html">Publicly Shared Collections</a> · <a href="index.html">Blog</a>
+</footer>
+
+</body>
+</html>
