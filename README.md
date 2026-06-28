@@ -983,9 +983,10 @@ The modal has three states:
 1. Open the Account modal (person icon in the header)
 2. Click **Create account**
 3. Enter your email address and a password (minimum 8 characters)
-4. Click **Create account** — Supabase sends a confirmation email
-5. Click the link in the email to verify your address
-6. Return to the app and sign in
+4. Check the **"I agree to the terms and conditions"** checkbox (links to `termsandconditions.html` in a new tab)
+5. Click **Create account** — Supabase sends a confirmation email
+6. Click the link in the email to verify your address
+7. Return to the app and sign in
 
 ### Signing In
 
